@@ -1,0 +1,70 @@
+# ------------------------
+# Root ignores
+# ------------------------
+.env
+*.env
+.DS_Store
+Thumbs.db
+*.log
+*.lock
+__pycache__/
+.vscode/
+.idea/
+*.swp
+
+# Node / Quasar (frontend)
+app-toxipred/node_modules/
+app-toxipred/dist/
+app-toxipred/.quasar/
+app-toxipred/.cache/
+app-toxipred/.vite/
+app-toxipred/.output/
+app-toxipred/npm-debug.log*
+app-toxipred/yarn-debug.log*
+app-toxipred/yarn-error.log*
+app-toxipred/package-lock.json
+app-toxipred/.env.local
+app-toxipred/.env.*.local
+
+# Python / FastAPI (backend)
+server-toxipred/__pycache__/
+server-toxipred/.venv/
+server-toxipred/venv/
+server-toxipred/.pytest_cache/
+server-toxipred/.mypy_cache/
+server-toxipred/*.pyc
+server-toxipred/*.pyo
+server-toxipred/*.pyd
+server-toxipred/.coverage
+server-toxipred/htmlcov/
+server-toxipred/uv.lock
+server-toxipred/requirements.txt
+
+# Docker & build artifacts
+docker-compose.override.yml
+*.pid
+*.seed
+*.pid.lock
+
+# Cache & temporary
+*.tmp
+*.bak
+*.old
+*.orig
+
+# macOS / Windows / Linux
+.DS_Store
+ehthumbs.db
+Icon?
+desktop.ini
+
+# Editor backups
+*~
+*.sublime-workspace
+*.sublime-project
+
+# ------------------------
+# Optional: GitHub or CI files
+# ------------------------
+# /docs/outputs/
+# /coverage/

@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  server-toxipred:
+    build:
+      context: ./server-toxipred
+    container_name: server-toxipred
+    ports:
+      - "${BACKEND_PORT}:8000"
+    volumes:
+      - ./server-toxipred/app:/app/app:rw
+      - backend_uv_cache:/root/.cache/uv
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  app-toxipred:
+    build:
+      context: ./app-toxipred
+    container_name: app-toxipred
+    ports:
+      - "${FRONTEND_PORT}:9000"
+    environment:
+      - VITE_API_BASE=http://localhost:${BACKEND_PORT}
+    volumes:
+      - ./app-toxipred:/app:rw
+      - /app/node_modules
+    depends_on:
+      - server-toxipred
+    # Quasar dev serves on 0.0.0.0:9000; HMR works through Docker
+
+volumes:
+  backend_uv_cache:
