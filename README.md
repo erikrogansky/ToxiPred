@@ -19,7 +19,25 @@ cd toxipred
 
 ---
 
-### 2. Start the Development Environment
+### 2. Environment setup
+
+Before launching, you’ll need to create your local environment files:
+
+```bash
+# In the frontend folder
+cd app-toxipred
+cp .env.example .env.development
+cd ..
+
+# In the project root
+cp .env.example .env
+```
+
+These files define variables like the API base URL and ports for Docker Compose.
+
+---
+
+### 3. Start the Development Environment
 
 Build and run everything (frontend + backend):
 
@@ -40,7 +58,7 @@ Then open:
 
 ---
 
-### 3. Project Structure
+### 4. Project Structure
 
 ```
 toxipred/
@@ -48,6 +66,7 @@ toxipred/
 │  ├─ src/
 │  ├─ quasar.config.ts
 │  ├─ Dockerfile
+│  ├─ .env.example
 │  └─ .env.development
 │
 ├─ server-toxipred/        # FastAPI backend
@@ -56,13 +75,14 @@ toxipred/
 │  ├─ requirements.txt (auto-generated)
 │  └─ Dockerfile
 │
+├─ .env.example            # Example root environment variables
 ├─ docker-compose.yml      # Orchestrates frontend + backend
 └─ README.md               # You are here ✨
 ```
 
 ---
 
-### 4. Useful Commands
+### 5. Useful Commands
 
 ```bash
 # Rebuild containers if dependencies changed
@@ -83,7 +103,7 @@ docker compose restart server-toxipred
 
 ---
 
-### 5. Notes for Contributors
+### 6. Notes for Contributors
 
 - Both containers use **live volume mounts** — any code changes reload automatically:
   - Frontend → Hot Module Reload (HMR) via Quasar
@@ -98,7 +118,7 @@ docker compose restart server-toxipred
 
 ---
 
-### 6. Production Build (optional)
+### 7. Production Build (optional)
 
 To build the static frontend bundle for deployment:
 
@@ -114,6 +134,7 @@ This will generate optimized static files inside `/app/dist/spa` within the cont
 
 | Action | Command |
 |--------|----------|
+| Copy env files | `cp app-toxipred/.env.example app-toxipred/.env.development && cp .env.example .env` |
 | Build + Run (first time) | `docker compose up --build` |
 | Start again (afterwards) | `docker compose up` |
 | Stop all containers | `docker compose down` |
