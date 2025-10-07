@@ -22,7 +22,7 @@ app-toxipred/.output/
 app-toxipred/npm-debug.log*
 app-toxipred/yarn-debug.log*
 app-toxipred/yarn-error.log*
-app-toxipred/package-lock.json
+# app-toxipred/package-lock.json
 app-toxipred/.env.local
 app-toxipred/.env.*.local
 
