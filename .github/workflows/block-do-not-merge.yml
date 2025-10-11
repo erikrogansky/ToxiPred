@@ -1,0 +1,21 @@
+name: Block merges from forbidden branches
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  block:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if PR head branch is forbidden
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "PR head: $HEAD_REF"
+          shopt -s nocasematch
+          if [[ "$HEAD_REF" =~ (do-?not-?merge|dont-?merge|no-?merge) ]]; then
+            echo "::error ::Pull requests from branch '$HEAD_REF' are blocked by repository policy."
+            exit 1
+          fi
+          echo "Branch is OK."
