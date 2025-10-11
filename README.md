@@ -2,7 +2,7 @@
 
 Welcome to **TOXIPRED**, a public research project for predicting chemical toxicity using machine learning.
 This repository contains both the frontend (**app-toxipred**) and backend (**server-toxipred**) components,
-connected via Docker for easy development and deployment.
+connected via Docker for easy development and deployment. 
 
 ---
 
