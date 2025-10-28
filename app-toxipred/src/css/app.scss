@@ -1,1 +1,3 @@
-// app global css in SCSS form
+@use './colors/tokens';
+@use './typography/styles';
+@use './icons/uxt-icons.css';

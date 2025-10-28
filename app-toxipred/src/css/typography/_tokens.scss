@@ -1,0 +1,16 @@
+@use 'primitives' as *;
+
+/* tokens-typography.scss */
+:root {
+  --font: "Lato", "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Dyslexic mode overrides ONLY what’s needed */
+:root[data-font="dyslexic"] {
+  --font: "OpenDyslexic", system-ui, Arial, sans-serif;
+}
+
+/* Optional: “plain” high-legibility sans for folks who don’t like OpenDyslexic */
+:root[data-font="accessible"] {
+  --font: "Atkinson Hyperlegible", system-ui, Arial, sans-serif;
+}

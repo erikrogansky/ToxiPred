@@ -1,0 +1,69 @@
+@use 'primitives' as *;
+
+/* Base (light) */
+:root {
+  --page-background: linear-gradient(119deg, #E8F4F3 10.6%, #B6E2D1 89.4%);
+
+  --surface-regular: #{$Grey-500};
+
+  --surface-brand-extra-light: #{$Green-50};
+  --surface-brand-light: #{$Green-100};
+  --surface-brand-medium: #{$Green-400};
+  --surface-brand-regular: #{$Green-600};
+  --surface-brand-medium-dark: #{$Green-700};
+  --surface-brand-dark: #{$Green-800};
+  --surface-brand-extra-dark: #{$Green-900};
+
+  --stroke-brand-regular: #{$Green-600};
+
+  --text: #{$Grey-600};
+  --text-inverse: #{$White};
+  --text-white: #{$White};
+  --text-dark: #{$Grey-600};
+
+  --text-brand-regular: #{$Green-600};
+  --text-brand-medium-dark: #{$Green-700};
+  --text-brand-dark: #{$Green-800};
+}
+
+/* Dark */
+:root[data-theme='dark'] {
+  --page-background: linear-gradient(119deg, #121921 10.6%, #143C34 89.4%);
+
+  --surface-regular: #{$White};
+
+  --surface-brand-regular: #{$Green-500};
+  --surface-brand-medium-dark: #{$Green-600};
+  --surface-brand-dark: #{$Green-700};
+
+  --stroke-brand-regular: #{$Green-500};
+
+  --text: #{$White};
+  --text-inverse: #{$Grey-600}; 
+  --text-white: #{$White};
+  --text-dark: #{$Grey-600};
+
+  --text-brand-regular: #{$Green-500};
+  --text-brand-medium-dark: #{$Green-400};
+  --text-brand-dark: #{$Green-300};
+}
+
+/* High contrast */
+:root[data-theme='hc'] {
+    --surface-regular: #{$Grey-500};
+
+    --surface-brand-regular: #{$Green-700};
+    --surface-brand-medium: #{$Green-800};
+    --surface-brand-dark: #{$Green-900};
+
+    --stroke-brand-regular: #{$Green-700};
+
+    --text: #{$White};
+    --text-inverse: #{$White};
+    --text-white: #{$White};
+    --text-dark: #{$Grey-600};
+
+    --text-brand-regular: #{$Green-600};
+    --text-brand-medium-dark: #{$Green-700};
+    --text-brand-dark: #{$Green-800};
+}

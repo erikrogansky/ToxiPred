@@ -1,0 +1,12 @@
+@function color-with-opacity($color, $opacity) {
+  @if type-of($color) == 'color' {
+    @return rgba($color, $opacity);
+  } @else {
+    @return unquote("color-mix(in srgb, #{$color} #{$opacity}, transparent)");
+  }
+}
+
+// Optional mixin variant
+@mixin apply-color-opacity($property, $color, $opacity) {
+  #{$property}: color-with-opacity($color, $opacity);
+}
