@@ -14,33 +14,57 @@
         </svg>
       </a>
 
-      <nav class="tp-nav desktop-only">
+      <nav class="tp-nav">
         <tp-link label="Home" href="/" underline="none" decolorize></tp-link>
         <tp-link label="Workspace" href="/workspace" underline="none" decolorize></tp-link>
         <tp-link label="Demos" href="/demos" underline="none" decolorize></tp-link>
         <tp-link label="Documentation" href="/documentation" underline="none" decolorize></tp-link>
       </nav>
 
-      <tp-dark-mode-switch :dark-mode="false" />
+      <div class="tp-actions">
+        <tp-dark-mode-switch />
+        <tp-icon-button class="tp-hamburger" icon-name="menu" :weight="'regular'" :size="24" @click="navOpen = !navOpen" />
+      </div>
     </div>
   </q-header>
+  <tp-mobile-nav v-model="navOpen" :items="[
+    { label: 'Home', href: '/' },
+    { label: 'Docs', href: '/docs' },
+    { label: 'Pricing', href: '/pricing' }
+  ]" />
 </template>
 
 <script setup lang="ts">
+import TpIconButton from './TpIconButton.vue';
 import TpDarkModeSwitch from 'components/TpDarkModeSwitch.vue';
 import TpLink from './TpLink.vue';
+import TpMobileNav from './TpMobileNav.vue';
+
+import { ref } from 'vue';
+const navOpen = ref(false);
 </script>
 
 <style scoped lang="scss">
+@use 'src/css/helpers/mixins.scss' as *;
+
 .tp-header {
   background-color: transparent;
 
   .tp-header__inner {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    column-gap: 32px;
     align-items: center;
-    justify-content: space-between;
     padding: 16px 32px;
     max-width: 1440px;
+
+    @include down(lg) {
+      grid-template-columns: auto auto auto;
+    }
+
+    @include down(md) {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
   .tp-nav{
@@ -48,6 +72,11 @@ import TpLink from './TpLink.vue';
     gap: 32px;
     font-size: 16px;
     font-weight: 900;
+    align-self: center;
+
+    @include down(md) {
+      display: none;
+    }
   }
 
   a {
@@ -59,6 +88,21 @@ import TpLink from './TpLink.vue';
   svg {
     height: 28px;
     width: auto;
+  }
+
+  .tp-actions {
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    gap: 16px;
+
+    .tp-hamburger {
+      display: none;
+
+      @include down(md) {
+        display: flex;
+      }
+    }
   }
 }
 </style>

@@ -1,3 +1,9 @@
+@use 'sass:meta';
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:math';
+
+// Opacity mixin
 @function color-with-opacity($color, $opacity) {
   @if type-of($color) == 'color' {
     @return rgba($color, $opacity);
@@ -6,7 +12,96 @@
   }
 }
 
-// Optional mixin variant
-@mixin apply-color-opacity($property, $color, $opacity) {
-  #{$property}: color-with-opacity($color, $opacity);
+// Usage: @include breakpoint(md) { ... }
+$breakpoints: (
+  xs: 375px,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+);
+
+// --- Settings
+$breakpoints: (
+  xs: 375px,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+) !default;
+
+// --- Helpers
+@function bp($key) {
+  @if meta.type-of($key) == 'number' { @return $key; }
+  @if map.has-key($breakpoints, $key) { @return map.get($breakpoints, $key); }
+  @error "Unknown breakpoint `#{$key}`. Available: #{map.keys($breakpoints)}";
+}
+
+// Compose extra conditions like orientation without repeating logic
+@function _mq($min: null, $max: null, $orientation: null) {
+  $parts: ();
+
+  @if $min != null {
+    $parts: list.append($parts, '(min-width: #{bp($min)})');
+  }
+  @if $max != null {
+    $parts: list.append($parts, '(max-width: #{bp($max)})');
+  }
+  @if $orientation != null {
+    $parts: list.append($parts, '(orientation: #{$orientation})');
+  }
+
+  $query: null;
+  @each $p in $parts {
+    $query: if($query == null, $p, '#{$query} and #{$p}');
+  }
+
+  @return $query;
+}
+
+// --- Public API (desktop-first by default: use down/between most of the time)
+@mixin up($min, $orientation: null) {
+  @media #{_mq($min: $min, $orientation: $orientation)} { @content; }
+}
+
+@mixin down($max, $orientation: null) {
+  @media #{_mq($max: $max, $orientation: $orientation)} { @content; }
+}
+
+@mixin between($min, $max, $orientation: null) {
+  @media #{_mq($min: $min, $max: $max, $orientation: $orientation)} { @content; }
+}
+
+// Alias for a single named range (e.g., only(md) == between(md, lg))
+@mixin only($key, $orientation: null) {
+  // find next key in the map to cap the range
+  $keys: map.keys($breakpoints);
+  $index: list.index($keys, $key);
+
+  @if $index == null { @error "Unknown breakpoint `#{$key}`."; }
+
+  $next: if($index < list.length($keys), list.nth($keys, $index + 1), null);
+
+  @if $next == null {
+    // Last key -> from key upward
+    @include up($key, $orientation) { @content; }
+  } @else {
+    @include between($key, $next, $orientation) { @content; }
+  }
+}
+
+// Backward-compatible wrapper with your original signature
+// Usage: @include breakpoint(md) { ... }             // max (desktop-first default)
+//        @include breakpoint(md, min) { ... }        // min
+//        @include breakpoint((sm, lg)) { ... }       // between
+@mixin breakpoint($size, $type: max, $orientation: null) {
+  @if meta.type-of($size) == 'list' and list.length($size) == 2 {
+    @include between(list.nth($size, 1), list.nth($size, 2), $orientation) { @content; }
+  } @else if $type == max {
+    @include down($size, $orientation) { @content; }
+  } @else if $type == min {
+    @include up($size, $orientation) { @content; }
+  } @else {
+    @warn "Invalid type: #{$type}. Use 'min' or 'max'.";
+  }
 }

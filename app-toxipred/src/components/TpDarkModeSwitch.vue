@@ -46,6 +46,7 @@ watch(darkMode, (newValue) => {
 
 <style scoped lang="scss">
 @use 'src/css/helpers/mixins.scss' as *;
+
 .tp-dark-mode-toggle {
   --cell: 28px;
   --pad: 4px;
@@ -64,6 +65,7 @@ watch(darkMode, (newValue) => {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   will-change: transform;
+  width: fit-content;
 
   &:focus-visible {
     outline: 2px solid var(--stroke-brand-regular);

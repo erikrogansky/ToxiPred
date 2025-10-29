@@ -15,6 +15,8 @@ interface Props {
   href?: string;
 }
 
+defineEmits(['click'])
+
 withDefaults(defineProps<Props>(), {
   variant: 'primary',
   size: 'regular'
