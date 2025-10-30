@@ -2,16 +2,20 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    colorMode: 'dark'
+    darkMode: true,
   }),
 
   getters: {
-    colorMode: (state) => state.colorMode,
+    //getDarkMode: (state) => state.darkMode,
   },
 
   actions: {
-    setColorMode(mode: string) {
-        this.colorMode = mode
+    setDarkMode(darkMode: boolean) {
+        this.darkMode = darkMode
+    },
+
+    toggleDarkMode() {
+        this.darkMode = !this.darkMode
     }
   },
 });

@@ -1,7 +1,7 @@
 <template>
   <div
     class="tp-dark-mode-toggle"
-    :class="{ 'is-dark': darkMode }"
+    :class="{ 'is-dark': darkMode, 'only-light': onlyLight, 'only-dark': onlyDark }"
     role="switch"
     :aria-checked="darkMode"
     tabindex="0"
@@ -22,25 +22,37 @@
 
 <script setup lang="ts">
 import TpIcon from './TpIcon.vue'
-import { ref, watch, onBeforeMount } from 'vue'
+import { watch, onBeforeMount } from 'vue'
+import { storeToRefs } from 'pinia';
 
-const darkMode = ref(false)
+import { useSettingsStore } from 'src/stores/settings-store';
+
+const settingsStore = useSettingsStore();
+const { darkMode } = storeToRefs(settingsStore);
+
+defineProps<{
+  onlyLight?: boolean;
+  onlyDark?: boolean;
+}>()
 
 onBeforeMount(() => {
   const storedValue = localStorage.getItem('darkMode')
   if (storedValue) {
-    darkMode.value = storedValue === 'true'
+    settingsStore.setDarkMode(storedValue === 'true')
   } else {
-    darkMode.value =
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      settingsStore.setDarkMode(true)
+    } else {
+      settingsStore.setDarkMode(false)
+    }
   }
   document.documentElement.setAttribute('data-theme', darkMode.value ? 'dark' : 'light')
 })
 
-watch(darkMode, (newValue) => {
+watch(() => darkMode.value, (newValue) => {
   document.documentElement.setAttribute('data-theme', newValue ? 'dark' : 'light')
   localStorage.setItem('darkMode', String(newValue))
+  settingsStore.setDarkMode(newValue)
 })
 </script>
 
@@ -107,6 +119,38 @@ watch(darkMode, (newValue) => {
 
   @media (prefers-reduced-motion: reduce) {
     .knob { transition: none; }
+  }
+
+  &.only-light {
+    border-color: color-with-opacity(var(--stroke-white), $opacity-regular);
+
+    .knob {
+      background: var(--surface-white);
+      box-shadow: 0 0 6px 1 rgba(0, 0, 0, 0.1);
+    }
+
+    .not-active {
+      color: var(--text-white);
+    }
+  }
+
+  &.only-dark {
+    border-color: color-with-opacity(var(--stroke-dark), $opacity-regular);
+
+    .knob {
+      background: var(--surface-dark);
+      box-shadow: 0 0 6px 1 rgba(0, 0, 0, 0.2);
+    }
+
+    .cell {
+      .not-active {
+        color: var(--text-dark);
+      }
+
+      .active {
+        color: var(--text-white);
+      }
+    }
   }
 }
 </style>

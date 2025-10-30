@@ -1,6 +1,6 @@
 <template>
   <button class="tp-icon-button" @click="$emit('click')">
-      <i :class="`i-${iconName} ${weight}`" class="tp-icon-button__icon" :style="{ fontSize: `${size}px` }"></i>
+      <i :class="`i-${iconName} ${weight}`" class="tp-icon-button__icon" :style="{ fontSize: `${size}px`, color: `var(--${color})` }"></i>
   </button>
 </template>
 
@@ -13,6 +13,7 @@ defineProps<{
   iconName: IconName;
   weight: IconWeight<IconName>;
   size: number;
+  color?: string;
 }>();
 
 </script>

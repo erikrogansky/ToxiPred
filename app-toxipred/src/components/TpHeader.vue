@@ -15,22 +15,23 @@
       </a>
 
       <nav class="tp-nav">
-        <tp-link label="Home" href="/" underline="none" decolorize></tp-link>
-        <tp-link label="Workspace" href="/workspace" underline="none" decolorize></tp-link>
-        <tp-link label="Demos" href="/demos" underline="none" decolorize></tp-link>
-        <tp-link label="Documentation" href="/documentation" underline="none" decolorize></tp-link>
+        <tp-link label="Home" href="/" underline="none" inherit-color></tp-link>
+        <tp-link label="Workspace" href="/workspace" underline="none" inherit-color></tp-link>
+        <tp-link label="Demos" href="/demos" underline="none" inherit-color></tp-link>
+        <tp-link label="Documentation" href="/documentation" underline="none" inherit-color></tp-link>
       </nav>
 
       <div class="tp-actions">
-        <tp-dark-mode-switch />
-        <tp-icon-button class="tp-hamburger" icon-name="menu" :weight="'regular'" :size="24" @click="navOpen = !navOpen" />
+        <tp-dark-mode-switch class="tp-dark-mode-switch" />
+        <tp-icon-button class="tp-hamburger" icon-name="menu" :weight="'regular'" :size="24" @click="navOpen = !navOpen" color="text" />
       </div>
     </div>
   </q-header>
   <tp-mobile-nav v-model="navOpen" :items="[
     { label: 'Home', href: '/' },
-    { label: 'Docs', href: '/docs' },
-    { label: 'Pricing', href: '/pricing' }
+    { label: 'Workspace', href: '/workspace' },
+    { label: 'Demos', href: '/demos' },
+    { label: 'Documentation', href: '/documentation' }
   ]" />
 </template>
 
@@ -73,6 +74,8 @@ const navOpen = ref(false);
     font-size: 16px;
     font-weight: 900;
     align-self: center;
+    justify-content: center;
+    color: var(--text);
 
     @include down(md) {
       display: none;
@@ -102,6 +105,12 @@ const navOpen = ref(false);
       @include down(md) {
         display: flex;
       }
+    }
+  }
+
+  .tp-dark-mode-switch {
+    @include down(xs) {
+      display: none;
     }
   }
 }

@@ -4,11 +4,13 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+    <tp-footer />
   </q-layout>
 </template>
 
 <script setup lang="ts">
 import TpHeader from 'components/TpHeader.vue';
+import TpFooter from 'components/TpFooter.vue';
 </script>
 
 <style scoped lang="scss">

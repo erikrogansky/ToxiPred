@@ -14,7 +14,19 @@
   --surface-brand-dark: #{$Green-800};
   --surface-brand-extra-dark: #{$Green-900};
 
+  --surface-white-fixed: #{$White};
+  --surface-dark-fixed: #{$Grey-600};
+  --surface-black-fixed: #{$Black};
+
+  --surface-white: #{$White};
+  --surface-dark: #{$Grey-600};
+  --surface-black: #{$Black};
+
   --stroke-brand-regular: #{$Green-600};
+  --stroke-regular: #{$Grey-600};
+
+  --stroke-white: #{$White};
+  --stroke-dark: #{$Grey-600};
 
   --text: #{$Grey-600};
   --text-inverse: #{$White};
@@ -36,7 +48,19 @@
   --surface-brand-medium-dark: #{$Green-600};
   --surface-brand-dark: #{$Green-700};
 
+  --surface-white-fixed: #{$White};
+  --surface-dark-fixed: #{$Grey-600};
+  --surface-black-fixed: #{$Black};
+
+  --surface-white: #{$Black};
+  --surface-dark: #{$Grey-400};
+  --surface-black: #{$White};
+
   --stroke-brand-regular: #{$Green-500};
+  --stroke-regular: #{$White};
+
+  --stroke-white: #{$White};
+  --stroke-dark: #{$Grey-600};
 
   --text: #{$White};
   --text-inverse: #{$Grey-600}; 
@@ -56,7 +80,19 @@
     --surface-brand-medium: #{$Green-800};
     --surface-brand-dark: #{$Green-900};
 
+    --surface-white-fixed: #{$White};
+    --surface-dark-fixed: #{$Grey-600};
+    --surface-black-fixed: #{$Black};
+
+    --surface-white: #{$White};
+    --surface-dark: #{$Grey-600};
+    --surface-black: #{$Black};
+
     --stroke-brand-regular: #{$Green-700};
+    --stroke-regular: #{$Grey-600};
+
+    --stroke-white: #{$White};
+    --stroke-dark: #{$Grey-600};
 
     --text: #{$White};
     --text-inverse: #{$White};

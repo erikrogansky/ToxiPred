@@ -1,5 +1,5 @@
 <template>
-  <a :href="href" class="tp-link" :class="[`tp-link--${underline}`, { 'tp-link--decolorized': decolorize }]">
+  <a :href="href" class="tp-link" :class="[`tp-link--${underline}`, { 'tp-link--decolorized': inheritColor, 'tp-link--decolorized-hover': decolorizeHover }]">
     {{ label }}
   </a>
 </template>
@@ -9,7 +9,8 @@ interface Props {
   label: string;
   href: string;
   underline?: 'hover' | 'always' | 'none';
-  decolorize?: boolean;
+  inheritColor?: boolean;
+  decolorizeHover?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -34,7 +35,13 @@ withDefaults(defineProps<Props>(), {
   }
 
   &--decolorized {
-    color: var(--text);
+    color: inherit;
+  }
+
+  &--decolorized-hover {
+    &:hover {
+      color: inherit;
+    }
   }
 
   &--always {

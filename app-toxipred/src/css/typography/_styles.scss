@@ -4,7 +4,7 @@ html * {
   font-family: var(--font);
 }
 
-.h1, h1, .h2, h2, .h3, h3, .h4, h4, .h5, h5 {
+.tp-h1, h1, .tp-h2, h2, .tp-h3, h3, .tp-h4, h4, .tp-h5, h5 {
   font-weight: 900;
   margin: 0;
   line-height: 140%;
@@ -16,23 +16,23 @@ p, li, span, div, input, button, textarea, select, label {
   line-height: 130%;
 }
 
-h1, .h1 {
+h1, .tp-h1 {
   font-size: 32px;
 }
 
-h2, .h2 {
+h2, .tp-h2 {
   font-size: 28px;
 }
 
-h3, .h3 {
+h3, .tp-h3 {
   font-size: 24px;
 }
 
-h4, .h4 {
+h4, .tp-h4 {
   font-size: 20px;
 }
 
-h5, .h5 {
+h5, .tp-h5 {
   font-size: 18px;
 }
 
@@ -41,4 +41,29 @@ h5, .h5 {
   font-weight: 700;
   line-height: 130%;
   margin: 0;
+}
+
+.paragraph-big {
+  font-size: 18px;
+}
+
+.paragraph {
+  font-size: 16px;
+}
+
+.paragraph-small {
+  font-size: 14px;
+}
+
+.paragraph-xsmall {
+  font-size: 12px;
+} 
+
+
+.bold {
+  font-weight: 700;
+}
+
+.black {
+  font-weight: 900;
 }
