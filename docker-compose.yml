@@ -1,17 +1,59 @@
-version: "3.9"
-
 services:
+  toxipred-redis:
+    image: redis:7
+    container_name: toxipred-redis
+    ports:
+      - "6379:6379"
+
   server-toxipred:
     build:
       context: ./server-toxipred
     container_name: server-toxipred
-    ports:
-      - "${BACKEND_PORT}:8000"
+    ports: ["${BACKEND_PORT}:8000"]
     volumes:
       - ./server-toxipred/app:/app/app:rw
-      - backend_uv_cache:/root/.cache/uv
     environment:
       - PYTHONUNBUFFERED=1
+      - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
+      - CELERY_DEFAULT_QUEUE=default
+    depends_on: [toxipred-redis]
+    command: >
+      micromamba run -n toxipred
+      uvicorn app.main:app
+      --host 0.0.0.0 --port 8000 --reload
+
+  toxipred-worker:
+    build:
+      context: ./server-toxipred
+    container_name: toxipred-worker
+    working_dir: /app
+    volumes:
+      - ./server-toxipred/app:/app/app:rw
+    depends_on: [toxipred-redis, server-toxipred]
+    environment:
+      - C_FORCE_ROOT=1
+      - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
+      - CELERY_DEFAULT_QUEUE=default
+    command: >
+      micromamba run -n toxipred
+      celery -A app.workers.celery_app:celery_app
+      worker --loglevel=info -Q default
+
+  toxipred-flower:
+    build:
+      context: ./server-toxipred
+    container_name: toxipred-flower
+    depends_on: [toxipred-redis]
+    ports: ["5555:5555"]
+    environment:
+      - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
+    command: >
+      micromamba run -n toxipred
+      celery -A app.workers.celery_app:celery_app flower
+      --port=5555
 
   app-toxipred:
     build:
@@ -26,7 +68,3 @@ services:
       - /app/node_modules
     depends_on:
       - server-toxipred
-    # Quasar dev serves on 0.0.0.0:9000; HMR works through Docker
-
-volumes:
-  backend_uv_cache:

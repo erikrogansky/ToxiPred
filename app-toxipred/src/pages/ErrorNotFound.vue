@@ -1,23 +1,30 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
-    <div>
-      <div style="font-size: 30vh">404</div>
+  <tp-page class="tp-404 column items-center text-center justify-centerdo">
+    <h1 class="tp-404__title">404</h1>
 
-      <div class="text-h2" style="opacity: 0.4">Oops. Nothing here...</div>
+    <h2 class="tp-404__subtitle tp-h1 bold">Oops. Nothing here...</h2>
 
-      <q-btn
-        class="q-mt-xl"
-        color="white"
-        text-color="blue"
-        unelevated
-        to="/"
-        label="Go Home"
-        no-caps
-      />
-    </div>
-  </div>
+    <tp-button
+      href="/"
+      label="Go Home"
+      size="big"
+    />
+  </tp-page>
 </template>
 
 <script setup lang="ts">
-//
+import TpPage from 'components/TpPage.vue';
+import TpButton from 'components/TpButton.vue';
 </script>
+
+<style scoped lang="scss">
+.tp-404 {
+  &__title {
+    font-size: 80px;
+  }
+
+  &__subtitle {
+    margin-bottom: 24px;
+  }
+}
+</style>

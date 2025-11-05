@@ -1,5 +1,5 @@
 <template>
-  <q-footer class="tp-footer">
+  <q-footer class="tp-footer relative-position" >
     <div class="tp-footer__inner">
       <div class="tp-footer__main">
         <a href="/">
@@ -16,14 +16,16 @@
         </a>
         <div v-for="(column, index) in columns" :key="index" class="tp-footer__column">
           <h5>{{ column.title }}</h5>
-          <tp-link
-            v-for="link in column.links"
-            :key="link.label"
-            :label="link.label"
-            :href="link.href"
-            inherit-color
-            underline="hover"
-          />
+          <div v-for="link in column.links" :key="link.label" class="black">
+            <tp-link
+              v-if="'href' in link"
+              :label="link.label"
+              :href="link.href"
+              inherit-color
+              underline="hover"
+            />
+            <span v-else class="paragraph-small black">{{ link.label }}</span>
+          </div>
         </div>
         <img class="tp-recovery-plan-logo" src="src/assets/recovery-plan-logo.png" alt="">
       </div>
@@ -48,22 +50,17 @@ const columns = [
   {
     title: 'Product',
     links: [
-      { label: 'Features', href: 'features' },
-      { label: 'Pricing', href: 'pricing' },
-      { label: 'Release Notes', href: 'release-notes' },
-      { label: 'Roadmap', href: 'roadmap' },
-      { label: 'Integrations', href: 'integrations' },
-      { label: 'API', href: 'api' }
+      { label: 'Home', href: '/' },
+      { label: 'Workspace', href: 'workspace' },
+      { label: 'Demos', href: 'demos' },
+      { label: 'Documentation', href: 'documentation' },
     ]
   },
   {
-    title: 'Company',
+    title: 'Contact',
     links: [
-      { label: 'About Us', href: 'about-us' },
-      { label: 'Careers', href: 'careers' },
-      { label: 'Press', href: 'press' },
-      { label: 'Blog', href: 'blog' },
-      { label: 'Contact', href: 'contact' }
+      { label: 'email@example.com' },
+      { label: 'email@example.com' },
     ]
   },
   {
@@ -71,9 +68,6 @@ const columns = [
     links: [
       { label: 'Documentation', href: 'documentation' },
       { label: 'Community', href: 'community' },
-      { label: 'Tutorials', href: 'tutorials' },
-      { label: 'Support', href: 'support' },
-      { label: 'FAQs', href: 'faqs' }
     ]
   },
   {
@@ -106,7 +100,7 @@ const columns = [
     width: 100%;
     background: linear-gradient(180deg, color-with-opacity(var(--surface-white), 7.5%) 0%, color-with-opacity(var(--surface-white), 30%) 100%);
     display: grid;
-    grid-template-columns: repeat(6, auto);
+    grid-template-columns: repeat(5, 1fr) auto;
     gap: 16px;
     padding: 32px 48px;
   }
