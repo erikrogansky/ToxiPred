@@ -20,64 +20,33 @@
       </span>
     </div>
 
-    <div class="column full-width">
-      <div
-        class="row items-center justify-between full-width cursor-pointer q-py-sm"
+    <q-list class="tp-prediction-list column items-center justify-between full-width">
+      <tp-prediction-row 
         v-for="[id, j] in items"
         :key="id"
-        @click="openJob(id)"
-      >
-        <!-- LEFT: name + formula -->
-        <div class="column">
-          <span>
-            {{ j.name || 'Unnamed compound' }}
-            <span v-if="j.formula">
-              |
-              <span v-html="formatChemFormula(j.formula)"></span>
-            </span>
-          </span>
-          <span class="text-caption text-grey-7">
-            {{ j.model }}
-          </span>
-        </div>
+        :id="id"
+        :name="getNameWithFormula(j.name, j.formula)"
+        :result="j.prediction === 1 ? 'Toxic' : 'Non-toxic'"
+        :time="formatTime(j.createdAt)"
+        @row-click="openJob"                
+        @selected-change="onSelectedChange"
+        :selected="selectedIds.has(id)"
+      />
+    </q-list>
 
-        <!-- MIDDLE: state + prediction -->
-        <div class="column items-end q-mx-md">
-          <span class="text-caption">
-            {{ prettyState(j.state) }}
-            <span v-if="j.percent !== null && !terminal(j.state)">
-              · {{ j.percent }}%
-            </span>
-          </span>
-          <span v-if="j.prediction !== null" class="text-caption">
-            Prediction:
-            <strong>{{ j.prediction === 1 ? 'Toxic' : 'Non-toxic' }}</strong>
-          </span>
-        </div>
-
-        <!-- RIGHT: time + trash -->
-        <div class="row items-center">
-          <span class="text-caption q-mr-md">
-            {{ formatTime(j.createdAt) }}
-          </span>
-
-          <tp-icon-button
-            iconName="trash"
-            weight="regular"
-            :size="24"
-            @click="remove(id)"
-          />
-        </div>
-      </div>
-    </div>
+    <q-popup class="tp-selected-popup" v-if="selectedIds.size > 0">
+      <span>Selected {{ selectedIds.size }} item{{ selectedIds.size > 1 ? 's' : '' }}</span>
+      <tp-button size="small" variant="outline" label="Select all" @click="selectAll" />
+      <tp-button size="small" variant="outline" label="Dselect all" @click="deselectAll" />
+      <tp-button size="small" variant="outline" label="Delete selected" @click="deleteSelected" />
+    </q-popup>
   </tp-page>
 </template>
 
 <script setup lang="ts">
 import TpPage from 'components/TpPage.vue';
 import TpButton from 'components/TpButton.vue';
-import TpIcon from 'components/TpIcon.vue';
-import TpIconButton from 'components/TpIconButton.vue';
+import TpPredictionRow from 'components/TpPredictionRow.vue';
 
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useJobsStore } from 'src/stores/jobs-store';
@@ -105,7 +74,12 @@ onUnmounted(() => {
 
 const items = computed(() => Array.from(store.jobs.entries()))
 const terminal = (s: string) => ['SUCCESS', 'FAILURE', 'REVOKED'].includes(s)
-const remove = (id: string) => store.remove(id)
+const deleteSelected = () => {
+  for (const id of selectedIds.value) {
+    void store.remove(id)
+    selectedIds.value.delete(id)
+  }
+}
 
 const pendingPredictions = computed(() =>
   Array.from(store.jobs.values()).filter(j => !terminal(j.state))
@@ -116,7 +90,6 @@ const openJob = async (id: string) => {
 }
 
 const goToNewPrediction = async () => {
-  // adjust route name to whatever your home / input page is
   await router.push({ name: 'home' })
 }
 
@@ -131,6 +104,15 @@ const subscriptMap: Record<string, string> = {
   '7': '₇',
   '8': '₈',
   '9': '₉'
+}
+
+const getNameWithFormula = (name: string | null, formula: string | null) => {
+  let final: string;
+  final = name || 'Unknown compound';
+  if (formula) {
+    final = final + ' | ' + formatChemFormula(formula)
+  }
+  return final;
 }
 
 const formatChemFormula = (formula: string) => {
@@ -169,20 +151,32 @@ const formatTime = (time: string | number) => {
   return diff >= 0 ? `${years} ${yearUnit} ago` : `in ${years} ${yearUnit}`
 }
 
-const prettyState = (state: string) => {
-  switch (state) {
-    case 'PENDING': return 'Queued'
-    case 'STARTED':
-    case 'PROGRESS': return 'Running'
-    case 'SUCCESS': return 'Finished'
-    case 'FAILURE': return 'Failed'
-    case 'REVOKED': return 'Cancelled'
-    default: return state
+
+const selectedIds = ref(new Set<string>())
+
+function onSelectedChange({ id, selected }: { id: string; selected: boolean }) {
+  const next = new Set(selectedIds.value)
+  if (selected) {
+    next.add(id)
+  } else {
+    next.delete(id)
   }
+  selectedIds.value = next
 }
+
+function selectAll() {
+  selectedIds.value = new Set(items.value.map(([id]) => id))
+}
+
+function deselectAll() {
+  selectedIds.value = new Set()
+}
+
 </script>
 
 <style scoped lang="scss">
+@use 'src/css/helpers/mixins.scss' as *;
+
 .tp-pending-panel {
   background-color: #FFF3E0;
   color: #EF6C00;
@@ -191,5 +185,15 @@ const prettyState = (state: string) => {
   font-weight: 500;
   gap: 8px;
   margin-bottom: 24px;
+}
+
+.tp-prediction-list {
+  gap: 16px
+}
+
+.tp-selected-popup {
+  position: fixed;
+  padding: 16px;
+  background: color-with-opacity(var(--surface-white), $opacity-high);
 }
 </style>

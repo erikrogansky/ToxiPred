@@ -44,7 +44,7 @@ async function render() {
     },
     width: 600,
     height: 300,
-    bondLength: 25,
+    bondLength: 75,
     gradientConfig: {
       palette: {
         name: 'MyPalette',

@@ -50,6 +50,7 @@ const navOpen = ref(false);
 
 .tp-header {
   background-color: transparent;
+  backdrop-filter: blur(16px);
 
   .tp-header__inner {
     display: grid;
