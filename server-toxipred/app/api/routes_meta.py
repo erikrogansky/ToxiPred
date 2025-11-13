@@ -1,19 +1,17 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from rdkit import Chem
+
 from app.models.models import MODELS
 from app.services.model_loader import get_model, resolve_feature_names
+from app.services.models_service import list_models_response
 from app.domain.descriptors import descriptor_map
+from app.schemas.meta import ModelsResponse, IntrospectResponse
 
-router = APIRouter(prefix="/api", tags=["meta"])
+router = APIRouter(tags=["meta"])
 
-@router.get("/models")
-def list_models():
-    return {
-        "available_models": list(MODELS.keys()),
-        "details": {k: {"file": v.path.name, "path": str(v.path),
-                        "kind": v.kind, "features_in_spec": (len(v.features) if v.features else None),
-                        "note": v.note} for k, v in MODELS.items()}
-    }
+@router.get("/models", response_model=ModelsResponse)
+def list_models(request: Request):
+  return list_models_response(request)
 
 @router.get("/descriptors")
 def describe_smiles(smiles: str = Query(...)):

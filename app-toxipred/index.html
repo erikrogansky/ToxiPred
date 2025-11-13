@@ -17,6 +17,17 @@
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />
     <link rel="icon" type="image/ico" href="favicon.ico" />
+
+    <script src="https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.js"></script>
+    <script>
+      window.__rdkitReady = window.initRDKitModule()
+        .then(function (RDKit) {
+          console.log("RDKit version:", RDKit.version());
+          window.RDKit = RDKit;
+          return RDKit;
+        })
+        .catch((e) => { console.error("RDKit init failed", e); });
+    </script>    
   </head>
   <body>
     <!-- quasar:entry-point -->

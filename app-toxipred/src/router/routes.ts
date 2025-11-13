@@ -10,7 +10,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/workspace',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/WorkspacePage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/WorkspacePage.vue'), name: 'workspace', },
+      { path: 'job/:job_id', component: () => import('pages/JobOverviewPage.vue'), name: 'job-overview' },
+    ],
   },
 
   {

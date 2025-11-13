@@ -29,7 +29,7 @@
         </div>
         <img class="tp-recovery-plan-logo" src="src/assets/recovery-plan-logo.png" alt="">
       </div>
-      <div class="tp-footer__copyright paragraph-xsmall black">
+      <div class="tp-footer__copyright paragraph-xsmall black row justify-center">
         Copyright © {{ year }} ToxiPred. All rights reserved.
       </div>
     </div>
@@ -115,6 +115,7 @@ const columns = [
   }
 
   &__copyright {
+    padding: 12px 32px;
     width: 100%;
     background-color: color-with-opacity(var(--surface-white), 30%);
   }
@@ -128,5 +129,4 @@ const columns = [
     filter: brightness(0) invert(1);
   }
 }
-
 </style>

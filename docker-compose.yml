@@ -4,6 +4,8 @@ services:
     container_name: toxipred-redis
     ports:
       - "6379:6379"
+    volumes:
+      - toxipred_redis:/data
 
   server-toxipred:
     build:
@@ -17,7 +19,9 @@ services:
       - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
       - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
       - CELERY_DEFAULT_QUEUE=default
-    depends_on: [toxipred-redis]
+      - PUBCHEM_LOOKUP=1
+      - DATABASE_URL=postgresql+psycopg2://toxipred:toxipred@toxipred-postgres:5432/toxipred
+    depends_on: [toxipred-redis, toxipred-postgres]
     command: >
       micromamba run -n toxipred
       uvicorn app.main:app
@@ -36,6 +40,7 @@ services:
       - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
       - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
       - CELERY_DEFAULT_QUEUE=default
+      - DATABASE_URL=postgresql+psycopg2://toxipred:toxipred@toxipred-postgres:5432/toxipred
     command: >
       micromamba run -n toxipred
       celery -A app.workers.celery_app:celery_app
@@ -62,9 +67,25 @@ services:
     ports:
       - "${FRONTEND_PORT}:9000"
     environment:
-      - VITE_API_BASE=http://localhost:${BACKEND_PORT}
+      - API_URL=http://localhost:${BACKEND_PORT}
     volumes:
       - ./app-toxipred:/app:rw
       - /app/node_modules
     depends_on:
       - server-toxipred
+
+  toxipred-postgres:
+    image: postgres:16
+    container_name: toxipred-postgres
+    environment:
+      POSTGRES_USER: toxipred
+      POSTGRES_PASSWORD: toxipred
+      POSTGRES_DB: toxipred
+    ports:
+      - "5432:5432"
+    volumes:
+      - toxipred_pgdata:/var/lib/postgresql/data
+
+volumes:
+  toxipred_pgdata:
+  toxipred_redis:

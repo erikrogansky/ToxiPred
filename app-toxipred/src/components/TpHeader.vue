@@ -58,6 +58,7 @@ const navOpen = ref(false);
     align-items: center;
     padding: 16px 32px;
     max-width: 1440px;
+    margin-inline: auto;
 
     @include down(lg) {
       grid-template-columns: auto auto auto;
