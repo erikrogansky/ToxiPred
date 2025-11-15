@@ -12,7 +12,7 @@ from app.models.models import MODELS
 from app.services.model_loader import get_model, resolve_feature_names
 from app.domain.descriptors import descriptor_map
 from app.services.predict import predict_vectorized
-from app.services.explain import explain_atom_importance
+from app.services.explain import explain_atom_importance, explain_feature_importance
 
 PROGRESS_DB = int(os.getenv("PROGRESS_DB", "2"))
 r = redis.Redis(host="toxipred-redis", port=6379, db=PROGRESS_DB)
@@ -74,6 +74,19 @@ def predict_task(
     set_progress(job_id, 55, "explaining")
     self.update_state(state="PROGRESS", meta={"pct": 55, "msg": "explaining"})
 
+    feature_scores = None
+    try:
+        feature_scores_np, base_pred = explain_feature_importance(
+            model,
+            X,
+            baseline=None,
+            normalize=False,
+        )
+        feature_scores = feature_scores_np.tolist()
+    except Exception as e:
+        print("Error computing feature_scores:", e)
+        feature_scores = None
+
     try:
         descriptor_fn = make_descriptor_fn(names)
         atom_scores_np, base_pred = explain_atom_importance(model, m, descriptor_fn)
@@ -95,7 +108,7 @@ def predict_task(
         "features_used": names,
         "model": model_name,
 
-        "feature_scores": None,
+        "feature_scores": feature_scores,
         "atom_scores": atom_scores,
     }
 

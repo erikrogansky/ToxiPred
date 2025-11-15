@@ -3,7 +3,6 @@
 
 import { defineConfig } from '#q-app/wrappers';
 import { fileURLToPath } from 'node:url';
-import xsmiles from './public/xsmiles/xsmiles';
 
 export default defineConfig((ctx) => {
   return {
@@ -13,7 +12,7 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['i18n', 'axios', 'models', 'jobs', 'rdkit', 'xsmiles'],
+    boot: ['i18n', 'axios', 'models', 'jobs', 'rdkit', 'xsmiles', 'plotly'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],

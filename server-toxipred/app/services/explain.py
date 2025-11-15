@@ -1,11 +1,9 @@
-# app/services/explain.py
 from __future__ import annotations
 from typing import Callable, Iterable, List, Tuple, Optional
 import numpy as np
 from rdkit import Chem
 from rdkit.Chem import rdmolops
 
-# --- Score helper: returns P(positive) if available, else a squashed score ---
 def _score_fn(model) -> Callable[[np.ndarray], np.ndarray]:
     if hasattr(model, "predict_proba"):
         return lambda X: np.asarray(model.predict_proba(X))[:, 1]
@@ -16,7 +14,6 @@ def _score_fn(model) -> Callable[[np.ndarray], np.ndarray]:
         return f
     return lambda X: np.asarray(model.predict(X)).reshape(-1).astype(float)
 
-# --- Safe sanitize (don’t bomb out if masking breaks valence heuristics) ---
 def _sanitize(m: Chem.Mol) -> Chem.Mol:
     try:
         Chem.SanitizeMol(m)
@@ -24,25 +21,21 @@ def _sanitize(m: Chem.Mol) -> Chem.Mol:
         pass
     return m
 
-# --- Masking primitives ------------------------------------------------------
 
 def _mask_atoms_with_dummy(mol: Chem.Mol, atom_idxs: Iterable[int]) -> Chem.Mol:
-    """Replace selected atoms with a dummy [*] to keep topology mostly intact."""
     rw = Chem.RWMol(mol)
     atom_idxs = set(atom_idxs)
     for idx in atom_idxs:
         a = rw.GetAtomWithIdx(idx)
-        a.SetAtomicNum(0)      # 0 => dummy
+        a.SetAtomicNum(0)
         a.SetFormalCharge(0)
         a.SetIsAromatic(False)
-        a.SetNoImplicit(True)  # avoid auto H completion
+        a.SetNoImplicit(True)
     return _sanitize(rw.GetMol())
 
 def _ring_atom_groups(mol: Chem.Mol) -> List[List[int]]:
     rings = mol.GetRingInfo().AtomRings()
     return [list(r) for r in rings]
-
-# --- Descriptor wrapper -------------------------------------------------------
 
 def _featurize(descriptor_fn: Callable[[Chem.Mol], np.ndarray],
                mol: Chem.Mol) -> np.ndarray:
@@ -51,8 +44,6 @@ def _featurize(descriptor_fn: Callable[[Chem.Mol], np.ndarray],
     X = np.asarray(X).reshape(1, -1)
     return X
 
-# --- Core perturbation engine -------------------------------------------------
-
 def _explain_by_groups(
     model,
     mol: Chem.Mol,
@@ -60,15 +51,10 @@ def _explain_by_groups(
     groups: List[List[int]],
     batch_size: int = 64,
 ) -> Tuple[np.ndarray, float]:
-    """
-    Returns (attr_per_group, base_pred). Attribution = base_pred - masked_pred.
-    """
     scorer = _score_fn(model)
-    # Base prediction on the unmasked molecule
     X0 = _featurize(descriptor_fn, mol)
     base = float(scorer(X0)[0])
 
-    # Build masked molecules in batches
     masked_preds: List[float] = []
     for i in range(0, len(groups), batch_size):
         batch = groups[i:i+batch_size]
@@ -78,15 +64,14 @@ def _explain_by_groups(
             masked.append(_featurize(descriptor_fn, mg))
         if not masked:
             continue
-        Xb = np.vstack(masked)  # (B, D)
-        preds = scorer(Xb)      # (B,)
+        Xb = np.vstack(masked)
+        preds = scorer(Xb)
         masked_preds.extend([float(p) for p in preds])
 
     masked_preds = np.asarray(masked_preds, dtype=float)
-    atts = base - masked_preds  # positive => group increases risk
+    atts = base - masked_preds
     return atts, base
 
-# --- Public APIs --------------------------------------------------------------
 
 def explain_atom_importance(
     model,
@@ -95,21 +80,15 @@ def explain_atom_importance(
     max_atoms: int = 120,
     normalize: bool = False,
 ) -> Tuple[np.ndarray, float]:
-    """
-    Per-atom attribution via single-atom masking.
-    Returns (atom_importances, base_pred).
-    """
     n = mol.GetNumAtoms()
     if n == 0:
         return np.array([]), float("nan")
     if n > max_atoms:
-        # Light sampling for very large molecules to keep runtime sane
         idxs = list(range(n))
     else:
         idxs = list(range(n))
     groups = [[i] for i in idxs]
     atts, base = _explain_by_groups(model, mol, descriptor_fn, groups)
-    # If we sampled, stitch back (here we didn’t subsample, but hook left in)
     atom_atts = np.zeros(n, dtype=float)
     for i, aidx in enumerate(idxs):
         atom_atts[aidx] = atts[i]
@@ -123,10 +102,6 @@ def explain_ring_importance(
     descriptor_fn: Callable[[Chem.Mol], np.ndarray],
     normalize: bool = False,
 ) -> Tuple[np.ndarray, float, List[List[int]]]:
-    """
-    Per-ring attribution via masking all atoms in each ring.
-    Returns (ring_importances, base_pred, rings_as_atom_idx_lists).
-    """
     rings = _ring_atom_groups(mol)
     if not rings:
         return np.array([]), float("nan"), []
@@ -135,7 +110,6 @@ def explain_ring_importance(
         atts = (atts - atts.mean()) / atts.std()
     return atts, base, rings
 
-# Optional: group atoms by functional groups or SMARTS matches
 def explain_smarts_groups(
     model,
     mol: Chem.Mol,
@@ -143,9 +117,6 @@ def explain_smarts_groups(
     smarts_list: List[str],
     normalize: bool = False,
 ) -> Tuple[np.ndarray, float, List[List[int]]]:
-    """
-    Attribution for arbitrary SMARTS-defined groups.
-    """
     groups: List[List[int]] = []
     for s in smarts_list:
         pat = Chem.MolFromSmarts(s)
@@ -159,3 +130,39 @@ def explain_smarts_groups(
     if normalize and atts.std() > 0:
         atts = (atts - atts.mean()) / atts.std()
     return atts, base, groups
+
+def explain_feature_importance(
+    model,
+    x: np.ndarray,
+    baseline: Optional[np.ndarray] = None,
+    normalize: bool = False,
+) -> Tuple[np.ndarray, float]:
+    x = np.asarray(x, dtype=float).reshape(1, -1)
+    n_features = x.shape[1]
+
+    scorer = _score_fn(model)
+    base = float(scorer(x)[0])
+
+    if baseline is not None:
+        baseline_vec = np.asarray(baseline, dtype=float).reshape(1, -1)
+        if baseline_vec.shape[1] != n_features:
+            raise ValueError("baseline must have same number of features as x")
+    else:
+        baseline_vec = None
+
+    scores = np.zeros(n_features, dtype=float)
+
+    for j in range(n_features):
+        x_pert = x.copy()
+        if baseline_vec is not None:
+            x_pert[0, j] = baseline_vec[0, j]
+        else:
+            x_pert[0, j] = 0.0
+
+        pred_pert = float(scorer(x_pert)[0])
+        scores[j] = base - pred_pert
+
+    if normalize and scores.std() > 0:
+        scores = (scores - scores.mean()) / scores.std()
+
+    return scores, base

@@ -19,3 +19,6 @@ export interface JobRecord {
 type JobSummary = Pick<JobRecord,
   'id' | 'model' | 'name' | 'formula' | 'state' | 'createdAt' | 'prediction'
 >
+
+declare module 'plotly.js-dist';
+declare module 'plotly.js-dist-min';

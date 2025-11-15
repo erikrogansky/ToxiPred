@@ -29,6 +29,7 @@
     "@quasar/app-vite": "^2.1.0",
     "@quasar/cli": "^2.5.0",
     "@types/node": "^20.5.9",
+    "@types/plotly.js-dist-min": "^2.3.4",
     "@vue/eslint-config-prettier": "^10.1.0",
     "@vue/eslint-config-typescript": "^14.4.0",
     "autoprefixer": "^10.4.2",

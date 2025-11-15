@@ -1,16 +1,13 @@
 <template>
   <tp-page class="column items-center text-center justify-center q-pa-xl">
-    <!-- Loading -->
     <div v-if="loading">
       Loading prediction details…
     </div>
 
-    <!-- Error -->
     <div v-else-if="error">
       {{ error }}
     </div>
 
-    <!-- Result -->
     <div v-else-if="result" class="column items-center">
       <h1 class="tp-main-heading q-mb-sm">
         {{ result.name || 'Unnamed compound' }}
@@ -30,9 +27,6 @@
         </span>
       </div>
 
-      <!-- For debugging, simple JSON dump if you want -->
-      <!-- <pre class="text-left">{{ result }}</pre> -->
-
       <tp-xsmiles-renderer
         v-if="smiles"
         :smiles="smiles"
@@ -40,12 +34,19 @@
         title="Atomic contributions"
       />
 
+      <tp-feature-importance-renderer
+        v-if="featureNames.length && featureScores.length && predictionValue !== null"
+        class="q-mt-xl full-width"
+        :features="featureNames"
+        :scores="featureScores"
+        :prediction="predictionValue"
+      />
+
       <div v-if="!smiles" class="text-caption q-mt-md">
         No structure available for visualization.
       </div>
     </div>
 
-    <!-- No response (should rarely happen if no error & !loading) -->
     <div v-else>
       No response available.
     </div>
@@ -55,6 +56,7 @@
 <script setup lang="ts">
 import TpPage from 'components/TpPage.vue';
 import TpXsmilesRenderer from 'components/TpXsmilesRenderer.vue';
+import TpFeatureImportanceRenderer from 'components/TpFeatureImportanceRenderer.vue';
 import { api } from 'src/boot/axios';
 import { useRoute } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
@@ -72,7 +74,7 @@ interface JobResultPayload {
   confidence?: number[] | null;
   features_used?: string[] | null;
   model?: string | null;
-  feature_scores?: unknown;
+  feature_scores?: number[] | null;
   atom_scores?: number[] | null;
 }
 
@@ -81,6 +83,8 @@ const error = ref<string | null>(null);
 const result = ref<JobResultPayload | null>(null);
 const smiles = ref<string>('');
 const atomScores = ref<number[]>([]);
+const featureNames = ref<string[]>([]);
+const featureScores = ref<number[]>([]);
 
 onMounted(async () => {
   try {
@@ -93,6 +97,9 @@ onMounted(async () => {
     result.value = response.data as JobResultPayload;
     smiles.value = result.value.canonical_smiles ?? '';
     atomScores.value = result.value.atom_scores ?? [];
+
+    featureNames.value = result.value.features_used ?? [];
+    featureScores.value = (result.value.feature_scores ?? []);
 
     console.log('Fetched job result:', result.value);
   } catch (err) {
@@ -129,5 +136,4 @@ const formatChemFormula = (formula: string) => {
 </script>
 
 <style scoped lang="scss">
-/* style later if you want */
 </style>

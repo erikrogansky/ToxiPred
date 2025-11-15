@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="w-full" />
+  <div ref="container"></div>
 </template>
 
 <script setup lang="ts">
@@ -51,15 +51,16 @@ async function render() {
         colors: ['#7FFFD4', '#C7FFEA', '#FFFFFF', '#FCDDDD', '#F9B4B4']
       },
       colorDomain: [-0.09, -0.05, 0, 0.05, 0.09],
-      highlight: false,
-      blur: 0,
-      opacity: { min: 0.1, max: 1.0 },
-      radius: 16,
-      thresholds: []
+      highlight: true,
+      blur: 0.7,
+      opacity: { min: 0.7, max: 1.0 },
+      radius: { min: 25, max: 50 },
+      thresholds: [],
+      delta: 0.05,
     },
-    drawerType: 'RDKitDrawer',
+    drawerType: 'RDKitDrawer_black',
     hideBarChart: false,
-    hideAttributesTable: false,
+    hideAttributesTable: true,
     showScoresOnStructure: true
   }
 
@@ -91,8 +92,26 @@ watch(
 )
 </script>
 
-<style scoped>
-div {
-  min-height: 320px;
+<style lang="scss">
+@use 'src/css/helpers/mixins.scss' as *;
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.SingleView {
+  background: color-with-opacity(var(--surface-white), $opacity-medium);
+}
+
+text[fill="#4a957c"], text[fill="#346957"] {
+  fill: var(--text) !important;
+}
+
+text[fill="#454545"], text[fill="#636363"] {
+  fill: var(--text) !important;
+}
+
+text[fill="#664a4a"], text[fill="#926969"] {
+  fill: var(--text) !important;
 }
 </style>
