@@ -1,3 +1,18 @@
-# Unmodified Models
+# DP-QSAR-Skin-Irritation
+ 
+Diplomová práca 2024/2025
 
-These are the original models from student Monika, which have not been modified and were obtained during the first weeks of the project
+This repository focuses on building QSAR models to predict skin irritation using molecular descriptors derived from SMILES strings. The workflow includes preprocessing of chemical data, descriptor calculation using RDKit, and training machine learning models:
+
+- Random Forest
+- Decision Tree
+- XGBoost
+- SVM
+- KNN.
+
+Key features include:
+
+- Automated calculation of molecular descriptors.
+- Support for handling invalid SMILES strings and missing data.
+- Implementation of multiple machine learning algorithms for classification.
+- Tools for evaluating model performance with detailed metrics.
