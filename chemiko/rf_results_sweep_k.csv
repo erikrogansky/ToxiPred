@@ -1,0 +1,5 @@
+Method,CV_metric,CV_best_k,CV_best_val,TEST_AUC,TEST_Acc,Params
+SHAP,f1,5,0.7828961587582277,0.6296296296296298,0.6060606060606061,"{'n_estimators': 11, 'max_depth': 12, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'sqrt'}"
+MI,f1,5,0.7746871008939975,0.8277777777777778,0.8181818181818182,"{'n_estimators': 10, 'max_depth': 7, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt'}"
+PI,f1,40,0.7655452560458121,0.6111111111111112,0.5151515151515151,"{'n_estimators': 47, 'max_depth': 7, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': None}"
+Lasso,f1,10,0.8661152467604081,0.5444444444444444,0.5151515151515151,"{'n_estimators': 16, 'max_depth': 7, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.5}"

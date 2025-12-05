@@ -1,0 +1,49 @@
+Method,Accuracy,AUC,Precision,Recall,F1,Params,Best_N,Feature_Ranking
+SHAP,0.6060606060606061,0.6296296296296298,0.6470588235294118,0.6111111111111112,0.6285714285714286,"{'n_estimators': 11, 'max_depth': 12, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 'sqrt'}",5,"PEOE_VSA8          0.013587
+RDK_256_82         0.009285
+HL_Gap_eV          0.007170
+SMR_VSA3           0.006077
+LUMO_eV            0.005941
+                     ...   
+Torsion_256_151    0.000000
+RDK_256_2          0.000000
+Morgan2_256_253    0.000000
+Torsion_256_150    0.000000
+MACCS_15           0.000000
+Length: 1235, dtype: float64"
+MI,0.8181818181818182,0.8277777777777778,0.875,0.7777777777777778,0.8235294117647058,"{'n_estimators': 10, 'max_depth': 7, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 'sqrt'}",5,"HL_Gap_eV          6.907115e-01
+HOMO_eV            6.907115e-01
+LUMO_eV            6.907115e-01
+BertzCT            6.799650e-01
+BCUT2D_CHGLO       6.799650e-01
+                       ...     
+Morgan2_256_128    2.587821e-06
+Torsion_256_177    1.063578e-06
+Torsion_256_17     6.355680e-07
+Morgan2_256_235    6.355680e-07
+Torsion_256_108    3.843769e-07
+Length: 1235, dtype: float64"
+PI,0.5151515151515151,0.6111111111111112,0.5555555555555556,0.5555555555555556,0.5555555555555556,"{'n_estimators': 47, 'max_depth': 7, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': None}",40,"MaxAbsEStateIndex    0.0
+MinAbsEStateIndex    0.0
+MinEStateIndex       0.0
+qed                  0.0
+SPS                  0.0
+                    ... 
+Torsion_256_250      0.0
+Torsion_256_251      0.0
+Torsion_256_252      0.0
+Torsion_256_253      0.0
+Torsion_256_254      0.0
+Length: 1235, dtype: float64"
+Lasso,0.5454545454545454,0.6462962962962963,0.5789473684210527,0.6111111111111112,0.5945945945945946,"{'n_estimators': 16, 'max_depth': 7, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.5}",20,"RDK_256_82         2.046792
+Morgan2_256_241    1.638652
+AtomPair_256_74    0.993255
+RDK_256_164        0.964318
+Morgan2_256_144    0.934667
+                     ...   
+Torsion_256_229    0.000000
+Torsion_256_230    0.000000
+Torsion_256_232    0.000000
+Torsion_256_233    0.000000
+Torsion_256_236    0.000000
+Length: 1235, dtype: float64"
