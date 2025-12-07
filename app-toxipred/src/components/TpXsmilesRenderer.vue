@@ -99,6 +99,11 @@ watch(
   justify-content: center;
 }
 
+.row.justify-content-md-center {
+  overflow: auto;
+  justify-content: center;
+}
+
 .SingleView {
   background: color-with-opacity(var(--surface-white), $opacity-medium);
 }

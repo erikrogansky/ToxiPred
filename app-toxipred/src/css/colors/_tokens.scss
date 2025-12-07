@@ -19,16 +19,22 @@
   --surface-black-fixed: #{$Black};
 
   --surface-white: #{$White};
+  --surface-gray-light: #{$Grey-50};
+  --surface-gray: #{$Grey-100};
   --surface-dark: #{$Grey-600};
   --surface-black: #{$Black};
 
   --stroke-brand-regular: #{$Green-600};
   --stroke-regular: #{$Grey-600};
+  --stroke-light: #{$Grey-200};
+  --stroke-extra-light: #{$Grey-100};
 
   --stroke-white: #{$White};
   --stroke-dark: #{$Grey-600};
 
   --text: #{$Grey-600};
+  --text-medium: #{$Grey-400};
+  --text-light: #{$Grey-300};
   --text-inverse: #{$White};
   --text-white: #{$White};
   --text-dark: #{$Grey-600};
@@ -36,6 +42,51 @@
   --text-brand-regular: #{$Green-600};
   --text-brand-medium-dark: #{$Green-700};
   --text-brand-dark: #{$Green-800};
+
+  // Accent colors - full palette
+  --accent-red-dark: #{$Red-700};
+  --accent-red: #{$Red-500};
+  --accent-red-light: #{$Red-400};
+  --accent-red-extra-light: #{$Red-100};
+  --accent-red-subtle: #{$Red-50};
+
+  --accent-blue-dark: #{$Blue-700};
+  --accent-blue: #{$Blue-500};
+  --accent-blue-light: #{$Blue-400};
+  --accent-blue-extra-light: #{$Blue-100};
+  --accent-blue-subtle: #{$Blue-50};
+
+  --accent-yellow: #{$Yellow-500};
+  --accent-yellow-light: #{$Yellow-300};
+  --accent-yellow-extra-light: #{$Yellow-100};
+
+  // Semantic colors
+  --color-success: #{$Green-600};
+  --color-success-light: #{$Green-100};
+  --color-error: #{$Red-500};
+  --color-error-light: #{$Red-100};
+  --color-warning: #{$Yellow-500};
+  --color-warning-light: #{$Yellow-100};
+  --color-info: #{$Blue-500};
+  --color-info-light: #{$Blue-100};
+
+  // Opacity tokens
+  --opacity-full: #{$opacity-full};
+  --opacity-high: #{$opacity-high};
+  --opacity-medium: #{$opacity-medium};
+  --opacity-low: #{$opacity-low};
+  --opacity-subtle: #{$opacity-subtle};
+  --opacity-ultra-subtle: #{$opacity-ultra-subtle};
+
+  // Glass effect tokens
+  --glass-background: rgba(255, 255, 255, 0.75);
+  --glass-background-light: rgba(255, 255, 255, 0.5);
+  --glass-background-dark: rgba(255, 255, 255, 0.9);
+  --glass-blur: 16px;
+  --glass-blur-strong: 24px;
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --glass-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.12);
 }
 
 /* Dark */
@@ -53,16 +104,22 @@
   --surface-black-fixed: #{$Black};
 
   --surface-white: #{$Black};
+  --surface-gray-light: #{$Grey-900};
+  --surface-gray: #{$Grey-800};
   --surface-dark: #{$Grey-400};
   --surface-black: #{$White};
 
   --stroke-brand-regular: #{$Green-500};
   --stroke-regular: #{$White};
+  --stroke-light: #{$Grey-700};
+  --stroke-extra-light: #{$Grey-800};
 
   --stroke-white: #{$White};
   --stroke-dark: #{$Grey-600};
 
   --text: #{$White};
+  --text-medium: #{$Grey-200};
+  --text-light: #{$Grey-300};
   --text-inverse: #{$Grey-600}; 
   --text-white: #{$White};
   --text-dark: #{$Grey-600};
@@ -70,6 +127,42 @@
   --text-brand-regular: #{$Green-500};
   --text-brand-medium-dark: #{$Green-400};
   --text-brand-dark: #{$Green-300};
+
+  --accent-red-dark: #{$Red-600};
+  --accent-red: #{$Red-400};
+  --accent-red-light: #{$Red-500};
+  --accent-red-extra-light: #{$Red-900};
+  --accent-red-subtle: #{$Red-950};
+
+  --accent-blue-dark: #{$Blue-600};
+  --accent-blue: #{$Blue-400};
+  --accent-blue-light: #{$Blue-500};
+  --accent-blue-extra-light: #{$Blue-900};
+  --accent-blue-subtle: #{$Blue-950};
+
+  --accent-yellow: #{$Yellow-400};
+  --accent-yellow-light: #{$Yellow-300};
+  --accent-yellow-extra-light: #{$Yellow-500};
+
+  // Semantic colors
+  --color-success: #{$Green-500};
+  --color-success-light: #{$Green-900};
+  --color-error: #{$Red-400};
+  --color-error-light: #{$Red-900};
+  --color-warning: #{$Yellow-400};
+  --color-warning-light: #{$Yellow-500};
+  --color-info: #{$Blue-400};
+  --color-info-light: #{$Blue-900};
+
+  // Glass effect tokens (dark mode)
+  --glass-background: rgba(0, 0, 0, 0.75);
+  --glass-background-light: rgba(0, 0, 0, 0.5);
+  --glass-background-dark: rgba(0, 0, 0, 0.9);
+  --glass-blur: 16px;
+  --glass-blur-strong: 24px;
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.4);
 }
 
 /* High contrast */
@@ -85,16 +178,22 @@
     --surface-black-fixed: #{$Black};
 
     --surface-white: #{$White};
+    --surface-gray-light: #{$Grey-50};
+    --surface-gray: #{$Grey-100};
     --surface-dark: #{$Grey-600};
     --surface-black: #{$Black};
 
     --stroke-brand-regular: #{$Green-700};
     --stroke-regular: #{$Grey-600};
+    --stroke-light: #{$Grey-300};
+    --stroke-extra-light: #{$Grey-200};
 
     --stroke-white: #{$White};
     --stroke-dark: #{$Grey-600};
 
     --text: #{$White};
+    --text-medium: #{$Grey-400};
+    --text-light: #{$Grey-300};
     --text-inverse: #{$White};
     --text-white: #{$White};
     --text-dark: #{$Grey-600};
@@ -102,4 +201,40 @@
     --text-brand-regular: #{$Green-600};
     --text-brand-medium-dark: #{$Green-700};
     --text-brand-dark: #{$Green-800};
+
+    --accent-red-dark: #{$Red-700};
+    --accent-red: #{$Red-500};
+    --accent-red-light: #{$Red-400};
+    --accent-red-extra-light: #{$Red-100};
+    --accent-red-subtle: #{$Red-50};
+
+    --accent-blue-dark: #{$Blue-700};
+    --accent-blue: #{$Blue-500};
+    --accent-blue-light: #{$Blue-400};
+    --accent-blue-extra-light: #{$Blue-100};
+    --accent-blue-subtle: #{$Blue-50};
+
+    --accent-yellow: #{$Yellow-500};
+    --accent-yellow-light: #{$Yellow-300};
+    --accent-yellow-extra-light: #{$Yellow-100};
+
+    // Semantic colors
+    --color-success: #{$Green-700};
+    --color-success-light: #{$Green-100};
+    --color-error: #{$Red-600};
+    --color-error-light: #{$Red-100};
+    --color-warning: #{$Yellow-500};
+    --color-warning-light: #{$Yellow-100};
+    --color-info: #{$Blue-600};
+    --color-info-light: #{$Blue-100};
+
+    // Glass effect tokens (high contrast - less transparency)
+    --glass-background: rgba(255, 255, 255, 0.95);
+    --glass-background-light: rgba(255, 255, 255, 0.85);
+    --glass-background-dark: rgba(255, 255, 255, 0.98);
+    --glass-blur: 8px;
+    --glass-blur-strong: 12px;
+    --glass-border: rgba(0, 0, 0, 0.2);
+    --glass-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --glass-shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.2);
 }

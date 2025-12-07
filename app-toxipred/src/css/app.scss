@@ -1,3 +1,58 @@
 @use './colors/tokens';
 @use './typography/styles';
 @use './icons/uxt-icons.css';
+@use './helpers/mixins.scss' as *;
+
+.q-field--outlined {
+  .q-field__control {
+    &::before {
+      border: 1px solid var(--stroke-extra-light) !important;
+      transition: border-color 0.2s ease !important;
+    }
+
+    &:hover::before {
+      border-color: var(--stroke-brand-regular) !important;
+    }
+  }
+
+  &.q-field--focused {
+    .q-field__control {
+      &::before {
+        border-color: var(--stroke-brand-regular) !important;
+      }
+
+      &::after {
+        border-color: var(--stroke-brand-regular) !important;
+        opacity: 1;
+        transform: scale3d(1, 1, 1);
+      }
+    }
+  }
+}
+
+
+.q-menu,
+.q-menu__content,
+.q-dialog__inner {
+  background: color-with-opacity(var(--surface-white), $opacity-regular);
+  border: 1px solid color-with-opacity(var(--stroke-extra-light), $opacity-regular);
+  border-radius: 10px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+
+  .q-item {
+    padding: 12px 14px;
+    color: var(--text-regular);
+
+    &:hover {
+      background: var(--surface-hover);
+    }
+
+    &.q-item--active {
+      background: var(--surface-selected);
+      color: var(--text-brand);
+      font-weight: 600;
+    }
+  }
+}

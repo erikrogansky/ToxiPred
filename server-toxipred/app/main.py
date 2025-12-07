@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.db import Base, engine
 from app.api.routes_meta import router as meta_router
 from app.api.routes_jobs import router as jobs_router
+from app.api.routes_sharing import router as sharing_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -12,3 +13,4 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
 
 app.include_router(meta_router)
 app.include_router(jobs_router)
+app.include_router(sharing_router)

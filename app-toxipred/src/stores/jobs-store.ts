@@ -7,7 +7,7 @@ const LS_KEY = 'toxipred.jobs.v1'
 const TERMINAL = new Set<JobState>(['SUCCESS', 'FAILURE', 'REVOKED'])
 
 type JobSummary = Pick<JobRecord,
-  'id' | 'model' | 'name' | 'formula' | 'state' | 'createdAt' | 'prediction'
+  'id' | 'model' | 'name' | 'trivial_name' | 'formula' | 'state' | 'createdAt' | 'prediction' | 'canonical_smiles'
 >
 
 export const useJobsStore = defineStore('jobs', () => {
@@ -20,10 +20,12 @@ export const useJobsStore = defineStore('jobs', () => {
       id: j.id,
       model: j.model,
       name: j.name,
+      trivial_name: j.trivial_name,
       formula: j.formula,
       state: j.state,
       createdAt: j.createdAt,
       prediction: j.prediction,
+      canonical_smiles: j.canonical_smiles,
     }
   }
 
@@ -42,6 +44,7 @@ export const useJobsStore = defineStore('jobs', () => {
           id: s.id,
           model: s.model,
           name: s.name ?? null,
+          trivial_name: s.trivial_name ?? null,
           formula: s.formula ?? null,
           state: s.state,
           createdAt: s.createdAt,
@@ -51,6 +54,8 @@ export const useJobsStore = defineStore('jobs', () => {
           msg: null,
           error: null,
           prediction: s.prediction ?? null,
+          canonical_smiles: s.canonical_smiles ?? null,
+          other_names: null,
         }
         jobs.set(s.id, record)
       })
@@ -67,6 +72,7 @@ export const useJobsStore = defineStore('jobs', () => {
       id: j.id,
       model: j.model ?? existing?.model ?? '',
       name: j.name ?? existing?.name ?? null,
+      trivial_name: j.trivial_name ?? existing?.trivial_name ?? null,
       formula: j.formula ?? existing?.formula ?? null,
       state: j.state ?? existing?.state ?? 'PENDING',
       createdAt: existing?.createdAt ?? now,
@@ -77,6 +83,8 @@ export const useJobsStore = defineStore('jobs', () => {
       error: j.error ?? existing?.error ?? null,
 
       prediction: j.prediction ?? existing?.prediction ?? null,
+      canonical_smiles: j.canonical_smiles ?? existing?.canonical_smiles ?? null,
+      other_names: j.other_names ?? existing?.other_names ?? null,
     }
 
     jobs.set(j.id, merged)
@@ -110,11 +118,14 @@ export const useJobsStore = defineStore('jobs', () => {
         msg: p.msg ?? null,
         error: p.error ?? null,
         name: res?.name ?? null,
+        trivial_name: res?.trivial_name ?? null,
         formula: res?.formula ?? null,
         model: res?.model ?? undefined,
         prediction: res?.prediction != null
           ? (Array.isArray(res.prediction) ? res.prediction[0] : res.prediction)
           : undefined,
+        canonical_smiles: res?.canonical_smiles ?? undefined,
+        other_names: res?.other_names ?? undefined,
       })
 
       if (TERMINAL.has(p.state)) stopTracking(id)
@@ -141,11 +152,14 @@ export const useJobsStore = defineStore('jobs', () => {
           msg: res.data.msg ?? null,
           error: res.data.error ?? null,
           name: result?.name ?? null,
+          trivial_name: result?.trivial_name ?? null,
           formula: result?.formula ?? null,
           model: result?.model ?? undefined,
           prediction: result?.prediction != null
             ? (Array.isArray(result.prediction) ? result.prediction[0] : result.prediction)
             : undefined,
+          canonical_smiles: result?.canonical_smiles ?? undefined,
+          other_names: result?.other_names ?? undefined,
         })
 
         if (TERMINAL.has(res.data.state)) stopTracking(id)

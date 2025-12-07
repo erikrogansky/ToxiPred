@@ -2,12 +2,19 @@
 import { defineStore } from 'pinia'
 import { api } from 'src/boot/axios'
 
+export type TestType = 'in_vitro' | 'in_vivo' | 'in_chemico'
+export type PredictionTarget = 'photo_irritation' | 'photo_toxicity'
+
 export type ModelDetail = {
   file: string
   path: string
   kind: string
   features_in_spec?: number | null
   note?: string | null
+  test_type?: TestType | null
+  prediction_target?: PredictionTarget | null
+  positive_label?: string | null
+  negative_label?: string | null
 }
 
 export type ModelsResponse = {
@@ -42,6 +49,45 @@ export const useModelsStore = defineStore('models', {
     getDetails: (s) => s.details,
     getModelDetail: (s) => (name: string) => s.details[name],
     isStale: (s) => !s.lastFetched || (Date.now() - s.lastFetched) > STALE_MS,
+    
+    // Get unique test types from available models
+    getTestTypes: (s): TestType[] => {
+      const types = new Set<TestType>()
+      Object.values(s.details).forEach(detail => {
+        if (detail.test_type) types.add(detail.test_type)
+      })
+      return Array.from(types)
+    },
+    
+    // Get unique prediction targets from available models
+    getPredictionTargets: (s): PredictionTarget[] => {
+      const targets = new Set<PredictionTarget>()
+      Object.values(s.details).forEach(detail => {
+        if (detail.prediction_target) targets.add(detail.prediction_target)
+      })
+      return Array.from(targets)
+    },
+    
+    // Get prediction targets available for a specific test type
+    getPredictionTargetsForTestType: (s) => (testType: TestType): PredictionTarget[] => {
+      const targets = new Set<PredictionTarget>()
+      Object.values(s.details).forEach(detail => {
+        if (detail.test_type === testType && detail.prediction_target) {
+          targets.add(detail.prediction_target)
+        }
+      })
+      return Array.from(targets)
+    },
+    
+    // Find model by test type and prediction target
+    getModelBySelection: (s) => (testType: TestType, predictionTarget: PredictionTarget): string | null => {
+      for (const [modelName, detail] of Object.entries(s.details)) {
+        if (detail.test_type === testType && detail.prediction_target === predictionTarget) {
+          return modelName
+        }
+      }
+      return null
+    },
   },
 
   actions: {

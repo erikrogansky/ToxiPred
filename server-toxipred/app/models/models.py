@@ -9,6 +9,8 @@ MODELS_DIR = Path(os.getenv("TOXIPRED_MODELS_DIR", BASE_DIR))
 ModelKind = Literal["pickle"]
 ExplainerKind = Literal["tree", "linear", "deep", "kernel"]
 FeatureSource = Literal["descriptors", "morgan", "tokens"]
+TestType = Literal["in_vitro", "in_vivo", "in_chemico"]
+PredictionTarget = Literal["photo_irritation", "photo_toxicity"]
 
 @dataclass(frozen=True)
 class ModelSpec:
@@ -18,6 +20,10 @@ class ModelSpec:
     note: str = ""
     explainer: Optional[ExplainerKind] = None 
     feature_source: FeatureSource = "descriptors"
+    test_type: Optional[TestType] = None
+    prediction_target: Optional[PredictionTarget] = None
+    positive_label: str = "Positive"
+    negative_label: str = "Negative"
 
 XGB_FEATURES = [
     "BertzCT", "PEOE_VSA1", "HallKierAlpha", "SlogP_VSA2", "MinAbsEStateIndex",
@@ -32,6 +38,10 @@ MODELS: dict[str, ModelSpec] = {
         note="XGBoost (sklearn wrapper) pickled – 11 descriptors",
         explainer="tree",
         feature_source="descriptors",
+        test_type="in_vitro",
+        prediction_target="photo_toxicity",
+        positive_label="Phototoxic",
+        negative_label="Non-phototoxic",
     ),
     "Ensamble": ModelSpec(
         path=MODELS_DIR / "ensamble_model.pkl",
@@ -46,5 +56,9 @@ MODELS: dict[str, ModelSpec] = {
         note="Sklearn ensemble pickled – 21 descriptors (explicit order)",
         explainer=None,
         feature_source="descriptors",
+        test_type="in_chemico",
+        prediction_target="photo_irritation",
+        positive_label="Irritant",
+        negative_label="Non-irritant",
     ),
 }

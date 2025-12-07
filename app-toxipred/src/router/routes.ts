@@ -17,6 +17,14 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/shared/:token',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/SharedJobPage.vue'), name: 'shared-job' },
+    ],
+  },
+
+  {
     path: '/:catchAll(.*)*',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/ErrorNotFound.vue') }],

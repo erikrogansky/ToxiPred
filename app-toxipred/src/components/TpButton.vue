@@ -1,8 +1,8 @@
 <template>
-  <button v-if="!href" class="tp-btn" :class="`tp-btn--${variant} tp-btn--${size}`" @click="$emit('click')">
+  <button v-if="!href" class="tp-btn" :class="`tp-btn--${variant} tp-btn--${size}`" @click="$emit('click')" :disabled="disabled">
     {{ label }}
   </button>
-  <a v-else :href="href" class="tp-btn" :class="`tp-btn--${variant} tp-btn--${size}`">
+  <a v-else :href="href" class="tp-btn" :class="`tp-btn--${variant} tp-btn--${size}`" :aria-disabled="disabled">
     {{ label }}
   </a>
 </template>
@@ -13,13 +13,15 @@ interface Props {
   variant?: 'primary' | 'outline' | 'link';
   size?: 'small' | 'regular' | 'big';
   href?: string;
+  disabled?: boolean;
 }
 
 defineEmits(['click'])
 
 withDefaults(defineProps<Props>(), {
   variant: 'primary',
-  size: 'regular'
+  size: 'regular',
+  disabled: false
 });
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <tp-page class="tp-404 column items-center text-center justify-centerdo">
+  <tp-page class="tp-404 column items-center text-center justify-center">
     <h1 class="tp-404__title">404</h1>
 
     <h2 class="tp-404__subtitle tp-h1 bold">Oops. Nothing here...</h2>

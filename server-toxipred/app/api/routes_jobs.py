@@ -9,6 +9,7 @@ from typing import List
 
 from app.db import SessionLocal
 from app.models.job_result import JobResult
+from app.models.shared_job import SharedJob
 
 class JobsValidateRequest(BaseModel):
     job_ids: List[str]
@@ -43,6 +44,8 @@ def enqueue(model_name: str, req: EnqueueRequest):
             "formula": chem.formula,
             "input_query": chem.query,
             "input_type": chem.source,
+            "trivial_name": chem.trivial_name,
+            "other_names": chem.other_names,
         },
     )
 
@@ -67,6 +70,7 @@ def status(job_id: str):
         res = ar.result or {}
         payload["result"] = {
             "name": res.get("name"),
+            "trivial_name": res.get("trivial_name"),
             "formula": res.get("formula"),
             "model": res.get("model"),
             "prediction": res.get("prediction"),
@@ -101,6 +105,7 @@ async def stream(job_id: str):
                 res = ar.result or {}
                 payload["result"] = {
                     "name": res.get("name"),
+                    "trivial_name": res.get("trivial_name"),
                     "formula": res.get("formula"),
                     "model": res.get("model"),
                     "prediction": res.get("prediction"),
@@ -186,8 +191,38 @@ def validate_jobs(body: JobsValidateRequest):
 
 @router.delete("/jobs/delete/{job_id}")
 def delete_job(job_id: str):
+    """
+    Delete a job from the user's workspace.
+    If the job has shared links, it decrements the reference count.
+    The job is only fully deleted when all references are removed.
+    """
     db = SessionLocal()
     try:
+        # Find all shared links pointing to this job
+        shared_links = db.query(SharedJob).filter(SharedJob.source_job_id == job_id).all()
+        
+        if shared_links:
+            # Decrement reference count on all shared links
+            all_zero = True
+            for shared in shared_links:
+                new_count = shared.decrement_refs()
+                if new_count > 0:
+                    all_zero = False
+            
+            db.commit()
+            
+            # Only delete the job if all reference counts are zero
+            if not all_zero:
+                return {
+                    "message": "Job removed from your workspace. Shared links still active.",
+                    "job_id": job_id,
+                    "fully_deleted": False
+                }
+            
+            # All references gone, delete the shared links
+            db.query(SharedJob).filter(SharedJob.source_job_id == job_id).delete(synchronize_session=False)
+        
+        # Delete the actual job
         deleted_count = (
             db.query(JobResult)
             .filter(JobResult.id == job_id)
@@ -198,6 +233,6 @@ def delete_job(job_id: str):
         if deleted_count == 0:
             raise HTTPException(status_code=404, detail="Job not found")
 
-        return {"message": "Job deleted successfully", "job_id": job_id}
+        return {"message": "Job deleted successfully", "job_id": job_id, "fully_deleted": True}
     finally:
         db.close()

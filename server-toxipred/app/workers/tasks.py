@@ -40,6 +40,8 @@ def predict_task(
     formula: str | None = None,
     input_query: str | None = None,
     input_type: str | None = None,
+    trivial_name: str | None = None,
+    other_names: list[str] | None = None,
 ):
     job_id = self.request.id
     set_progress(job_id, 1, "queued")
@@ -96,16 +98,22 @@ def predict_task(
 
     set_progress(job_id, 95, "assembling_result")
 
+    # Extract feature values for the summary table
+    feature_values = [feats_dict.get(f, None) for f in names]
+
     payload = {
         "input_query": input_query,
         "input_type": input_type,
         "name": display_name,
+        "trivial_name": trivial_name,
         "formula": formula,
         "canonical_smiles": can,
+        "other_names": other_names,
 
         "prediction": y,
         "confidence": conf,
         "features_used": names,
+        "feature_values": feature_values,
         "model": model_name,
 
         "feature_scores": feature_scores,

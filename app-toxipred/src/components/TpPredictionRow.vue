@@ -17,6 +17,10 @@
         <q-item-label>{{ name }}</q-item-label>
       </q-item-section>
 
+      <q-item-section class="tp-prediction-row__prediction-type">
+        <q-item-label>{{ predictionType }}</q-item-label>
+      </q-item-section>
+
       <q-item-section class="tp-prediction-row__result">
         <q-item-label>{{ result }}</q-item-label>
       </q-item-section>
@@ -37,6 +41,7 @@ import TpIcon from './TpIcon.vue'
 const props = defineProps<{
   id: string
   name: string | null
+  predictionType: string
   result: string
   time: string | number
   selected: boolean
@@ -67,12 +72,17 @@ function onRowClick () {
     display: none;
   }
 
+  &__prediction-type {
+    max-width: 240px;
+    color: var(--text-medium);
+  }
+
   &__result {
-    max-width: 260px;
+    max-width: 160px;
   }
 
   &__time {
-    max-width: 340px;
+    max-width: 180px;
   }
 
   &__arrow-icon {

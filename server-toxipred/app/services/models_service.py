@@ -17,6 +17,10 @@ def models_payload() -> Dict[str, Any]:
         "kind": v.kind,
         "features_in_spec": (len(v.features) if v.features else None),
         "note": v.note,
+        "test_type": v.test_type,
+        "prediction_target": v.prediction_target,
+        "positive_label": v.positive_label,
+        "negative_label": v.negative_label,
       }
       for k, v in MODELS.items()
     },
