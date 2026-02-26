@@ -51,27 +51,33 @@ const indicatorStyle = computed(() => {
   position: relative;
   display: flex;
   border-radius: 1000px;
-  border: 1px solid var(--stroke-extra-light);
-  background: transparent;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-background-light);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
   width: 100%;
 
   &__indicator {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: -1px;
+    bottom: -1px;
     left: 0;
-    background: white;
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
     border-radius: 360px;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
     z-index: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
   }
 
   &__button {
     position: relative;
     z-index: 1;
     flex: 1;
-    font-weight: 900;
+    font-weight: 700;
     border: none;
     border-radius: 360px;
     cursor: pointer;
@@ -79,10 +85,11 @@ const indicatorStyle = computed(() => {
     text-decoration: none;
     background: transparent;
     padding: 8px 16px;
-    color: var(--text-secondary, #666);
+    font-size: 13px;
+    color: var(--text-medium);
 
     &--active {
-      color: var(--text-primary, #000);
+      color: var(--text);
     }
 
     &:disabled {

@@ -1,0 +1,185 @@
+services:
+  toxipred-redis:
+    image: redis:7
+    container_name: toxipred-redis
+    restart: unless-stopped
+    volumes:
+      - toxipred_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - toxipred-network
+
+  toxipred-postgres:
+    image: postgres:16
+    container_name: toxipred-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-toxipred}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-toxipred}
+      POSTGRES_DB: ${POSTGRES_DB:-toxipred}
+    volumes:
+      - toxipred_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-toxipred}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - toxipred-network
+
+  # Blue deployment
+  server-toxipred-blue:
+    build:
+      context: ./server-toxipred
+    container_name: server-toxipred-blue
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
+      - CELERY_DEFAULT_QUEUE=default
+      - PUBCHEM_LOOKUP=${PUBCHEM_LOOKUP:-1}
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-toxipred}:${POSTGRES_PASSWORD:-toxipred}@toxipred-postgres:5432/${POSTGRES_DB:-toxipred}
+    depends_on:
+      toxipred-redis:
+        condition: service_healthy
+      toxipred-postgres:
+        condition: service_healthy
+    command: >
+      micromamba run -n toxipred
+      uvicorn app.main:app
+      --host 0.0.0.0 --port 8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - toxipred-network
+    labels:
+      - "deployment=blue"
+
+  # Green deployment (initially stopped)
+  server-toxipred-green:
+    build:
+      context: ./server-toxipred
+    container_name: server-toxipred-green
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
+      - CELERY_DEFAULT_QUEUE=default
+      - PUBCHEM_LOOKUP=${PUBCHEM_LOOKUP:-1}
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-toxipred}:${POSTGRES_PASSWORD:-toxipred}@toxipred-postgres:5432/${POSTGRES_DB:-toxipred}
+    depends_on:
+      toxipred-redis:
+        condition: service_healthy
+      toxipred-postgres:
+        condition: service_healthy
+    command: >
+      micromamba run -n toxipred
+      uvicorn app.main:app
+      --host 0.0.0.0 --port 8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - toxipred-network
+    labels:
+      - "deployment=green"
+    profiles:
+      - green
+
+  toxipred-worker:
+    build:
+      context: ./server-toxipred
+    container_name: toxipred-worker
+    restart: unless-stopped
+    working_dir: /app
+    depends_on:
+      toxipred-redis:
+        condition: service_healthy
+      toxipred-postgres:
+        condition: service_healthy
+    environment:
+      - C_FORCE_ROOT=1
+      - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
+      - CELERY_DEFAULT_QUEUE=default
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-toxipred}:${POSTGRES_PASSWORD:-toxipred}@toxipred-postgres:5432/${POSTGRES_DB:-toxipred}
+    command: >
+      micromamba run -n toxipred
+      celery -A app.workers.celery_app:celery_app
+      worker --loglevel=info -Q default
+    healthcheck:
+      test: ["CMD-SHELL", "micromamba run -n toxipred celery -A app.workers.celery_app:celery_app inspect ping -d celery@$$HOSTNAME"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - toxipred-network
+
+  toxipred-flower:
+    build:
+      context: ./server-toxipred
+    container_name: toxipred-flower
+    restart: unless-stopped
+    depends_on:
+      toxipred-redis:
+        condition: service_healthy
+    environment:
+      - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
+    command: >
+      micromamba run -n toxipred
+      celery -A app.workers.celery_app:celery_app flower
+      --port=5555
+    networks:
+      - toxipred-network
+
+  app-toxipred:
+    build:
+      context: ./app-toxipred
+      dockerfile: Dockerfile.prod
+    container_name: app-toxipred
+    restart: unless-stopped
+    networks:
+      - toxipred-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: toxipred-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "5555:5555"  # Flower monitoring
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - server-toxipred-blue
+      - app-toxipred
+    networks:
+      - toxipred-network
+
+volumes:
+  toxipred_pgdata:
+    name: toxipred_pgdata
+  toxipred_redis:
+    name: toxipred_redis
+
+networks:
+  toxipred-network:
+    name: toxipred-network
+    driver: bridge

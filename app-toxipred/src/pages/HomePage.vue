@@ -1,5 +1,5 @@
 <template>
-  <tp-page class="tp-home-page">
+  <tp-page class="tp-home-page column items-center">
     <h1 class="tp-main-heading">Predict dermatological toxicity from structure</h1>
     <h2 class="tp-h3 bold">OECD-aligned QSAR models with applicability domain & confidence.</h2>
 

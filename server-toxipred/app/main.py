@@ -14,3 +14,23 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
 app.include_router(meta_router)
 app.include_router(jobs_router)
 app.include_router(sharing_router)
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for load balancer and deployment monitoring."""
+    return {"status": "healthy", "service": "toxipred-api"}
+
+
+@app.get("/ready")
+async def readiness_check():
+    """Readiness check - verifies database connectivity."""
+    try:
+        from app.db import SessionLocal
+        db = SessionLocal()
+        db.execute("SELECT 1")
+        db.close()
+        return {"status": "ready", "database": "connected"}
+    except Exception as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail=f"Database not ready: {str(e)}")

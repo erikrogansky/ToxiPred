@@ -61,11 +61,18 @@ function onRowClick () {
 @use 'src/css/helpers/mixins.scss' as *;
 
 .tp-prediction-row {
-  border-radius: 8px;
-  background: color-with-opacity(var(--surface-white), $opacity-medium);
+  border-radius: 14px;
+  background: var(--glass-background-light);
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
 
   &:hover {
-    background: color-with-opacity(var(--surface-white), $opacity-regular);
+    background: var(--glass-background);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border-color: var(--stroke-extra-light);
   }
 
   :deep(.q-focus-helper) {

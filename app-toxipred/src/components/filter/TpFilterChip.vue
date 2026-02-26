@@ -3,43 +3,45 @@
     clickable
     outline
     dense
-    square
     :label="displayLabel"
-    :removable="hasSelection"
-    @remove="$emit('clear')"
     class="tp-filter-chip"
     :class="{ 'tp-filter-chip--active': hasSelection }"
-  />
-  <q-menu 
-    class="tp-filter-chip__menu"
-    @before-show="initPending"
   >
-    <div class="tp-filter-chip__content">
-      <q-checkbox
-        v-for="option in options"
-        :key="option.value"
-        :label="option.label"
-        :model-value="pendingValues.includes(option.value)"
-        :true-value="true"
-        :false-value="false"
-        @update:model-value="(checked) => toggleOption(option.value, checked)"
-        class="tp-filter-chip__checkbox"
-      />
-      <tp-button
-        label="Apply"
-        variant="primary"
-        size="small"
-        class="tp-filter-chip__apply"
-        v-close-popup
-        @click="apply"
-      />
+    <div v-if="hasSelection" class="tp-filter-chip__remove" @click.stop="$emit('clear')">
+      <tp-icon icon-name="close" weight="regular" :size="14" />
     </div>
-  </q-menu>
+    <q-menu 
+      class="tp-filter-chip__menu"
+      @before-show="initPending"
+    >
+      <div class="tp-filter-chip__content">
+        <q-checkbox
+          v-for="option in options"
+          :key="option.value"
+          :label="option.label"
+          :model-value="pendingValues.includes(option.value)"
+          :true-value="true"
+          :false-value="false"
+          @update:model-value="(checked) => toggleOption(option.value, checked)"
+          class="tp-filter-chip__checkbox"
+        />
+        <tp-button
+          label="Apply"
+          variant="primary"
+          size="small"
+          class="tp-filter-chip__apply"
+          v-close-popup
+          @click="apply"
+        />
+      </div>
+    </q-menu>
+  </q-chip>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import TpButton from 'src/components/TpButton.vue';
+import TpIcon from 'src/components/TpIcon.vue';
 import type { FilterOption } from './types';
 
 const props = defineProps<{
@@ -87,42 +89,76 @@ const apply = () => {
 
 <style scoped lang="scss">
 .tp-filter-chip {
-  background-color: transparent;
-  border: 1px solid var(--stroke-regular);
-  color: var(--text);
+  background: var(--glass-background-light) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 20px !important;
+  color: var(--text) !important;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 13px !important;
+  padding: 5px 14px !important;
+  height: 32px !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
 
   &:hover {
-    border-color: var(--stroke-brand-regular);
-    color: var(--text-brand-regular);
+    border-color: var(--stroke-brand-regular) !important;
+    background: var(--glass-background) !important;
+    color: var(--text-brand-regular) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   &--active {
-    border-color: var(--stroke-brand-regular);
-    background-color: var(--surface-brand-extra-light);
-    color: var(--text-brand-regular);
+    border-color: var(--stroke-brand-regular) !important;
+    background: var(--surface-brand-extra-light) !important;
+    color: var(--text-brand-regular) !important;
+    font-weight: 600;
   }
 
   &__menu {
-    background-color: var(--surface-white);
-    border: 1px solid var(--stroke-extra-light);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: var(--glass-background) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--glass-shadow) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    padding: 8px !important;
   }
 
   &__content {
     display: flex;
     flex-direction: column;
-    min-width: 180px;
+    min-width: 200px;
+    gap: 4px;
   }
 
   &__checkbox {
-    padding: 4px 8px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--surface-brand-extra-light);
+    }
   }
 
   &__apply {
-    margin-top: 8px;
+    margin: 8px;
+    width: calc(100% - 16px);
+  }
+
+  &__remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 4px;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 }
 </style>

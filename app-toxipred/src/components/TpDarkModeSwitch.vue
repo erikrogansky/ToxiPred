@@ -25,10 +25,11 @@ import TpIcon from './TpIcon.vue'
 import { watch, onBeforeMount } from 'vue'
 import { storeToRefs } from 'pinia';
 
-import { useSettingsStore } from 'src/stores/settings-store';
+import { useSettingsStore, type FontFamily } from 'src/stores/settings-store';
 
 const settingsStore = useSettingsStore();
-const { darkMode } = storeToRefs(settingsStore);
+const { darkMode, highContrast } = storeToRefs(settingsStore);
+const { theme } = storeToRefs(settingsStore);
 
 defineProps<{
   onlyLight?: boolean;
@@ -36,9 +37,12 @@ defineProps<{
 }>()
 
 onBeforeMount(() => {
-  const storedValue = localStorage.getItem('darkMode')
-  if (storedValue) {
-    settingsStore.setDarkMode(storedValue === 'true')
+  const storedDarkMode = localStorage.getItem('darkMode')
+  const storedHighContrast = localStorage.getItem('highContrast')
+  const storedFontFamily = localStorage.getItem('fontFamily')
+  
+  if (storedDarkMode) {
+    settingsStore.setDarkMode(storedDarkMode === 'true')
   } else {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       settingsStore.setDarkMode(true)
@@ -46,13 +50,28 @@ onBeforeMount(() => {
       settingsStore.setDarkMode(false)
     }
   }
-  document.documentElement.setAttribute('data-theme', darkMode.value ? 'dark' : 'light')
+
+  if (storedHighContrast) {
+    settingsStore.setHighContrast(storedHighContrast === 'true')
+  }
+
+  if (storedFontFamily && (storedFontFamily === 'default' || storedFontFamily === 'comic-sans' || storedFontFamily === 'open-dyslexic')) {
+    settingsStore.setFontFamily(storedFontFamily as FontFamily)
+  }
+  
+  document.documentElement.setAttribute('data-theme', theme.value)
+  document.documentElement.setAttribute('data-font', settingsStore.fontFamily)
 })
 
-watch(() => darkMode.value, (newValue) => {
-  document.documentElement.setAttribute('data-theme', newValue ? 'dark' : 'light')
-  localStorage.setItem('darkMode', String(newValue))
-  settingsStore.setDarkMode(newValue)
+watch(() => theme.value, (newValue) => {
+  document.documentElement.setAttribute('data-theme', newValue)
+  localStorage.setItem('darkMode', String(darkMode.value))
+  localStorage.setItem('highContrast', String(highContrast.value))
+})
+
+watch(() => settingsStore.fontFamily, (newValue) => {
+  document.documentElement.setAttribute('data-font', newValue)
+  localStorage.setItem('fontFamily', newValue)
 })
 </script>
 

@@ -69,23 +69,25 @@ const currentLabel = computed(() => {
 .tp-input-with-select {
   display: flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.24);
+  gap: 10px;
+  border: 1px solid var(--glass-border);
   border-radius: 28px;
-  padding: 8px 14px;
+  padding: 10px 16px;
   width: 100%;
-  transition: border-color 0.2s ease;
+  background: var(--glass-background-light);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: var(--stroke-light);
+    box-shadow: var(--glass-shadow-elevated);
+  }
 
   &:focus-within {
     border-color: var(--stroke-brand-regular);
-  }
-
-  &:hover {
-    border-color: rgba(0, 0, 0, 0.87);
-  }
-
-  &:focus-within:hover {
-    border-color: var(--stroke-brand-regular);
+    box-shadow: 0 0 0 3px rgba(var(--color-brand-rgb, 0, 128, 96), 0.12), var(--glass-shadow-elevated);
   }
 
   &__field {
@@ -103,22 +105,24 @@ const currentLabel = computed(() => {
   }
 
   &__chip {
-    background-color: var(--surface-brand-extra-light);
+    background: var(--surface-brand-extra-light);
     border: 1px solid var(--stroke-brand-regular);
     color: var(--text-brand-regular);
     cursor: pointer;
     flex-shrink: 0;
     font-size: 13px;
-    padding: 4px 10px;
-    border-radius: 16px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 18px;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     user-select: none;
 
     &:hover {
-      background-color: var(--surface-brand-light);
+      background: var(--surface-brand-light);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
     }
   }
 
@@ -135,28 +139,34 @@ const currentLabel = computed(() => {
   }
 
   &__menu {
-    background-color: var(--surface-white);
-    border: 1px solid var(--stroke-extra-light);
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    background: var(--glass-background) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--glass-shadow) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    backdrop-filter: blur(var(--glass-blur-strong)) !important;
   }
 
   &__menu-content {
     display: flex;
     flex-direction: column;
     min-width: 200px;
+    padding: 6px;
   }
 
   &__item {
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 10px 12px;
+    transition: all 0.15s ease;
 
     &:hover {
-      background-color: var(--surface-brand-extra-light);
+      background: var(--surface-brand-extra-light);
     }
 
     &.q-item--active {
-      background-color: var(--surface-brand-light);
+      background: var(--surface-brand-extra-light);
+      color: var(--text-brand-regular);
+      font-weight: 600;
     }
   }
 }

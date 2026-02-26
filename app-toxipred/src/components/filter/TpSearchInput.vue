@@ -64,20 +64,29 @@ const currentFieldLabel = computed(() => {
 .tp-search-input {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background-color: var(--surface-white);
-  border: 1px solid var(--stroke-regular);
-  border-radius: 8px;
-  padding: 6px 12px;
-  min-width: 280px;
-  transition: border-color 0.2s ease;
+  gap: 10px;
+  background: var(--glass-background-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  min-width: 300px;
+  transition: all 0.2s ease;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+
+  &:hover {
+    border-color: var(--stroke-brand-regular);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
 
   &:focus-within {
     border-color: var(--stroke-brand-regular);
+    background: var(--glass-background);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   }
 
   &__icon {
-    color: var(--text-medium);
+    color: var(--text-brand-regular);
     flex-shrink: 0;
   }
 
@@ -86,47 +95,60 @@ const currentFieldLabel = computed(() => {
     border: none;
     outline: none;
     background: transparent;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
     color: var(--text);
     min-width: 0;
 
     &::placeholder {
-      color: var(--text-medium);
+      color: var(--text-light);
+      font-weight: 400;
     }
   }
 
   &__chip {
-    background-color: var(--surface-brand-extra-light);
+    background: var(--surface-brand-extra-light);
     border: 1px solid var(--stroke-brand-regular);
+    border-radius: 16px !important;
     color: var(--text-brand-regular);
     cursor: pointer;
     flex-shrink: 0;
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px !important;
+    height: 24px !important;
     transition: all 0.2s ease;
 
     &:hover {
-      background-color: var(--surface-brand-light);
+      background: var(--surface-brand-light);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
     }
   }
 
   &__menu {
-    background-color: var(--surface-white);
-    border: 1px solid var(--stroke-extra-light);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: var(--glass-background) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--glass-shadow) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    backdrop-filter: blur(var(--glass-blur-strong)) !important;
   }
 
   &__menu-content {
     display: flex;
     flex-direction: column;
-    min-width: 150px;
+    min-width: 160px;
+    padding: 8px;
   }
 
   &__item {
-    border-radius: 4px;
+    border-radius: 10px;
+    padding: 8px 12px;
+    transition: all 0.15s ease;
 
     &:hover {
       background-color: var(--surface-brand-extra-light);
+      color: var(--text-brand-regular);
     }
   }
 }

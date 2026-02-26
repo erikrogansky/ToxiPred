@@ -118,15 +118,25 @@ docker compose restart server-toxipred
 
 ---
 
-### 7. Production Build (optional)
+### 7. Production Deployment 🚀
 
-To build the static frontend bundle for deployment:
+For production deployment with zero-downtime and automatic GitHub Actions:
+
+**See:** [`SETUP.md`](SETUP.md) - Complete production setup guide
+
+Quick summary:
+- Zero-downtime blue-green deployments
+- Auto-deploy on `git push` to main
+- Automatic rollback on failure
+- Database backups before each deployment
+- 10-minute setup time
 
 ```bash
-docker compose exec app-toxipred npm run build
+# Quick deploy (after setup)
+git push origin main  # Automatically deploys to production!
 ```
 
-This will generate optimized static files inside `/app/dist/spa` within the container.
+For advanced configuration and troubleshooting, see: [`ADVANCED.md`](ADVANCED.md)
 
 ---
 
@@ -140,7 +150,8 @@ This will generate optimized static files inside `/app/dist/spa` within the cont
 | Stop all containers | `docker compose down` |
 | Open frontend | [http://localhost:9000](http://localhost:9000) |
 | Open backend | [http://localhost:8000/health](http://localhost:8000/health) |
+| **Production setup** | **See [`SETUP.md`](SETUP.md)** |
 
 ---
 
-Developed with ❤️ by the **TOXIPRED** team  
+Developed with ❤️ by the **TOXIPRED** team

@@ -1,5 +1,5 @@
 <template>
-  <tp-page class="row items-center justify-evenly">
+  <tp-page class="tp-workspace-page">
     <div class="row items-center justify-between full-width">
       <h1 class="tp-main-heading">My Workspace</h1>
       <tp-button
@@ -30,7 +30,29 @@
       </span>
     </div>
 
-    <q-list class="tp-prediction-list column items-center justify-between full-width">
+    <!-- Empty state -->
+    <div v-if="filteredAndSortedItems.length === 0 && !pendingPredictions.length" class="tp-empty-state">
+      <div class="tp-empty-state__icon">
+        <tp-icon icon-name="document" weight="regular" :size="48" />
+      </div>
+      <h3 class="tp-empty-state__title">No predictions yet</h3>
+      <p class="tp-empty-state__description">Start by creating a new prediction to see your results here.</p>
+      <tp-button
+        label="New prediction"
+        @click="showNewPredictionDialog = true"
+      />
+    </div>
+
+    <!-- Filtered empty state -->
+    <div v-else-if="filteredAndSortedItems.length === 0" class="tp-empty-state tp-empty-state--filtered">
+      <div class="tp-empty-state__icon">
+        <tp-icon icon-name="search-normal" weight="regular" :size="40" />
+      </div>
+      <h3 class="tp-empty-state__title">No matching results</h3>
+      <p class="tp-empty-state__description">Try adjusting your filters or search query.</p>
+    </div>
+
+    <q-list v-else class="tp-prediction-list column items-center justify-between full-width">
       <tp-prediction-row 
         v-for="[id, j] in filteredAndSortedItems"
         :key="id"
@@ -45,12 +67,16 @@
       />
     </q-list>
 
-    <q-popup class="tp-selected-popup" v-if="selectedIds.size > 0">
-      <span>Selected {{ selectedIds.size }} item{{ selectedIds.size > 1 ? 's' : '' }}</span>
-      <tp-button size="small" variant="outline" label="Select all" @click="selectAll" />
-      <tp-button size="small" variant="outline" label="Dselect all" @click="deselectAll" />
-      <tp-button size="small" variant="outline" label="Delete selected" @click="deleteSelected" />
-    </q-popup>
+    <Transition name="popup-slide">
+      <div class="tp-selected-popup" v-if="selectedIds.size > 0">
+        <span class="tp-selected-popup__label">{{ selectedIds.size }} selected</span>
+        <div class="tp-selected-popup__actions">
+          <tp-button size="small" variant="outline" label="Select all" @click="selectAll" />
+          <tp-button size="small" variant="outline" label="Deselect all" @click="deselectAll" />
+          <tp-button size="small" variant="primary" label="Delete selected" @click="deleteSelected" />
+        </div>
+      </div>
+    </Transition>
 
     <!-- New Prediction Dialog -->
     <tp-new-prediction-dialog v-model="showNewPredictionDialog" />
@@ -381,22 +407,101 @@ function deselectAll() {
 @use 'src/css/helpers/mixins.scss' as *;
 
 .tp-pending-panel {
-  background-color: #FFF3E0;
-  color: #EF6C00;
-  padding: 8px 16px;
-  border-radius: 8px;
+  background: var(--glass-background-light);
+  color: var(--text-warning, #EF6C00);
+  padding: 10px 16px;
+  border-radius: 14px;
   font-weight: 500;
-  gap: 8px;
-  margin-bottom: 24px;
+  font-size: 14px;
+  gap: 10px;
+  margin-bottom: 16px;
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
 }
 
 .tp-prediction-list {
-  gap: 16px
+  gap: 8px;
+}
+
+.tp-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 32px;
+  width: 100%;
+  background: var(--glass-background-light);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+
+  &__icon {
+    color: var(--text-light);
+    margin-bottom: 4px;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+  }
+
+  &__description {
+    font-size: 14px;
+    color: var(--text-medium);
+    margin: 0 0 8px;
+    text-align: center;
+    max-width: 340px;
+  }
+
+  &--filtered {
+    padding: 48px 32px;
+  }
 }
 
 .tp-selected-popup {
   position: fixed;
-  padding: 16px;
-  background: color-with-opacity(var(--surface-white), $opacity-high);
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6001; // Above Quasar footer (2000) and dialog (6000)
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: var(--glass-background);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow-elevated);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  backdrop-filter: blur(var(--glass-blur-strong));
+
+  &__label {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+// Slide-up animation for the batch bar
+.popup-slide-enter-active,
+.popup-slide-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.popup-slide-enter-from,
+.popup-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(16px);
 }
 </style>

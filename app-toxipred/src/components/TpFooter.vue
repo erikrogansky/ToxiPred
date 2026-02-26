@@ -27,6 +27,10 @@
             <span v-else class="paragraph-small black">{{ link.label }}</span>
           </div>
         </div>
+        <div class="tp-footer__column">
+          <h5>Accessibility</h5>
+          <tp-accessibility-settings />
+        </div>
         <img class="tp-recovery-plan-logo" src="src/assets/recovery-plan-logo.png" alt="">
       </div>
       <div class="tp-footer__copyright paragraph-xsmall black row justify-center">
@@ -39,6 +43,7 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue';
 import TpLink from './TpLink.vue';
+import TpAccessibilitySettings from './TpAccessibilitySettings.vue';
 
 let year: number;
 
@@ -61,13 +66,6 @@ const columns = [
     links: [
       { label: 'email@example.com' },
       { label: 'email@example.com' },
-    ]
-  },
-  {
-    title: 'Resources',
-    links: [
-      { label: 'Documentation', href: 'documentation' },
-      { label: 'Community', href: 'community' },
     ]
   },
   {
@@ -94,30 +92,44 @@ const columns = [
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 1440px;
+    margin-inline: auto;
+    width: 100%;
   }
 
   &__main {
     width: 100%;
-    background: linear-gradient(180deg, color-with-opacity(var(--surface-white), 7.5%) 0%, color-with-opacity(var(--surface-white), 30%) 100%);
+    background: var(--glass-background-light);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    border-top: 1px solid var(--glass-border);
     display: grid;
-    grid-template-columns: repeat(5, 1fr) auto;
-    gap: 16px;
-    padding: 32px 48px;
+    grid-template-columns: 1.2fr repeat(3, 1fr) auto auto;
+    gap: 24px;
+    padding: 40px 48px;
   }
 
   &__column {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     color: var(--text);
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 400;
+
+    h5 {
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
   }
 
   &__copyright {
     padding: 12px 32px;
     width: 100%;
-    background-color: color-with-opacity(var(--surface-white), 30%);
+    background: var(--glass-background-light);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    border-top: 1px solid var(--glass-border);
   }
 }
 

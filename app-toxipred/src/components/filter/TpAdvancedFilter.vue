@@ -114,29 +114,31 @@ watch(
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-  gap: 24px;
+  padding: 16px 0;
+  gap: 16px;
 
   &__left {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    flex: 1;
+    gap: 4px;
   }
 
   &__row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
   }
 
   &__icon {
-    color: var(--text);
+    color: var(--text-brand-regular);
     flex-shrink: 0;
   }
 
   &__chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 4px;
   }
 
   &__right {

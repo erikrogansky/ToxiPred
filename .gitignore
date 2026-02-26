@@ -64,7 +64,16 @@ desktop.ini
 *.sublime-project
 
 # ------------------------
+# Deployment & Production
+# ------------------------
+backups/
+*.sql
+nginx/nginx.conf.backup.*
+.env.prod
+
+# ------------------------
 # Optional: GitHub or CI files
 # ------------------------
 # /docs/outputs/
 # /coverage/
+

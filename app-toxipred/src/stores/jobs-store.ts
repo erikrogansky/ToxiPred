@@ -5,6 +5,7 @@ import { api } from 'src/boot/axios'
 
 const LS_KEY = 'toxipred.jobs.v1'
 const TERMINAL = new Set<JobState>(['SUCCESS', 'FAILURE', 'REVOKED'])
+const MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
 
 type JobSummary = Pick<JobRecord,
   'id' | 'model' | 'name' | 'trivial_name' | 'formula' | 'state' | 'createdAt' | 'prediction' | 'canonical_smiles'
@@ -39,7 +40,11 @@ export const useJobsStore = defineStore('jobs', () => {
     if (!raw) return
     try {
       const arr: JobSummary[] = JSON.parse(raw)
+      const now = Date.now()
       arr.forEach(s => {
+        // Skip jobs older than 14 days
+        if (s.createdAt && now - s.createdAt > MAX_AGE_MS) return
+
         const record: JobRecord = {
           id: s.id,
           model: s.model,
@@ -180,6 +185,14 @@ export const useJobsStore = defineStore('jobs', () => {
 
   async function restoreAndAttach() {
     load()
+
+    // Prune jobs older than 14 days
+    const now = Date.now()
+    for (const [id, j] of jobs) {
+      if (j.createdAt && now - j.createdAt > MAX_AGE_MS) {
+        jobs.delete(id)
+      }
+    }
 
     // 1) Reattach tracking for non-terminal jobs
     for (const j of jobs.values()) {

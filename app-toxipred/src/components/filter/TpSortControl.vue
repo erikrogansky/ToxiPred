@@ -5,32 +5,31 @@
       clickable
       outline
       dense
-      square
       :label="'Sort: ' + currentLabel"
       class="tp-sort-control__chip"
-    />
-    <q-menu class="tp-sort-control__menu">
-      <div class="tp-sort-control__content">
-        <q-item
-          v-for="option in options"
-          :key="option.value"
-          clickable
-          v-close-popup
-          @click="$emit('update:field', option.value)"
-          :active="field === option.value"
-          class="tp-sort-control__item"
-        >
-          <q-item-section>{{ option.label }}</q-item-section>
-        </q-item>
-      </div>
-    </q-menu>
+    >
+      <q-menu class="tp-sort-control__menu">
+        <div class="tp-sort-control__content">
+          <q-item
+            v-for="option in options"
+            :key="option.value"
+            clickable
+            v-close-popup
+            @click="$emit('update:field', option.value)"
+            :active="field === option.value"
+            class="tp-sort-control__item"
+          >
+            <q-item-section>{{ option.label }}</q-item-section>
+          </q-item>
+        </div>
+      </q-menu>
+    </q-chip>
 
     <!-- Direction buttons -->
     <q-chip
       clickable
       outline
       dense
-      square
       class="tp-sort-control__direction"
       :class="{ 'tp-sort-control__direction--active': direction === 'asc' }"
       @click="$emit('update:direction', 'asc')"
@@ -42,7 +41,6 @@
       clickable
       outline
       dense
-      square
       class="tp-sort-control__direction"
       :class="{ 'tp-sort-control__direction--active': direction === 'desc' }"
       @click="$emit('update:direction', 'desc')"
@@ -76,62 +74,83 @@ const currentLabel = computed(() => {
 <style scoped lang="scss">
 .tp-sort-control {
   display: flex;
-  gap: 8px;
   align-items: center;
+  gap: 4px;
 
   &__chip {
-    background-color: transparent;
-    border: 1px solid var(--stroke-regular);
-    color: var(--text);
+    background: var(--glass-background-light) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    color: var(--text) !important;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 13px !important;
+    padding: 5px 14px !important;
+    height: 32px !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
 
     &:hover {
-      border-color: var(--stroke-brand-regular);
-      color: var(--text-brand-regular);
+      border-color: var(--stroke-brand-regular) !important;
+      background: var(--glass-background) !important;
+      color: var(--text-brand-regular) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
   }
 
   &__menu {
-    background-color: var(--surface-white);
-    border: 1px solid var(--stroke-extra-light);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: var(--glass-background) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--glass-shadow) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    backdrop-filter: blur(var(--glass-blur-strong)) !important;
   }
 
   &__content {
     display: flex;
     flex-direction: column;
     padding: 8px;
-    min-width: 150px;
+    min-width: 160px;
   }
 
   &__item {
-    border-radius: 4px;
+    border-radius: 10px;
+    padding: 8px 12px;
+    transition: all 0.15s ease;
 
     &:hover {
       background-color: var(--surface-brand-extra-light);
+      color: var(--text-brand-regular);
     }
   }
 
   &__direction {
-    background-color: transparent;
-    border: 1px solid var(--stroke-regular);
-    color: var(--text);
+    background: var(--glass-background-light) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    color: var(--text) !important;
     cursor: pointer;
-    padding: 0 8px;
+    padding: 5px 8px !important;
     min-width: auto;
+    height: 32px !important;
     transition: all 0.2s ease;
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
 
     &:hover {
-      border-color: var(--stroke-brand-regular);
-      color: var(--text-brand-regular);
+      border-color: var(--stroke-brand-regular) !important;
+      background: var(--glass-background) !important;
+      color: var(--text-brand-regular) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
     &--active {
-      border-color: var(--stroke-brand-regular);
-      background-color: var(--surface-brand-extra-light);
-      color: var(--text-brand-regular);
+      border-color: var(--stroke-brand-regular) !important;
+      background: var(--surface-brand-extra-light) !important;
+      color: var(--text-brand-regular) !important;
+      font-weight: 600;
     }
   }
 }
