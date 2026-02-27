@@ -17,6 +17,14 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/draw',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/KetcherPage.vue'), name: 'draw' },
+    ],
+  },
+
+  {
     path: '/shared/:token',
     component: () => import('layouts/MainLayout.vue'),
     children: [

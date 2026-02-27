@@ -26,6 +26,15 @@ type JobSummary = Pick<JobRecord,
 declare module 'plotly.js-dist'
 declare module 'plotly.js-dist-min'
 
+// ketcher-standalone has types at dist/index.d.ts but package.json "exports" doesn't resolve them
+declare module 'ketcher-standalone' {
+  export class StandaloneStructServiceProvider {
+    mode: string
+    createStructService(options: Record<string, unknown>): unknown
+  }
+  export class StandaloneStructService {}
+}
+
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

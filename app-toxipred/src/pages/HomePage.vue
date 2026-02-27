@@ -15,6 +15,7 @@
         <tp-input-with-select select-label="Prediction" label="Enter SMILES, CAS number, or trivial name" hint="For batch submissions, separate the identifiers by a comma" v-model:input-value="inputValue" v-model:selected-value="selectedValue" :options="modelOptions" @enter="submitPrediction"/>
         <tp-button :disabled="!inputValue || !selectedValue" style="margin: 0 0 20px 16px;" @click="submitPrediction" label="Predict" variant="outline" size="regular"></tp-button>
       </div>
+      <tp-button class="tp-draw-cta" label="or draw a molecule" variant="link" size="small" @click="$router.push({ name: 'draw', query: { model: selectedValue || undefined } })" />
     </section>
 
     <!-- ========== FEATURE CARDS ========== -->
@@ -355,6 +356,10 @@ function selectAndScroll(modelValue: string) {
   .tp-input-section {
     margin-top: 72px;
   }
+}
+
+.tp-draw-cta {
+  margin-top: 4px;
 }
 
 // ─── FEATURE CARDS ─────────────────────────────────

@@ -67,6 +67,24 @@ export default defineConfig((ctx) => {
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
 
+      extendViteConf(viteConf) {
+        // Polyfill `global` for draft-js (used by ketcher-react)
+        viteConf.define = {
+          ...(viteConf.define || {}),
+          global: 'globalThis',
+        };
+
+        // Ensure Ketcher/React packages are pre-bundled by Vite for compatibility
+        viteConf.optimizeDeps = viteConf.optimizeDeps || {};
+        viteConf.optimizeDeps.include = [
+          ...(viteConf.optimizeDeps.include || []),
+          'react',
+          'react-dom/client',
+          'ketcher-react',
+          'ketcher-standalone',
+        ];
+      },
+
       vitePlugins: [
         [
           '@intlify/unplugin-vue-i18n/vite',

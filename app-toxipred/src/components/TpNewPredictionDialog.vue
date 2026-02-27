@@ -40,6 +40,12 @@
 
           <div class="tp-actions q-mt-lg">
             <tp-button
+              label="Draw molecule"
+              variant="outline"
+              @click="goToDraw"
+            />
+            <div style="flex: 1" />
+            <tp-button
               label="Cancel"
               variant="outline"
               @click="close"
@@ -119,6 +125,7 @@ import TpInputWithSelect from 'components/TpInputWithSelect.vue';
 import { useModelsStore, type TestType, type PredictionTarget } from 'src/stores/models-store';
 import { useJobsStore } from 'src/stores/jobs-store';
 import { api } from 'src/boot/axios';
+import { useRouter } from 'vue-router';
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
 }>();
@@ -129,6 +136,7 @@ defineProps<{
 
 const modelsStore = useModelsStore();
 const jobsStore = useJobsStore();
+const router = useRouter();
 
 const activeTab = ref(0);
 
@@ -199,6 +207,11 @@ const modelOptions = computed(() => {
     };
   });
 });
+
+function goToDraw() {
+  close();
+  void router.push({ name: 'draw', query: { model: selectedValue.value || undefined } });
+}
 
 function close() {
   emit('update:modelValue', false);

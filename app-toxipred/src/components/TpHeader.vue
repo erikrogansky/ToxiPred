@@ -17,6 +17,7 @@
       <nav class="tp-nav">
         <tp-link label="Home" href="/" underline="none" inherit-color></tp-link>
         <tp-link label="Workspace" href="/workspace" underline="none" inherit-color></tp-link>
+        <tp-link label="Draw" href="/draw" underline="none" inherit-color></tp-link>
         <tp-link label="Demos" href="/demos" underline="none" inherit-color></tp-link>
         <tp-link label="Documentation" href="/documentation" underline="none" inherit-color></tp-link>
       </nav>
@@ -30,6 +31,7 @@
   <tp-mobile-nav v-model="navOpen" :items="[
     { label: 'Home', href: '/' },
     { label: 'Workspace', href: '/workspace' },
+    { label: 'Draw', href: '/draw' },
     { label: 'Demos', href: '/demos' },
     { label: 'Documentation', href: '/documentation' }
   ]" />
