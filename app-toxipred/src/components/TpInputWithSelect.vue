@@ -151,7 +151,6 @@ const currentLabel = computed(() => {
     display: flex;
     flex-direction: column;
     min-width: 200px;
-    padding: 6px;
   }
 
   &__item {

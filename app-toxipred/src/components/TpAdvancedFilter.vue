@@ -302,7 +302,6 @@ const getSearchInLabel = (): string => {
   &__left {
     display: flex;
     flex-direction: column;
-    gap: 8px;
   }
 
   &__row {
@@ -319,7 +318,6 @@ const getSearchInLabel = (): string => {
   &__chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
   }
 
   &__chip {

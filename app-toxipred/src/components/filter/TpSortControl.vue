@@ -75,7 +75,6 @@ const currentLabel = computed(() => {
 .tp-sort-control {
   display: flex;
   align-items: center;
-  gap: 4px;
 
   &__chip {
     background: var(--glass-background-light) !important;
@@ -111,7 +110,6 @@ const currentLabel = computed(() => {
   &__content {
     display: flex;
     flex-direction: column;
-    padding: 8px;
     min-width: 160px;
   }
 

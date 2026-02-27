@@ -138,7 +138,6 @@ const currentFieldLabel = computed(() => {
     display: flex;
     flex-direction: column;
     min-width: 160px;
-    padding: 8px;
   }
 
   &__item {

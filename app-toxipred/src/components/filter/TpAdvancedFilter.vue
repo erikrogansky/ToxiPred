@@ -121,7 +121,7 @@ watch(
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 4px;
+    gap: 2px;
   }
 
   &__row {
@@ -138,7 +138,6 @@ watch(
   &__chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
   }
 
   &__right {
