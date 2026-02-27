@@ -214,9 +214,13 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   padding: 0 !important;
-  /* Override q-page min-height so the editor fills the viewport minus header */
-  height: calc(100vh - 60px); /* 60px = approximate header height */
-  max-height: calc(100vh - 60px);
+  max-width: 1440px;
+  margin-inline: auto;
+  width: 100%;
+  /* Override Quasar's computed min-height so the page doesn't push beyond the viewport */
+  min-height: 0 !important;
+  height: calc(100dvh - 60px);
+  max-height: calc(100dvh - 60px);
   overflow: hidden;
 }
 
@@ -226,7 +230,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 24px;
+  padding: 12px 32px;
   border-bottom: 1px solid var(--glass-border);
   background: var(--glass-background);
   backdrop-filter: blur(var(--glass-blur));
@@ -384,9 +388,11 @@ onBeforeUnmount(() => {
   flex: 1;
   min-height: 0;
   position: relative;
+  overflow: hidden;
 
   :deep(.tp-ketcher-editor) {
     height: 100%;
+    overflow: hidden;
   }
 }
 
