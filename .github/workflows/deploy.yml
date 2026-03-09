@@ -8,32 +8,22 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "!contains(github.event.head_commit.message, '[skip-deploy]')"
 
     steps:
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.8.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Add server to known hosts
+      - name: Pull latest code
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          cd /home/toxipred/ToxiPred
+          git pull origin main
 
       - name: Deploy
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
-            cd ${{ secrets.DEPLOY_PATH }}
-            git pull origin main
-            ./scripts/deploy.sh deploy
-          ENDSSH
+          cd /home/toxipred/ToxiPred
+          ./scripts/deploy.sh deploy
 
       - name: Verify
         if: success()
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
-            cd ${{ secrets.DEPLOY_PATH }}
-            ./scripts/deploy.sh status
-          ENDSSH
+          cd /home/toxipred/ToxiPred
+          ./scripts/deploy.sh status
