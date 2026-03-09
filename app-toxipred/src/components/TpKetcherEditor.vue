@@ -1,5 +1,6 @@
 <template>
-  <div ref="ketcherHost" class="tp-ketcher-editor">
+  <div class="tp-ketcher-editor">
+    <div ref="reactContainer" class="tp-ketcher-react-root" />
     <div v-if="loading" class="tp-ketcher-loading">
       <q-spinner-dots size="48px" color="primary" />
       <p class="paragraph-small">Loading molecular editor…</p>
@@ -15,7 +16,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import TpButton from './TpButton.vue';
 
-const ketcherHost = ref<HTMLDivElement>();
+const reactContainer = ref<HTMLDivElement>();
 const loading = ref(true);
 const error = ref<string | null>(null);
 
@@ -67,7 +68,7 @@ function loadKetcherBundle(): Promise<any> {
 }
 
 async function initKetcher() {
-  if (!ketcherHost.value) return;
+  if (!reactContainer.value) return;
 
   loading.value = true;
   error.value = null;
@@ -75,11 +76,11 @@ async function initKetcher() {
   try {
     const { React, ReactDOM, Editor, StandaloneStructServiceProvider } = await loadKetcherBundle();
 
-    if (!ketcherHost.value) return;
+    if (!reactContainer.value) return;
 
     const structServiceProvider = new StandaloneStructServiceProvider();
 
-    reactRoot = ReactDOM.createRoot(ketcherHost.value);
+    reactRoot = ReactDOM.createRoot(reactContainer.value);
     reactRoot.render(
       React.createElement(Editor, {
         staticResourcesUrl: '',
@@ -161,6 +162,11 @@ defineExpose({
   height: 100%;
   position: relative;
   min-height: 400px;
+}
+
+.tp-ketcher-react-root {
+  width: 100%;
+  height: 100%;
 }
 
 .tp-ketcher-loading,
