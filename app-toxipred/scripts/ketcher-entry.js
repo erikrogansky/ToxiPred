@@ -6,5 +6,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Editor } from 'ketcher-react';
 import { StandaloneStructServiceProvider } from 'ketcher-standalone';
+import 'ketcher-react/dist/index.css';
 
 export { React, ReactDOM, Editor, StandaloneStructServiceProvider };

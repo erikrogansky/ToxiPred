@@ -7,7 +7,7 @@
  * The main app accesses ketcher via window.__ketcher globals.
  */
 import { build } from 'esbuild';
-import { mkdirSync } from 'fs';
+import { mkdirSync, copyFileSync } from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -39,5 +39,9 @@ await build({
   sourcemap: false,
   logLevel: 'info',
 });
+
+// Overwrite with the full ketcher-react CSS (esbuild only extracts a small subset)
+const ketcherCss = `${__dirname}/../node_modules/ketcher-react/dist/index.css`;
+copyFileSync(ketcherCss, `${outdir}/ketcher-bundle.css`);
 
 console.log('Ketcher bundle built successfully.');
