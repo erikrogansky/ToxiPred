@@ -14,6 +14,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import TpButton from './TpButton.vue';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Editor } from 'ketcher-react';
+// @ts-expect-error ketcher-standalone types don't match package.json exports
+import { StandaloneStructServiceProvider } from 'ketcher-standalone';
+import 'ketcher-react/dist/index.css';
 
 const ketcherHost = ref<HTMLDivElement>();
 const loading = ref(true);
@@ -34,32 +40,20 @@ const props = defineProps<{
   initialSmiles?: string;
 }>();
 
-async function initKetcher() {
+function initKetcher() {
   if (!ketcherHost.value) return;
 
   loading.value = true;
   error.value = null;
 
   try {
-    const [React, ReactDOM, ketcherReact] = await Promise.all([
-      import('react'),
-      import('react-dom/client'),
-      import('ketcher-react'),
-    ]);
-
-    // @ts-expect-error ketcher-standalone package.json exports missing types condition
-    const ketcherStandalone = await import('ketcher-standalone');
-
-    // Load Ketcher CSS (Vite handles this as a side-effect import — injected once globally)
-    await import('ketcher-react/dist/index.css');
-
     if (!ketcherHost.value) return;
 
-    const structServiceProvider = new ketcherStandalone.StandaloneStructServiceProvider();
+    const structServiceProvider = new StandaloneStructServiceProvider();
 
     reactRoot = ReactDOM.createRoot(ketcherHost.value);
     reactRoot.render(
-      React.createElement(ketcherReact.Editor, {
+      React.createElement(Editor, {
         staticResourcesUrl: '',
         structServiceProvider,
         errorHandler: (msg: string) => console.warn('[Ketcher]', msg),
