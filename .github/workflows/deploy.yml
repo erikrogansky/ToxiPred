@@ -16,7 +16,8 @@ jobs:
       - name: Pull latest code
         run: |
           cd /home/toxipred/ToxiPred
-          git pull origin main
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Deploy
         timeout-minutes: 25
