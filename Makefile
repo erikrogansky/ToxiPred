@@ -37,9 +37,6 @@ prod-status:
 deploy:
 	./scripts/deploy.sh deploy
 
-rollback:
-	./scripts/deploy.sh rollback
-
 backup:
 	./scripts/migrate.sh
 

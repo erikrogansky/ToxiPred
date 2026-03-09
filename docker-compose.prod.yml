@@ -31,11 +31,10 @@ services:
     networks:
       - toxipred-network
 
-  # Blue deployment
-  server-toxipred-blue:
+  server-toxipred:
     build:
       context: ./server-toxipred
-    container_name: server-toxipred-blue
+    container_name: server-toxipred
     restart: unless-stopped
     environment:
       - PYTHONUNBUFFERED=1
@@ -61,43 +60,6 @@ services:
       start_period: 30s
     networks:
       - toxipred-network
-    labels:
-      - "deployment=blue"
-
-  # Green deployment (initially stopped)
-  server-toxipred-green:
-    build:
-      context: ./server-toxipred
-    container_name: server-toxipred-green
-    restart: unless-stopped
-    environment:
-      - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=redis://toxipred-redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://toxipred-redis:6379/0
-      - CELERY_DEFAULT_QUEUE=default
-      - PUBCHEM_LOOKUP=${PUBCHEM_LOOKUP:-1}
-      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-toxipred}:${POSTGRES_PASSWORD:-toxipred}@toxipred-postgres:5432/${POSTGRES_DB:-toxipred}
-    depends_on:
-      toxipred-redis:
-        condition: service_healthy
-      toxipred-postgres:
-        condition: service_healthy
-    command: >
-      micromamba run -n toxipred
-      uvicorn app.main:app
-      --host 0.0.0.0 --port 8000
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-    networks:
-      - toxipred-network
-    labels:
-      - "deployment=green"
-    profiles:
-      - green
 
   toxipred-worker:
     build:
@@ -162,13 +124,13 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "5555:5555"  # Flower monitoring
+      - "5555:5555"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
-      - server-toxipred-blue
+      - server-toxipred
       - app-toxipred
     networks:
       - toxipred-network
