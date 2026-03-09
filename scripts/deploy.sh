@@ -27,7 +27,7 @@ log_error()   { echo -e "${RED}[ERROR]${NC} $1"; }
 check_health() {
     log_info "Running health checks..."
     for i in $(seq 1 $HEALTH_CHECK_RETRIES); do
-        if docker exec server-toxipred curl -sf http://localhost:8000/health > /dev/null 2>&1; then
+        if docker exec server-toxipred micromamba run -n toxipred python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" > /dev/null 2>&1; then
             log_success "Health check passed (attempt $i/$HEALTH_CHECK_RETRIES)"
             return 0
         fi
@@ -60,7 +60,7 @@ deploy() {
     # Step 3: Build and restart all services
     log_info "Step 3/4: Building and restarting services..."
     docker compose -f "$COMPOSE_FILE" build
-    docker compose -f "$COMPOSE_FILE" up -d
+    docker compose -f "$COMPOSE_FILE" up -d --no-build
     echo ""
 
     # Step 4: Health check

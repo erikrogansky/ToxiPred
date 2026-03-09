@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    timeout-minutes: 30
     if: "!contains(github.event.head_commit.message, '[skip-deploy]')"
 
     steps:
@@ -18,6 +19,7 @@ jobs:
           git pull origin main
 
       - name: Deploy
+        timeout-minutes: 25
         run: |
           cd /home/toxipred/ToxiPred
           ./scripts/deploy.sh deploy
