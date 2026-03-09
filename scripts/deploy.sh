@@ -43,20 +43,23 @@ deploy() {
     log_info "====== ToxiPred Deployment Started ======"
     echo ""
 
-    # Step 1: Run database migrations
-    log_info "Step 1/4: Running database migrations..."
+    # Step 1: Start infrastructure (postgres, redis) if not running
+    log_info "Step 1/4: Ensuring infrastructure is up..."
+    docker compose -f "$COMPOSE_FILE" up -d toxipred-postgres toxipred-redis
+    log_info "Waiting for database to be ready..."
+    sleep 5
+    log_success "Infrastructure is up"
+    echo ""
+
+    # Step 2: Run database migrations
+    log_info "Step 2/4: Running database migrations..."
     bash scripts/migrate.sh
     log_success "Database migrations completed"
     echo ""
 
-    # Step 2: Build new images
-    log_info "Step 2/4: Building Docker images..."
+    # Step 3: Build and restart all services
+    log_info "Step 3/4: Building and restarting services..."
     docker compose -f "$COMPOSE_FILE" build
-    log_success "Docker images built"
-    echo ""
-
-    # Step 3: Restart services (recreates only changed containers)
-    log_info "Step 3/4: Restarting services..."
     docker compose -f "$COMPOSE_FILE" up -d
     echo ""
 
