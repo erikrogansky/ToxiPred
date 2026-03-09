@@ -55,7 +55,7 @@ docker-compose.override.yml
 # macOS / Windows / Linux
 .DS_Store
 ehthumbs.db
-Icon?
+Icon[?]
 desktop.ini
 
 # Editor backups
