@@ -34,6 +34,7 @@ services:
   server-toxipred:
     build:
       context: ./server-toxipred
+    image: toxipred-server:latest
     container_name: server-toxipred
     restart: unless-stopped
     environment:
@@ -62,8 +63,7 @@ services:
       - toxipred-network
 
   toxipred-worker:
-    build:
-      context: ./server-toxipred
+    image: toxipred-server:latest
     container_name: toxipred-worker
     restart: unless-stopped
     working_dir: /app
@@ -91,8 +91,7 @@ services:
       - toxipred-network
 
   toxipred-flower:
-    build:
-      context: ./server-toxipred
+    image: toxipred-server:latest
     container_name: toxipred-flower
     restart: unless-stopped
     depends_on:
