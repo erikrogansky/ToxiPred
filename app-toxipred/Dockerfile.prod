@@ -3,8 +3,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files and quasar config (needed for postinstall)
 COPY package*.json ./
+COPY quasar.config.ts tsconfig.json ./
 
 # Install dependencies
 RUN npm ci --no-audit --no-fund
