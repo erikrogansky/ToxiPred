@@ -14,12 +14,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import TpButton from './TpButton.vue';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Editor } from 'ketcher-react';
-// @ts-expect-error ketcher-standalone types don't match package.json exports
-import { StandaloneStructServiceProvider } from 'ketcher-standalone';
-import 'ketcher-react/dist/index.css';
 
 const ketcherHost = ref<HTMLDivElement>();
 const loading = ref(true);
@@ -40,13 +34,47 @@ const props = defineProps<{
   initialSmiles?: string;
 }>();
 
-function initKetcher() {
+/**
+ * Load the pre-built ketcher bundle (built with esbuild, avoids Rollup CJS/WASM issues).
+ * Returns the { React, ReactDOM, Editor, StandaloneStructServiceProvider } globals.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function loadKetcherBundle(): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((window as any).__ketcher) return Promise.resolve((window as any).__ketcher);
+
+  return new Promise((resolve, reject) => {
+    // Load CSS
+    if (!document.querySelector('link[href="/ketcher/ketcher-bundle.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/ketcher/ketcher-bundle.css';
+      document.head.appendChild(link);
+    }
+
+    // Load JS
+    const script = document.createElement('script');
+    script.src = '/ketcher/ketcher-bundle.js';
+    script.onload = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const k = (window as any).__ketcher;
+      if (k && k.Editor) resolve(k);
+      else reject(new Error('Ketcher bundle loaded but exports not found'));
+    };
+    script.onerror = () => reject(new Error('Failed to load ketcher bundle'));
+    document.head.appendChild(script);
+  });
+}
+
+async function initKetcher() {
   if (!ketcherHost.value) return;
 
   loading.value = true;
   error.value = null;
 
   try {
+    const { React, ReactDOM, Editor, StandaloneStructServiceProvider } = await loadKetcherBundle();
+
     if (!ketcherHost.value) return;
 
     const structServiceProvider = new StandaloneStructServiceProvider();

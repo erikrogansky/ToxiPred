@@ -71,24 +71,6 @@ export default defineConfig((ctx) => {
           ...(viteConf.define || {}),
           global: 'globalThis',
         };
-
-        // Ensure Ketcher/React packages are pre-bundled by Vite for compatibility
-        viteConf.optimizeDeps = viteConf.optimizeDeps || {};
-        viteConf.optimizeDeps.include = [
-          ...(viteConf.optimizeDeps.include || []),
-          'react',
-          'react-dom/client',
-          'ketcher-react',
-          'ketcher-standalone',
-        ];
-
-        // Fix commonjs/ESM interop for ketcher-react's ajv dependency
-        viteConf.build = viteConf.build || {};
-        viteConf.build.commonjsOptions = {
-          ...(viteConf.build.commonjsOptions || {}),
-          transformMixedEsModules: true,
-          defaultIsModuleExports: true,
-        };
       },
 
       vitePlugins: [
