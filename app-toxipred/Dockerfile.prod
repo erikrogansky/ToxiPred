@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy package files and quasar config (needed for postinstall)
 COPY package*.json ./
-COPY quasar.config.ts tsconfig.json ./
+COPY quasar.config.ts tsconfig.json index.html ./
 
 # Install dependencies
 RUN npm ci --no-audit --no-fund
