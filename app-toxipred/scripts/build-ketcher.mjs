@@ -23,7 +23,13 @@ await build({
   outfile: `${outdir}/ketcher-bundle.js`,
   define: {
     'process.env.NODE_ENV': '"production"',
+    'process.env': JSON.stringify({ NODE_ENV: 'production' }),
+    'process.version': '"v20.0.0"',
+    'process.platform': '"browser"',
     global: 'globalThis',
+  },
+  banner: {
+    js: 'if(typeof process==="undefined"){var process={env:{NODE_ENV:"production"},version:"v20.0.0",platform:"browser",nextTick:function(f){Promise.resolve().then(f)}}}',
   },
   loader: {
     '.wasm': 'binary',

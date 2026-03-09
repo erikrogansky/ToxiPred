@@ -61,6 +61,8 @@ deploy() {
     log_info "Step 3/4: Building and restarting services..."
     docker compose -f "$COMPOSE_FILE" build
     docker compose -f "$COMPOSE_FILE" up -d --no-build
+    # Reload nginx so it resolves fresh upstream IPs after container restarts
+    docker compose -f "$COMPOSE_FILE" restart nginx
     echo ""
 
     # Step 4: Health check
