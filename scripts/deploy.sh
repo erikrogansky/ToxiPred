@@ -87,7 +87,7 @@ status() {
     echo ""
 
     echo -n "Backend: "
-    if docker exec server-toxipred curl -sf http://localhost:8000/health > /dev/null 2>&1; then
+    if docker exec server-toxipred micromamba run -n toxipred python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" > /dev/null 2>&1; then
         log_success "Healthy"
     else
         log_error "Unhealthy or stopped"
