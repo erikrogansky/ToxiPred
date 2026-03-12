@@ -46,15 +46,13 @@ const indicatorStyle = computed(() => {
 
 <style scoped lang="scss">
 @use 'src/css/helpers/mixins.scss' as *;
+@use 'src/css/helpers/glass' as glass;
 
 .tp-btn-group {
   position: relative;
   display: flex;
   border-radius: 1000px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-background-light);
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
+  @include glass.glass(var(--glass-background-light), var(--glass-blur), 1000px);
   width: 100%;
 
   &__indicator {

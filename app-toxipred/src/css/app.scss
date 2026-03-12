@@ -3,6 +3,7 @@
 @use './icons/uxt-icons.css';
 @use './fonts';
 @use './helpers/mixins.scss' as *;
+@use './helpers/glass' as glass;
 
 // Font family support
 :root[data-font='default'],
@@ -55,7 +56,6 @@
 
 // --- Dialog overlay should be transparent, only the card inside is styled ---
 .q-dialog__inner {
-  // Reset: the overlay wrapper must not look like a card
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
@@ -63,29 +63,16 @@
   backdrop-filter: none !important;
 }
 
+.q-dialog__backdrop {
+  background: transparent !important;
+  backdrop-filter: blur(12px) !important;
+}
+
 .q-menu,
 .q-menu__content {
-  background: var(--glass-background) !important;
-  border: 1px solid var(--glass-border) !important;
-  border-radius: 16px;
-  box-shadow: var(--glass-shadow);
-  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
-  backdrop-filter: blur(var(--glass-blur-strong));
+  @include glass.glass-menu;
 
   .q-item {
-    padding: 10px 14px;
-    color: var(--text-regular);
-    border-radius: 10px;
-    transition: all 0.15s ease;
-
-    &:hover {
-      background: var(--surface-brand-extra-light);
-    }
-
-    &.q-item--active {
-      background: var(--surface-brand-extra-light);
-      color: var(--text-brand);
-      font-weight: 600;
-    }
+    @include glass.glass-menu-item;
   }
 }

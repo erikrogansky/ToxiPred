@@ -146,6 +146,7 @@ watch(fontFamily, (newValue) => {
 
 <style scoped lang="scss">
 @use 'src/css/helpers/_mixins.scss' as *;
+@use 'src/css/helpers/glass' as glass;
 @use 'src/css/colors/primitives' as *;
 
 .tp-accessibility-settings {
@@ -172,28 +173,15 @@ watch(fontFamily, (newValue) => {
 }
 
 .accessibility-chip {
-  background: var(--glass-background-light);
-  border: 1px solid var(--glass-border);
-  color: var(--text-brand-regular);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 7px 12px;
-  border-radius: 20px;
-  transition: all 0.2s ease;
+  @include glass.glass-chip;
+  color: var(--text-brand-regular) !important;
+  font-size: 12px !important;
+  padding: 7px 12px !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   user-select: none;
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
-
-  &:hover {
-    background: var(--glass-background);
-    border-color: var(--stroke-brand-regular);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
 
   &__label {
     overflow: hidden;
@@ -226,15 +214,11 @@ watch(fontFamily, (newValue) => {
 <style lang="scss">
 // Global styles for the menu (not scoped)
 @use 'src/css/helpers/_mixins.scss' as *;
+@use 'src/css/helpers/glass' as glass;
 
 .accessibility-menu {
   .q-menu__content {
-    background: var(--glass-background) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 16px !important;
-    box-shadow: var(--glass-shadow) !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
-    backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    @include glass.glass-menu;
     padding: 0 !important;
   }
 

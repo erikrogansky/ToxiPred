@@ -22,7 +22,7 @@
           :model-value="pendingValues.includes(option.value)"
           :true-value="true"
           :false-value="false"
-          @update:model-value="(checked) => toggleOption(option.value, checked)"
+          @update:model-value="(checked: boolean) => toggleOption(option.value, checked)"
           class="tp-filter-chip__checkbox"
         />
         <tp-button
@@ -88,41 +88,17 @@ const apply = () => {
 </script>
 
 <style scoped lang="scss">
-.tp-filter-chip {
-  background: var(--glass-background-light) !important;
-  border: 1px solid var(--glass-border) !important;
-  border-radius: 20px !important;
-  color: var(--text) !important;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  font-size: 13px !important;
-  padding: 5px 14px !important;
-  height: 32px !important;
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
+@use 'src/css/helpers/glass' as *;
 
-  &:hover {
-    border-color: var(--stroke-brand-regular) !important;
-    background: var(--glass-background) !important;
-    color: var(--text-brand-regular) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
+.tp-filter-chip {
+  @include glass-chip;
 
   &--active {
-    border-color: var(--stroke-brand-regular) !important;
-    background: var(--surface-brand-extra-light) !important;
-    color: var(--text-brand-regular) !important;
-    font-weight: 600;
+    @include glass-chip-active;
   }
 
   &__menu {
-    background: var(--glass-background) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 16px !important;
-    box-shadow: var(--glass-shadow) !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
-    backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    @include glass-menu;
     padding: 8px !important;
   }
 

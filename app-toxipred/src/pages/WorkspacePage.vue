@@ -31,26 +31,26 @@
     </div>
 
     <!-- Empty state -->
-    <div v-if="filteredAndSortedItems.length === 0 && !pendingPredictions.length" class="tp-empty-state">
-      <div class="tp-empty-state__icon">
-        <tp-icon icon-name="document" weight="regular" :size="48" />
-      </div>
-      <h3 class="tp-empty-state__title">No predictions yet</h3>
-      <p class="tp-empty-state__description">Start by creating a new prediction to see your results here.</p>
+    <tp-empty-state
+      v-if="filteredAndSortedItems.length === 0 && !pendingPredictions.length"
+      icon="document"
+      title="No predictions yet"
+      description="Start by creating a new prediction to see your results here."
+    >
       <tp-button
         label="New prediction"
         @click="showNewPredictionDialog = true"
       />
-    </div>
+    </tp-empty-state>
 
     <!-- Filtered empty state -->
-    <div v-else-if="filteredAndSortedItems.length === 0" class="tp-empty-state tp-empty-state--filtered">
-      <div class="tp-empty-state__icon">
-        <tp-icon icon-name="search-normal" weight="regular" :size="40" />
-      </div>
-      <h3 class="tp-empty-state__title">No matching results</h3>
-      <p class="tp-empty-state__description">Try adjusting your filters or search query.</p>
-    </div>
+    <tp-empty-state
+      v-else-if="filteredAndSortedItems.length === 0"
+      icon="search-normal"
+      title="No matching results"
+      description="Try adjusting your filters or search query."
+      compact
+    />
 
     <q-list v-else class="tp-prediction-list column items-center justify-between full-width">
       <tp-prediction-row 
@@ -88,6 +88,7 @@ import TpPage from 'components/TpPage.vue';
 import TpButton from 'components/TpButton.vue';
 import TpPredictionRow from 'components/TpPredictionRow.vue';
 import TpIcon from 'src/components/TpIcon.vue';
+import TpEmptyState from 'src/components/TpEmptyState.vue';
 import TpNewPredictionDialog from 'src/components/TpNewPredictionDialog.vue';
 import { TpAdvancedFilter } from 'src/components/filter';
 import type { FilterConfig, SortOption, FilterOption, FilterState } from 'src/components/filter';
@@ -405,80 +406,33 @@ function deselectAll() {
 
 <style scoped lang="scss">
 @use 'src/css/helpers/mixins.scss' as *;
+@use 'src/css/helpers/glass' as glass;
 
 .tp-pending-panel {
-  background: var(--glass-background-light);
+  @include glass.glass(var(--glass-background-light), var(--glass-blur), 14px);
   color: var(--text-warning, #EF6C00);
   padding: 10px 16px;
-  border-radius: 14px;
   font-weight: 500;
   font-size: 14px;
   gap: 10px;
   margin-bottom: 16px;
-  border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
 }
 
 .tp-prediction-list {
   gap: 8px;
 }
 
-.tp-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 64px 32px;
-  width: 100%;
-  background: var(--glass-background-light);
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-
-  &__icon {
-    color: var(--text-light);
-    margin-bottom: 4px;
-  }
-
-  &__title {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-    margin: 0;
-  }
-
-  &__description {
-    font-size: 14px;
-    color: var(--text-medium);
-    margin: 0 0 8px;
-    text-align: center;
-    max-width: 340px;
-  }
-
-  &--filtered {
-    padding: 48px 32px;
-  }
-}
-
 .tp-selected-popup {
+  @include glass.glass-elevated(20px);
   position: fixed;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 6001; // Above Quasar footer (2000) and dialog (6000)
+  z-index: 6001;
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 12px 24px;
-  background: var(--glass-background);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  box-shadow: var(--glass-shadow-elevated);
-  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
-  backdrop-filter: blur(var(--glass-blur-strong));
 
   &__label {
     font-weight: 700;

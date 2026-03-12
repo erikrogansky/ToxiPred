@@ -59,15 +59,12 @@ function onRowClick () {
 
 <style scoped lang="scss">
 @use 'src/css/helpers/mixins.scss' as *;
+@use 'src/css/helpers/glass' as glass;
 
 .tp-prediction-row {
-  border-radius: 14px;
-  background: var(--glass-background-light);
+  @include glass.glass(var(--glass-background-light), var(--glass-blur), 14px);
   transition: all 0.2s ease;
   padding: 4px 8px;
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
 
   &:hover {
     background: var(--glass-background);

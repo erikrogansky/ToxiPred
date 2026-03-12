@@ -72,39 +72,18 @@ const currentLabel = computed(() => {
 </script>
 
 <style scoped lang="scss">
+@use 'src/css/helpers/glass' as *;
+
 .tp-sort-control {
   display: flex;
   align-items: center;
 
   &__chip {
-    background: var(--glass-background-light) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 20px !important;
-    color: var(--text) !important;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 500;
-    font-size: 13px !important;
-    padding: 5px 14px !important;
-    height: 32px !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    backdrop-filter: blur(var(--glass-blur));
-
-    &:hover {
-      border-color: var(--stroke-brand-regular) !important;
-      background: var(--glass-background) !important;
-      color: var(--text-brand-regular) !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
+    @include glass-chip;
   }
 
   &__menu {
-    background: var(--glass-background) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 16px !important;
-    box-shadow: var(--glass-shadow) !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
-    backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    @include glass-menu;
   }
 
   &__content {
@@ -125,30 +104,12 @@ const currentLabel = computed(() => {
   }
 
   &__direction {
-    background: var(--glass-background-light) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 20px !important;
-    color: var(--text) !important;
-    cursor: pointer;
+    @include glass-chip;
     padding: 5px 8px !important;
     min-width: auto;
-    height: 32px !important;
-    transition: all 0.2s ease;
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    backdrop-filter: blur(var(--glass-blur));
-
-    &:hover {
-      border-color: var(--stroke-brand-regular) !important;
-      background: var(--glass-background) !important;
-      color: var(--text-brand-regular) !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
 
     &--active {
-      border-color: var(--stroke-brand-regular) !important;
-      background: var(--surface-brand-extra-light) !important;
-      color: var(--text-brand-regular) !important;
-      font-weight: 600;
+      @include glass-chip-active;
     }
   }
 }

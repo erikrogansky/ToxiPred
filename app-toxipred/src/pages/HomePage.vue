@@ -133,7 +133,7 @@ const predictionTargetLabels: Record<PredictionTarget, string> = {
 
 // Create model options with formatted labels (Test Type + Prediction Target)
 const modelOptions = computed(() => {
-  return modelsStore.getModels.map(modelName => {
+  return modelsStore.getModels.map((modelName: string) => {
     const detail = modelsStore.getModelDetail(modelName)
     const parts: string[] = []
     

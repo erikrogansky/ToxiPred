@@ -60,6 +60,7 @@ const currentLabel = computed(() => {
 
 <style scoped lang="scss">
 @use 'src/css/helpers/mixins.scss' as *;
+@use 'src/css/helpers/glass' as glass;
 
 .tp-input-with-select-wrapper {
   max-width: 700px;
@@ -67,17 +68,12 @@ const currentLabel = computed(() => {
 }
 
 .tp-input-with-select {
+  @include glass.glass(var(--glass-background-light), var(--glass-blur), 28px);
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 1px solid var(--glass-border);
-  border-radius: 28px;
   padding: 10px 16px;
   width: 100%;
-  background: var(--glass-background-light);
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
-  box-shadow: var(--glass-shadow);
   transition: all 0.25s ease;
 
   &:hover {
@@ -139,12 +135,7 @@ const currentLabel = computed(() => {
   }
 
   &__menu {
-    background: var(--glass-background) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 16px !important;
-    box-shadow: var(--glass-shadow) !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
-    backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    @include glass.glass-menu;
   }
 
   &__menu-content {

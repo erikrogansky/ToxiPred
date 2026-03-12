@@ -31,7 +31,7 @@
           <h5>Accessibility</h5>
           <tp-accessibility-settings />
         </div>
-        <img class="tp-recovery-plan-logo" src="src/assets/recovery-plan-logo.png" alt="">
+        <img class="tp-recovery-plan-logo" :src="recoveryPlanLogo" alt="Recovery Plan Logo">
       </div>
       <div class="tp-footer__copyright paragraph-xsmall black row justify-center">
         Copyright © {{ year }} ToxiPred. All rights reserved.
@@ -44,6 +44,7 @@
 import { onBeforeMount } from 'vue';
 import TpLink from './TpLink.vue';
 import TpAccessibilitySettings from './TpAccessibilitySettings.vue';
+import recoveryPlanLogo from 'src/assets/recovery-plan-logo.png';
 
 let year: number;
 

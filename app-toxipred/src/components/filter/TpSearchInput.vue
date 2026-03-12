@@ -61,18 +61,16 @@ const currentFieldLabel = computed(() => {
 </script>
 
 <style scoped lang="scss">
+@use 'src/css/helpers/glass' as *;
+
 .tp-search-input {
+  @include glass(var(--glass-background-light), var(--glass-blur), 20px);
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--glass-background-light);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
   padding: 6px 14px;
   min-width: 300px;
   transition: all 0.2s ease;
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  backdrop-filter: blur(var(--glass-blur));
 
   &:hover {
     border-color: var(--stroke-brand-regular);
@@ -126,12 +124,7 @@ const currentFieldLabel = computed(() => {
   }
 
   &__menu {
-    background: var(--glass-background) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 16px !important;
-    box-shadow: var(--glass-shadow) !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
-    backdrop-filter: blur(var(--glass-blur-strong)) !important;
+    @include glass-menu;
   }
 
   &__menu-content {

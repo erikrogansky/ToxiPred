@@ -1,0 +1,177 @@
+// ──────────────────────────────────────────────
+// Glass-morphism mixins – single source of truth
+// ──────────────────────────────────────────────
+
+/// Base glass surface (cards, rows, panels)
+/// @param {String} $bg        - background token (default: --glass-background-light)
+/// @param {String} $blur      - blur token   (default: --glass-blur)
+/// @param {Length} $radius    - border-radius (default: 14px)
+@mixin glass(
+  $bg: var(--glass-background-light),
+  $blur: var(--glass-blur),
+  $radius: 14px
+) {
+  background: $bg;
+  border: 1px solid var(--glass-border);
+  border-radius: $radius;
+  -webkit-backdrop-filter: blur($blur);
+  backdrop-filter: blur($blur);
+  box-shadow: var(--glass-shadow);
+}
+
+/// Elevated glass surface (popups, floating bars)
+@mixin glass-elevated($radius: 20px) {
+  @include glass(var(--glass-background), var(--glass-blur-strong), $radius);
+  box-shadow: var(--glass-shadow-elevated);
+}
+
+/// Glass input field
+@mixin glass-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  background: var(--glass-background);
+  backdrop-filter: blur(8px);
+  color: var(--text);
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: var(--text-medium);
+  }
+
+  &:focus {
+    border-color: var(--stroke-brand-regular);
+    box-shadow: 0 0 0 3px rgba(var(--color-brand-rgb), 0.1);
+  }
+
+  &:read-only {
+    cursor: default;
+    background: var(--surface-gray-light);
+  }
+}
+
+/// Glass menu/dropdown (use on the q-menu element)
+@mixin glass-menu {
+  background: var(--glass-background) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--glass-shadow) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) !important;
+  backdrop-filter: blur(var(--glass-blur-strong)) !important;
+}
+
+/// Standard menu item styling
+@mixin glass-menu-item {
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--surface-brand-extra-light);
+  }
+
+  &.q-item--active {
+    background: var(--surface-brand-extra-light);
+    color: var(--text-brand);
+    font-weight: 600;
+  }
+}
+
+/// Glass chip (filter chips, sort chips)
+/// @param {Length} $height - chip height (default: 32px)
+@mixin glass-chip($height: 32px) {
+  background: var(--glass-background-light) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 20px !important;
+  color: var(--text) !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 13px !important;
+  padding: 5px 14px !important;
+  height: $height !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+
+  &:hover {
+    border-color: var(--stroke-brand-regular) !important;
+    background: var(--glass-background) !important;
+    color: var(--text-brand-regular) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+/// Active state for glass chips
+@mixin glass-chip-active {
+  border-color: var(--stroke-brand-regular) !important;
+  background: var(--surface-brand-extra-light) !important;
+  color: var(--text-brand-regular) !important;
+  font-weight: 600;
+}
+
+/// Password input wrapper (input + toggle button)
+@mixin glass-password-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding-right: 8px;
+  background: var(--glass-background);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--stroke-brand-regular);
+    box-shadow: 0 0 0 3px rgba(var(--color-brand-rgb), 0.1);
+  }
+
+  // Nested input should be unstyled
+  input {
+    border: none;
+    flex: 1;
+    background: transparent;
+    backdrop-filter: none;
+    outline: none;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text);
+
+    &::placeholder {
+      color: var(--text-medium);
+    }
+  }
+}
+
+/// Info / notice glass box (expiry notices, info panels)
+@mixin glass-info-box($radius: 12px) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--glass-background);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-radius: $radius;
+  font-size: 13px;
+  color: var(--text-medium);
+}
+
+/// Dialog card container
+@mixin glass-dialog($min-width: 480px, $max-width: 600px) {
+  min-width: $min-width;
+  max-width: $max-width;
+  border-radius: 20px;
+  background: var(--glass-background);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+
+  @media (max-width: #{$min-width + 20px}) {
+    min-width: unset;
+    width: 95vw;
+  }
+}
