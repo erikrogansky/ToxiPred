@@ -33,6 +33,38 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/privacy-policy',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PrivacyPolicyPage.vue'), name: 'privacy-policy' },
+    ],
+  },
+
+  {
+    path: '/terms-of-service',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/TermsOfServicePage.vue'), name: 'terms-of-service' },
+    ],
+  },
+
+  {
+    path: '/cookie-policy',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/CookiePolicyPage.vue'), name: 'cookie-policy' },
+    ],
+  },
+
+  {
+    path: '/security',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/SecurityPage.vue'), name: 'security' },
+    ],
+  },
+
+  {
     path: '/:catchAll(.*)*',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/ErrorNotFound.vue') }],

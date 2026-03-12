@@ -81,6 +81,11 @@ const navOpen = ref(false);
     justify-content: center;
     color: var(--text);
 
+    @include down(lg) {
+      gap: 20px;
+      font-size: 14px;
+    }
+
     @include down(md) {
       display: none;
     }
@@ -109,6 +114,10 @@ const navOpen = ref(false);
       @include down(md) {
         display: flex;
       }
+    }
+
+    @include down(sm) {
+      gap: 8px;
     }
   }
 

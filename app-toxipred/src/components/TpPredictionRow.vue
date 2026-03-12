@@ -79,6 +79,10 @@ function onRowClick () {
   &__prediction-type {
     max-width: 240px;
     color: var(--text-medium);
+
+    @include down(md) {
+      display: none;
+    }
   }
 
   &__result {
@@ -87,6 +91,10 @@ function onRowClick () {
 
   &__time {
     max-width: 180px;
+
+    @include down(sm) {
+      display: none;
+    }
   }
 
   &__arrow-icon {

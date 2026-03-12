@@ -65,8 +65,8 @@ const columns = [
   {
     title: 'Contact',
     links: [
-      { label: 'email@example.com' },
-      { label: 'email@example.com' },
+      { label: 'roganskyerik@gmail.com' },
+      { label: 'marta.prnova@stuba.sk' },
     ]
   },
   {
@@ -84,7 +84,8 @@ const columns = [
 
 
 <style scoped lang="scss">
-@use 'src/css/helpers/mixins.scss' as *;
+@use 'src/css/helpers/mixins' as *;
+
 .tp-footer {
   background: transparent;
 
@@ -108,6 +109,27 @@ const columns = [
     grid-template-columns: 1.2fr repeat(3, 1fr) auto auto;
     gap: 24px;
     padding: 40px 48px;
+
+    @include down(lg) {
+      grid-template-columns: repeat(3, 1fr) auto;
+      padding: 32px 32px;
+
+      > a:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @include down(md) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px 32px;
+      padding: 32px 24px;
+    }
+
+    @include down(sm) {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 24px 16px;
+    }
   }
 
   &__column {
@@ -131,6 +153,11 @@ const columns = [
     -webkit-backdrop-filter: blur(var(--glass-blur));
     backdrop-filter: blur(var(--glass-blur));
     border-top: 1px solid var(--glass-border);
+    text-align: center;
+
+    @include down(sm) {
+      padding: 12px 16px;
+    }
   }
 }
 
@@ -140,6 +167,10 @@ const columns = [
 
   html[data-theme="dark"] & {
     filter: brightness(0) invert(1);
+  }
+
+  @include down(md) {
+    width: 120px;
   }
 }
 </style>

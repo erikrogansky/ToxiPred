@@ -292,6 +292,8 @@ const getSearchInLabel = (): string => {
 </script>
 
 <style scoped lang="scss">
+@use 'src/css/helpers/mixins' as *;
+
 .tp-advanced-filter {
   display: flex;
   justify-content: space-between;
@@ -299,9 +301,15 @@ const getSearchInLabel = (): string => {
   width: 100%;
   gap: 24px;
 
+  @include down(md) {
+    flex-direction: column;
+    gap: 16px;
+  }
+
   &__left {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
   &__row {
@@ -376,6 +384,10 @@ const getSearchInLabel = (): string => {
 
   &__right {
     flex-shrink: 0;
+
+    @include down(md) {
+      width: 100%;
+    }
   }
 
   &__search-wrapper {
@@ -388,6 +400,11 @@ const getSearchInLabel = (): string => {
     padding: 6px 12px;
     min-width: 280px;
     transition: border-color 0.2s ease;
+
+    @include down(md) {
+      min-width: 0;
+      width: 100%;
+    }
 
     &:focus-within {
       border-color: var(--stroke-brand-regular);

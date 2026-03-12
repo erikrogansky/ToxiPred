@@ -1,6 +1,6 @@
 <template>
   <tp-page class="tp-workspace-page">
-    <div class="row items-center justify-between full-width">
+    <div class="tp-workspace-heading row items-center justify-between full-width">
       <h1 class="tp-main-heading">My Workspace</h1>
       <tp-button
         label="New prediction"
@@ -408,6 +408,14 @@ function deselectAll() {
 @use 'src/css/helpers/mixins.scss' as *;
 @use 'src/css/helpers/glass' as glass;
 
+.tp-workspace-heading {
+  @include down(sm) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
 .tp-pending-panel {
   @include glass.glass(var(--glass-background-light), var(--glass-blur), 14px);
   color: var(--text-warning, #EF6C00);
@@ -434,6 +442,16 @@ function deselectAll() {
   gap: 16px;
   padding: 12px 24px;
 
+  @include down(md) {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    transform: none;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
   &__label {
     font-weight: 700;
     font-size: 14px;
@@ -444,6 +462,10 @@ function deselectAll() {
   &__actions {
     display: flex;
     gap: 8px;
+
+    @include down(sm) {
+      flex-wrap: wrap;
+    }
   }
 }
 
@@ -457,5 +479,9 @@ function deselectAll() {
 .popup-slide-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(16px);
+
+  @include down(md) {
+    transform: translateY(16px);
+  }
 }
 </style>
