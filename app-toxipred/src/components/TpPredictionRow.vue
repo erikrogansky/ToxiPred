@@ -13,7 +13,7 @@
         />
       </q-item-section>
 
-      <q-item-section>
+      <q-item-section class="tp-prediction-row__name">
         <q-item-label>{{ name }}</q-item-label>
       </q-item-section>
 
@@ -74,6 +74,16 @@ function onRowClick () {
 
   :deep(.q-focus-helper) {
     display: none;
+  }
+
+  &__name {
+    overflow: hidden;
+
+    :deep(.q-item__label) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   &__prediction-type {

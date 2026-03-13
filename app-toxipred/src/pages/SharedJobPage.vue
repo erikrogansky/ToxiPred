@@ -493,6 +493,14 @@ const visualizationIndex = ref(0);
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
+    overflow: hidden;
+
+    .tp-main-heading {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   &__right {
