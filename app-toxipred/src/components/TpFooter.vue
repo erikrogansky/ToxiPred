@@ -58,6 +58,7 @@ const columns = [
     links: [
       { label: 'Home', href: '/' },
       { label: 'Workspace', href: 'workspace' },
+      { label: 'Draw', href: 'draw' },
       { label: 'Demos', href: 'demos' },
       { label: 'Documentation', href: 'documentation' },
     ]
@@ -106,7 +107,7 @@ const columns = [
     backdrop-filter: blur(var(--glass-blur));
     border-top: 1px solid var(--glass-border);
     display: grid;
-    grid-template-columns: 1.2fr repeat(3, 1fr) auto auto;
+    grid-template-columns: 1.1fr repeat(3, 1fr) auto 1.1fr;
     gap: 24px;
     padding: 40px 48px;
 
@@ -120,15 +121,23 @@ const columns = [
     }
 
     @include down(md) {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 0.9fr 1.1fr;
       gap: 24px 32px;
       padding: 32px 24px;
+
+      > a:first-child {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      > .tp-recovery-plan-logo {
+        grid-column: 2;
+        grid-row: 1;
+      }
     }
 
     @include down(sm) {
-      grid-template-columns: 1fr;
-      gap: 24px;
-      padding: 24px 16px;
+      gap: 16px 24px;
     }
   }
 
@@ -164,13 +173,18 @@ const columns = [
 .tp-recovery-plan-logo {
   width: 151.18px;
   height: auto;
+  justify-self: flex-end;
 
   html[data-theme="dark"] & {
     filter: brightness(0) invert(1);
   }
 
-  @include down(md) {
-    width: 120px;
+  @include down(lg) {
+    justify-self: flex-start;
+  }
+
+  @include down(sm) {
+    width: 130px;
   }
 }
 </style>
