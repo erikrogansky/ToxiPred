@@ -76,6 +76,16 @@ function onRowClick () {
     display: none;
   }
 
+  :deep(.q-checkbox__bg) {
+    border-color: var(--stroke-light);
+  }
+
+  :deep(.q-checkbox__inner--truthy .q-checkbox__bg),
+  :deep(.q-checkbox__inner--indet .q-checkbox__bg) {
+    background: var(--stroke-brand-regular) !important;
+    border-color: var(--stroke-brand-regular) !important;
+  }
+
   &__name {
     overflow: hidden;
 
