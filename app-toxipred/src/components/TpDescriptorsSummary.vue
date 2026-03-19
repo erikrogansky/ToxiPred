@@ -315,23 +315,23 @@ function formatValue(value: number | null, name: string): string {
   justify-content: center;
 
   &--negative {
-    background-color: #3FDBA5;
-    color: #1a1a1a;
+    background-color: var(--color-success-light);
+    color: var(--color-success);
   }
 
   &--positive {
-    background-color: #ef4444;
-    color: white;
+    background-color: var(--color-error-light);
+    color: var(--color-error);
   }
 
   &--confidence {
-    background-color: #F5C842;
-    color: #1a1a1a;
+    background-color: var(--color-warning-light);
+    color: var(--color-warning);
   }
 }
 
 .tp-descriptors-table {
-  background: color-with-opacity(var(--surface-brand-extra-light), $opacity-high);
+  background: color-with-opacity(var(--surface-white), $opacity-medium);
   border-radius: 12px;
   padding: 20px;
 }

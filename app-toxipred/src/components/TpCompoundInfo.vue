@@ -1,12 +1,12 @@
 <template>
   <div class="tp-compound-info">
-    <div class="tp-status-banner row items-center justify-center">
+    <div class="tp-status-banner row items-center justify-center" :class="trivialName ? 'tp-status-banner--match' : 'tp-status-banner--unknown'">
       <tp-icon 
-        iconName="tick-circle" 
+        :iconName="trivialName ? 'tick-circle' : 'close-circle'" 
         :size="22"
         weight="regular"
       />
-      <span class="paragraph black">{{ trivialName ? 'Matches known compound' : 'Unknown compound' }}</span>
+      <span>{{ trivialName ? 'Matches known compound' : 'Unknown compound' }}</span>
     </div>
 
     <div class="tp-info-row">
@@ -137,10 +137,19 @@ const molecularWeight = computed(() => {
   align-items: center;
   gap: 10px;
   padding: 10px 20px;
-  background-color: var(--surface-brand-medium);
   font-weight: 500;
   font-size: 15px;
   border-radius: 6px;
+
+  &--match {
+    background-color: var(--color-success-light);
+    color: var(--color-success);
+  }
+
+  &--unknown {
+    background-color: var(--color-error-light);
+    color: var(--color-error);
+  }
 }
 
 .tp-info-row {
@@ -148,7 +157,7 @@ const molecularWeight = computed(() => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid var(--stroke-light);
   gap: 20px;
   
   &:last-child {
@@ -158,13 +167,13 @@ const molecularWeight = computed(() => {
 
 .tp-info-label {
   font-weight: 600;
-  color: #424242;
+  color: var(--text-medium);
   font-size: 14px;
   flex-shrink: 0;
 }
 
 .tp-info-value {
-  color: #212121;
+  color: var(--text);
   text-align: right;
   word-break: break-word;
   font-size: 14px;

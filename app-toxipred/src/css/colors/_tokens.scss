@@ -61,14 +61,14 @@
   --accent-yellow-extra-light: #{$Yellow-100};
 
   // Semantic colors
-  --color-success: #{$Green-600};
-  --color-success-light: #{$Green-100};
-  --color-error: #{$Red-500};
-  --color-error-light: #{$Red-100};
-  --color-warning: #{$Yellow-500};
-  --color-warning-light: #{$Yellow-100};
-  --color-info: #{$Blue-500};
-  --color-info-light: #{$Blue-100};
+  --color-success: #{$Green-800};
+  --color-success-light: #{$Green-200};
+  --color-error: #{$Red-600};
+  --color-error-light: #{$Red-200};
+  --color-warning: #{$Yellow-700};
+  --color-warning-light: #{$Yellow-200};
+  --color-info: #{$Blue-600};
+  --color-info-light: #{$Blue-200};
 
   // Opacity tokens
   --opacity-full: #{$opacity-full};
@@ -154,7 +154,7 @@
   --color-error: #{$Red-400};
   --color-error-light: #{$Red-900};
   --color-warning: #{$Yellow-400};
-  --color-warning-light: #{$Yellow-500};
+  --color-warning-light: #{$Yellow-900};
   --color-info: #{$Blue-400};
   --color-info-light: #{$Blue-900};
 
@@ -230,14 +230,14 @@
     --accent-yellow-extra-light: #{$Yellow-100};
 
     // Semantic colors
-    --color-success: #{$Green-700};
-    --color-success-light: #{$Green-100};
+    --color-success: #{$Green-800};
+    --color-success-light: #{$Green-300};
     --color-error: #{$Red-700};
-    --color-error-light: #{$Red-100};
-    --color-warning: #{$Yellow-600};
-    --color-warning-light: #{$Yellow-100};
+    --color-error-light: #{$Red-300};
+    --color-warning: #{$Yellow-700};
+    --color-warning-light: #{$Yellow-300};
     --color-info: #{$Blue-700};
-    --color-info-light: #{$Blue-100};
+    --color-info-light: #{$Blue-300};
 
     // Opacity tokens
     --opacity-full: #{$opacity-full};
@@ -264,9 +264,13 @@
 
     --surface-regular: #{$White};
 
+    --surface-brand-extra-light: #{$Green-950};
+    --surface-brand-light: #{$Green-900};
+    --surface-brand-medium: #{$Green-700};
     --surface-brand-regular: #{$Green-400};
     --surface-brand-medium-dark: #{$Green-500};
     --surface-brand-dark: #{$Green-600};
+    --surface-brand-extra-dark: #{$Green-700};
 
     --surface-white-fixed: #{$White};
     --surface-dark-fixed: #{$Grey-600};
@@ -315,13 +319,13 @@
 
     // Semantic colors
     --color-success: #{$Green-400};
-    --color-success-light: #{$Green-900};
+    --color-success-light: #{$Green-950};
     --color-error: #{$Red-300};
-    --color-error-light: #{$Red-900};
+    --color-error-light: #{$Red-950};
     --color-warning: #{$Yellow-300};
-    --color-warning-light: #{$Yellow-500};
+    --color-warning-light: #{$Yellow-950};
     --color-info: #{$Blue-300};
-    --color-info-light: #{$Blue-900};
+    --color-info-light: #{$Blue-950};
 
     // Glass effect tokens (high contrast dark - less transparency)
     --glass-background: rgba(0, 0, 0, 0.95);

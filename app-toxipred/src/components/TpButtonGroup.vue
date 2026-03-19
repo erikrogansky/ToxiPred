@@ -101,7 +101,7 @@ const indicatorStyle = computed(() => {
     }
 
     &:hover:not(:disabled) {
-      color: var(--text-primary, #000);
+      color: var(--text);
     }
   }
 }

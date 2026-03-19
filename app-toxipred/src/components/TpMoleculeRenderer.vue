@@ -93,9 +93,13 @@ const render3D = async () => {
     const molblock = mol.get_molblock();
     mol.delete();
 
-    // Clear previous viewer if exists
     if (viewer3d) {
-      viewer3d.clear();
+      try {
+        viewer3d.clear();
+      } catch {
+        // stale context from detached canvas (Safari)
+      }
+      viewer3d = null;
     }
 
     // Create 3Dmol viewer
@@ -125,6 +129,17 @@ const renderMolecule = async () => {
     await render3D();
   }
 };
+
+watch(() => props.mode, (newMode) => {
+  if (newMode !== '3d' && viewer3d) {
+    try {
+      viewer3d.clear();
+    } catch {
+      // ignore
+    }
+    viewer3d = null;
+  }
+});
 
 watch(() => [props.smiles, props.mode], renderMolecule, { immediate: false });
 
