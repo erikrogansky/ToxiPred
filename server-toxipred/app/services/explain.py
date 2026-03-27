@@ -167,3 +167,88 @@ def explain_feature_importance(
         scores = (scores - scores.mean()) / scores.std()
 
     return scores, base
+
+
+# ── SHAP-based explainers ────────────────────────────────────────────
+
+
+def _is_xgboost(model) -> bool:
+    """Check if the model is an XGBoost model (sklearn API or raw Booster)."""
+    try:
+        import xgboost
+        return isinstance(model, (xgboost.XGBModel, xgboost.Booster))
+    except ImportError:
+        return False
+
+
+def _xgboost_shap(model, x: np.ndarray) -> Tuple[np.ndarray, float]:
+    """Use XGBoost's built-in TreeSHAP (pred_contribs).
+
+    Returns SHAP values in log-odds (margin) space.
+    The last column of contribs is the bias term (base_score).
+    """
+    import xgboost
+
+    booster = model.get_booster() if hasattr(model, "get_booster") else model
+    dm = xgboost.DMatrix(x, feature_names=booster.feature_names)
+    contribs = booster.predict(dm, pred_contribs=True)  # shape (1, n_features+1)
+    sv = contribs[0, :-1]
+    base_value = float(contribs[0, -1])
+    return sv.astype(float), base_value
+
+
+def explain_feature_importance_shap(
+    model,
+    x: np.ndarray,
+    explainer_kind: str = "tree",
+    normalize: bool = False,
+) -> Tuple[np.ndarray, float]:
+    """Compute per-feature SHAP values.
+
+    *explainer_kind* selects the SHAP explainer:
+        "tree"   → XGBoost built-in or shap.TreeExplainer
+        "linear" → shap.LinearExplainer
+        "kernel" → shap.KernelExplainer (model-agnostic, slow)
+    """
+    x = np.asarray(x, dtype=float).reshape(1, -1)
+
+    if explainer_kind == "tree" and _is_xgboost(model):
+        sv, base_value = _xgboost_shap(model, x)
+    elif explainer_kind == "tree":
+        import shap
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(x)
+        if isinstance(shap_values, list):
+            sv = np.asarray(shap_values[1]).reshape(-1)
+        elif shap_values.ndim == 3:
+            sv = shap_values[0, :, 1]
+        elif shap_values.ndim == 2:
+            sv = shap_values[0]
+        else:
+            sv = shap_values.reshape(-1)
+        base_value = float(
+            explainer.expected_value[1]
+            if isinstance(explainer.expected_value, (list, np.ndarray))
+            and len(explainer.expected_value) > 1
+            else explainer.expected_value
+        )
+    elif explainer_kind == "linear":
+        import shap
+        explainer = shap.LinearExplainer(model, x)
+        shap_values = explainer.shap_values(x)
+        sv = np.asarray(shap_values).reshape(-1)
+        base_value = float(explainer.expected_value)
+    elif explainer_kind == "kernel":
+        import shap
+        scorer = _score_fn(model)
+        explainer = shap.KernelExplainer(scorer, x)
+        shap_values = explainer.shap_values(x)
+        sv = np.asarray(shap_values).reshape(-1)
+        base_value = float(explainer.expected_value)
+    else:
+        raise ValueError(f"Unknown explainer kind: {explainer_kind}")
+
+    if normalize and sv.std() > 0:
+        sv = (sv - sv.mean()) / sv.std()
+
+    return sv.astype(float), base_value

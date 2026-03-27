@@ -12,7 +12,11 @@ from app.models.models import MODELS
 from app.services.model_loader import get_model, resolve_feature_names
 from app.domain.descriptors import descriptor_map
 from app.services.predict import predict_vectorized
-from app.services.explain import explain_atom_importance, explain_feature_importance
+from app.services.explain import (
+    explain_atom_importance,
+    explain_feature_importance,
+    explain_feature_importance_shap,
+)
 
 PROGRESS_DB = int(os.getenv("PROGRESS_DB", "2"))
 r = redis.Redis(host="toxipred-redis", port=6379, db=PROGRESS_DB)
@@ -78,15 +82,25 @@ def predict_task(
 
     feature_scores = None
     try:
-        feature_scores_np, base_pred = explain_feature_importance(
-            model,
-            X,
-            baseline=None,
-            normalize=False,
-        )
+        if spec.explainer in ("tree", "linear", "kernel"):
+            feature_scores_np, base_pred = explain_feature_importance_shap(
+                model,
+                X,
+                explainer_kind=spec.explainer,
+                normalize=False,
+            )
+        else:
+            feature_scores_np, base_pred = explain_feature_importance(
+                model,
+                X,
+                baseline=None,
+                normalize=False,
+            )
         feature_scores = feature_scores_np.tolist()
     except Exception as e:
+        import traceback
         print("Error computing feature_scores:", e)
+        traceback.print_exc()
         feature_scores = None
 
     try:
