@@ -106,14 +106,8 @@ def predict_task(
         feature_scores = None
 
     try:
-        has_fp = any(n.startswith(("MACCS_", "AtomPair_")) for n in names)
-        if spec.explainer == "tree" and has_fp and feature_scores_np is not None:
-            atom_scores_np = explain_atom_importance_shap_fp(
-                m, names, feature_scores_np
-            )
-        else:
-            descriptor_fn = make_descriptor_fn(names)
-            atom_scores_np, base_pred = explain_atom_importance(model, m, descriptor_fn)
+        descriptor_fn = make_descriptor_fn(names)
+        atom_scores_np, base_pred = explain_atom_importance(model, m, descriptor_fn)
         atom_scores = atom_scores_np.tolist()
     except Exception as e:
         print("Error computing atom_scores:", e)
