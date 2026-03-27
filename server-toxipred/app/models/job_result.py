@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from sqlalchemy import Column, String, DateTime, JSON, ARRAY
+from sqlalchemy import Column, String, DateTime, JSON, ARRAY, Boolean
 from app.db import Base
 
 class JobResult(Base):
@@ -17,6 +17,10 @@ class JobResult(Base):
 
   created_at = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
   expires_at = Column(DateTime, nullable=False, index=True)
+
+  is_demo = Column(Boolean, nullable=False, default=False, server_default="false")
+  demo_title = Column(String, nullable=True)
+  demo_description = Column(String, nullable=True)
 
   @staticmethod
   def from_payload(job_id: str, payload: dict, ttl_days: int = 14) -> "JobResult":

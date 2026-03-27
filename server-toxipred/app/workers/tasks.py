@@ -147,7 +147,10 @@ def prune_old_results():
     db = SessionLocal()
     try:
         now = datetime.utcnow()
-        db.query(JobResult).filter(JobResult.expires_at < now).delete()
+        db.query(JobResult).filter(
+            JobResult.expires_at < now,
+            JobResult.is_demo == False,
+        ).delete()
         db.commit()
     finally:
         db.close()

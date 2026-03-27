@@ -148,7 +148,7 @@ def job_result(job_id: str):
             return ar.result
 
         now = datetime.utcnow()
-        if obj.expires_at < now:
+        if obj.expires_at < now and not obj.is_demo:
             raise HTTPException(status_code=404, detail="Result expired")
 
         return obj.payload
@@ -173,13 +173,16 @@ def validate_jobs(body: JobsValidateRequest):
         found_ids = {row.id for row in rows}
         invalid_ids = set(job_ids) - found_ids
 
-        expired_ids = {row.id for row in rows if row.expires_at < now}
+        expired_ids = {row.id for row in rows if row.expires_at < now and not row.is_demo}
         invalid_ids |= expired_ids
 
         if expired_ids:
             (
                 db.query(JobResult)
-                .filter(JobResult.id.in_(list(expired_ids)))
+                .filter(
+                    JobResult.id.in_(list(expired_ids)),
+                    JobResult.is_demo == False,
+                )
                 .delete(synchronize_session=False)
             )
             db.commit()
@@ -198,6 +201,11 @@ def delete_job(job_id: str):
     """
     db = SessionLocal()
     try:
+        # Prevent deletion of demo jobs
+        job = db.get(JobResult, job_id)
+        if job and job.is_demo:
+            raise HTTPException(status_code=403, detail="Demo jobs cannot be deleted")
+
         # Find all shared links pointing to this job
         shared_links = db.query(SharedJob).filter(SharedJob.source_job_id == job_id).all()
         
