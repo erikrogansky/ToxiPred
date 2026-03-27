@@ -116,7 +116,7 @@ function predictionClass(demo: Demo): string {
 }
 
 function openDemo(jobId: string) {
-  void router.push({ name: 'job-overview', params: { job_id: jobId } });
+  void router.push({ name: 'job-overview', params: { job_id: jobId }, query: { from: 'demos' } });
 }
 
 async function fetchDemos() {

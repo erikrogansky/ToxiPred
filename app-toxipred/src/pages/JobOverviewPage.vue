@@ -7,7 +7,7 @@
           icon-name="arrow-left-02"
           weight="regular"
           :size="28"
-          @click="$router.push('/workspace')"
+          @click="goBack"
         />
         <h1 class="tp-main-heading">{{ displayName }}</h1>
       </div>
@@ -127,13 +127,19 @@ import TpCompoundInfo from 'components/TpCompoundInfo.vue';
 import TpShareDialog from 'components/TpShareDialog.vue';
 import TpEmptyState from 'components/TpEmptyState.vue';
 import { api } from 'src/boot/axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
 import { useModelsStore } from 'src/stores/models-store';
 import { jsPDF } from 'jspdf';
 
+const router = useRouter();
 const route = useRoute();
 const jobId = route.params.job_id?.toString() || '';
+const cameFromDemos = route.query.from === 'demos';
+
+function goBack() {
+  router.push(cameFromDemos ? '/demos' : '/workspace');
+}
 const modelsStore = useModelsStore();
 
 // Dialog state
@@ -1191,6 +1197,7 @@ async function downloadPdf() {
     align-items: center;
     gap: 16px;
     min-width: 0;
+    flex: 1;
     overflow: hidden;
 
     .tp-main-heading {
@@ -1203,7 +1210,8 @@ async function downloadPdf() {
   &__right {
     display: flex;
     gap: 12px;
-    flex-wrap: wrap;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
   }
 }
 
