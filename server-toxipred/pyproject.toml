@@ -16,6 +16,7 @@ dependencies = [
 
   # --- Chemistry ---
   "rdkit-pypi==2023.9.6",   # wheels built for NumPy 1.x
+  "mordredcommunity>=2.0.0",   # autocorrelation & chi descriptors
   "shap==0.45.1",
   "numba==0.59.*",        # compatible with NumPy 1.26
   "scipy>=1.11,<1.12",    # Py3.11 + NumPy 1.26 friendly

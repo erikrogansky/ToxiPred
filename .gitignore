@@ -77,3 +77,4 @@ nginx/nginx.conf.backup.*
 # /docs/outputs/
 # /coverage/
 
+MODELS/

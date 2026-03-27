@@ -113,6 +113,7 @@ const testTypeLabels: Record<TestType, string> = {
 const predictionTargetLabels: Record<PredictionTarget, string> = {
   photo_irritation: 'Photo Irritation',
   photo_toxicity: 'Phototoxicity',
+  corrosion: 'Corrosion',
 };
 
 const modelOptions = computed(() =>

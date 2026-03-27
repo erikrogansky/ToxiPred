@@ -31,7 +31,8 @@ RUN micromamba run -n toxipred python -m pip install --no-cache-dir \
   "requests>=2.31.0" \
   "flower>=2.0" \
   "SQLAlchemy>=2.0" \
-  "psycopg2-binary>=2.9"
+  "psycopg2-binary>=2.9" \
+  "mordredcommunity>=2.0.0"
 
 EXPOSE 8000
 CMD ["micromamba","run","-n","toxipred","uvicorn","app.main:app","--host","0.0.0.0","--port","8000","--reload"]

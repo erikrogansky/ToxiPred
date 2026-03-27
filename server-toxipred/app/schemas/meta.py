@@ -7,6 +7,12 @@ class ModelDetail(BaseModel):
   kind: str
   features_in_spec: Optional[int] = None
   note: Optional[str] = None
+  test_type: Optional[str] = None
+  prediction_target: Optional[str] = None
+  positive_label: Optional[str] = None
+  negative_label: Optional[str] = None
+  classification_threshold: Optional[float] = None
+  dataset: Optional[str] = None
 
 class ModelsResponse(BaseModel):
   available_models: List[str]

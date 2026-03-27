@@ -23,7 +23,7 @@ def set_progress(job_id, pct, msg=""):
 
 def make_descriptor_fn(feature_names):
     def _fn(mol):
-        feats = descriptor_map(mol)
+        feats = descriptor_map(mol, feature_names=feature_names)
         vec = np.array([feats.get(f, np.nan) for f in feature_names], dtype=float)
         if np.isnan(vec).any():
             vec = np.nan_to_num(vec, nan=0.0)
@@ -63,7 +63,7 @@ def predict_task(
     model = get_model(model_name, MODELS)
     names = resolve_feature_names(spec, model)
 
-    feats_dict = descriptor_map(m)
+    feats_dict = descriptor_map(m, feature_names=names)
     X = np.array([feats_dict.get(f, np.nan) for f in names], dtype=float).reshape(1, -1)
     if np.isnan(X).any():
         X = np.nan_to_num(X, nan=0.0)
@@ -71,7 +71,7 @@ def predict_task(
     set_progress(job_id, 30, "featurized")
     self.update_state(state="PROGRESS", meta={"pct": 30, "msg": "featurized"})
 
-    y, conf = predict_vectorized(model, X)
+    y, conf = predict_vectorized(model, X, threshold=spec.classification_threshold)
 
     set_progress(job_id, 55, "explaining")
     self.update_state(state="PROGRESS", meta={"pct": 55, "msg": "explaining"})
@@ -102,6 +102,29 @@ def predict_task(
     # Extract feature values for the summary table
     feature_values = [feats_dict.get(f, None) for f in names]
 
+    # Sanitize NaN/Inf in float lists – JSON doesn't support them
+    def _sanitize(lst):
+        if lst is None:
+            return None
+        out = []
+        for v in lst:
+            if v is None:
+                out.append(None)
+            elif isinstance(v, float) and (np.isnan(v) or np.isinf(v)):
+                out.append(None)
+            else:
+                out.append(v)
+        return out
+
+    feature_values = _sanitize(feature_values)
+    feature_scores = _sanitize(feature_scores)
+    atom_scores = _sanitize(atom_scores)
+    if conf is not None and (np.isnan(conf) or np.isinf(conf)):
+        conf = None
+
+    # Map raw prediction to human-readable label
+    label = spec.positive_label if y == 1 else spec.negative_label
+
     payload = {
         "input_query": input_query,
         "input_type": input_type,
@@ -112,10 +135,13 @@ def predict_task(
         "other_names": other_names,
 
         "prediction": y,
+        "prediction_label": label,
         "confidence": conf,
         "features_used": names,
         "feature_values": feature_values,
         "model": model_name,
+        "test_type": spec.test_type,
+        "prediction_target": spec.prediction_target,
 
         "feature_scores": feature_scores,
         "atom_scores": atom_scores,

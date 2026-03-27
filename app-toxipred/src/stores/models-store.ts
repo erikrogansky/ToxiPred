@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { api } from 'src/boot/axios'
 
 export type TestType = 'in_vitro' | 'in_vivo' | 'in_chemico'
-export type PredictionTarget = 'photo_irritation' | 'photo_toxicity'
+export type PredictionTarget = 'photo_irritation' | 'photo_toxicity' | 'corrosion'
 
 export type ModelDetail = {
   file: string
@@ -15,6 +15,8 @@ export type ModelDetail = {
   prediction_target?: PredictionTarget | null
   positive_label?: string | null
   negative_label?: string | null
+  classification_threshold?: number | null
+  dataset?: string | null
 }
 
 export type ModelsResponse = {

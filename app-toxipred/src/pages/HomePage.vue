@@ -129,6 +129,7 @@ const testTypeLabels: Record<TestType, string> = {
 const predictionTargetLabels: Record<PredictionTarget, string> = {
   'photo_irritation': 'Photo Irritation',
   'photo_toxicity': 'Phototoxicity',
+  'corrosion': 'Corrosion',
 }
 
 // Create model options with formatted labels (Test Type + Prediction Target)
@@ -250,32 +251,43 @@ const steps = [
 ]
 
 const stats = [
-  { value: '2', label: 'QSAR models' },
-  { value: '32', label: 'Molecular descriptors' },
+  { value: '3', label: 'QSAR models' },
+  { value: '120+', label: 'Molecular descriptors' },
   { value: '100%', label: 'Free to use' },
   { value: '<5s', label: 'Prediction time' },
 ]
 
 const models = [
   {
-    name: 'XGBoost',
-    value: 'XGBoost',
+    name: 'XGB Corrosion',
+    value: 'XGB Corrosion',
     badge: 'In Vitro',
     details: [
-      'Phototoxicity prediction',
-      '11 molecular descriptors',
-      'Tree-based SHAP explanations',
+      'Corrosion prediction',
+      '23 molecular descriptors',
+      'Tree-based explanations',
       'Applicability domain check',
     ],
   },
   {
-    name: 'Ensemble',
-    value: 'Ensamble',
+    name: 'XGB Phototox Chemico',
+    value: 'XGB Phototox Chemico',
     badge: 'In Chemico',
     details: [
-      'Photo-irritation prediction',
-      '21 molecular descriptors',
-      'Ensemble voting classifier',
+      'Phototoxicity prediction',
+      '48 descriptors + MACCS fingerprint',
+      'Lasso feature selection',
+      'Applicability domain check',
+    ],
+  },
+  {
+    name: 'XGB Phototox 3T3',
+    value: 'XGB Phototox 3T3',
+    badge: 'In Vitro',
+    details: [
+      'Phototoxicity prediction (3T3)',
+      '52 descriptors + AtomPair fingerprint',
+      'Tree-based explanations',
       'Applicability domain check',
     ],
   },
@@ -304,7 +316,7 @@ const faqItems = [
   },
   {
     q: 'What dermatological endpoints are covered?',
-    a: 'Currently ToxiPred covers <strong>phototoxicity</strong> (in vitro, XGBoost model) and <strong>photo-irritation</strong> (in chemico, ensemble model). Additional endpoints may be added in the future.',
+    a: 'Currently ToxiPred covers <strong>corrosion</strong> (in vitro), <strong>phototoxicity</strong> (in chemico), and <strong>phototoxicity 3T3</strong> (in vitro). All models use XGBoost classifiers with tailored descriptor sets.',
   },
 ]
 

@@ -21,6 +21,8 @@ def models_payload() -> Dict[str, Any]:
         "prediction_target": v.prediction_target,
         "positive_label": v.positive_label,
         "negative_label": v.negative_label,
+        "classification_threshold": v.classification_threshold,
+        "dataset": v.dataset,
       }
       for k, v in MODELS.items()
     },
