@@ -11,15 +11,25 @@ const props = defineProps<{
   title?: string
 }>()
 
+const emit = defineEmits<{
+  'render-error': []
+}>()
+
 const container = ref<HTMLDivElement | null>(null)
 
 async function render() {
   if (!container.value) return
-  if (!props.smiles || !Array.isArray(props.atomScores) || props.atomScores.length === 0) return
+  if (!props.smiles || !Array.isArray(props.atomScores) || props.atomScores.length === 0) {
+    emit('render-error')
+    return
+  }
 
   if (window.__xsmilesReady) await window.__xsmilesReady
   if (window.__rdkitReady) await window.__rdkitReady
-  if (!window.RDKit || !window.xsmiles) return
+  if (!window.RDKit || !window.xsmiles) {
+    emit('render-error')
+    return
+  }
 
   try {
     const expected = window.xsmiles.getNAtomsFromSmilesString(props.smiles)
@@ -69,6 +79,7 @@ async function render() {
 
   if (typeof fn !== 'function') {
     console.error('XSMILES API not found:', Object.keys(api))
+    emit('render-error')
     return
   }
 
@@ -76,6 +87,8 @@ async function render() {
     fn(container.value, setup)
   } catch (e) {
     console.error('XSMILES render failed. Setup was:', setup, e)
+    container.value.innerHTML = ''
+    emit('render-error')
   }
 }
 

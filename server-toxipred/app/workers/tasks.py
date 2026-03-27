@@ -93,7 +93,8 @@ def predict_task(
         descriptor_fn = make_descriptor_fn(names)
         atom_scores_np, base_pred = explain_atom_importance(model, m, descriptor_fn)
         atom_scores = atom_scores_np.tolist()
-    except Exception:
+    except Exception as e:
+        print("Error computing atom_scores:", e)
         atom_scores = None
 
     set_progress(job_id, 95, "assembling_result")

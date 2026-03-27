@@ -75,10 +75,19 @@
           />
           
           <tp-xsmiles-renderer
-            v-if="visualizationIndex === 0 && smiles"
+            v-if="visualizationIndex === 0 && smiles && !xsmilesUnavailable"
             :smiles="smiles"
             :atom-scores="atomScores"
             title="Atomic contributions"
+            @render-error="onXsmilesError"
+          />
+
+          <tp-empty-state
+            v-if="visualizationIndex === 0 && xsmilesUnavailable"
+            icon="info-circle"
+            title="XSMILES not available"
+            description="Atomic contribution visualization is not available for this molecule. This can happen with complex structures such as organometallic compounds."
+            compact
           />
 
           <tp-feature-importance-renderer
@@ -116,6 +125,7 @@ import TpButton from 'components/TpButton.vue';
 import TpIconButton from 'components/TpIconButton.vue';
 import TpCompoundInfo from 'components/TpCompoundInfo.vue';
 import TpShareDialog from 'components/TpShareDialog.vue';
+import TpEmptyState from 'components/TpEmptyState.vue';
 import { api } from 'src/boot/axios';
 import { useRoute } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
@@ -219,6 +229,12 @@ const selectedIndex = ref(0);
 
 const visualizationLabels = ['XSMILES', 'Descriptor Importance'];
 const visualizationIndex = ref(0);
+const xsmilesUnavailable = ref(false);
+
+function onXsmilesError() {
+  xsmilesUnavailable.value = true;
+  visualizationIndex.value = 1;
+}
 
 // Descriptor type mapping for PDF
 const descriptorTypes: Record<string, { type: string; displayName: string }> = {

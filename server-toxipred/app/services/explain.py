@@ -1,8 +1,11 @@
 from __future__ import annotations
+import logging
 from typing import Callable, Iterable, List, Tuple, Optional
 import numpy as np
 from rdkit import Chem
 from rdkit.Chem import rdmolops
+
+logger = logging.getLogger(__name__)
 
 def _score_fn(model) -> Callable[[np.ndarray], np.ndarray]:
     if hasattr(model, "predict_proba"):
@@ -56,17 +59,15 @@ def _explain_by_groups(
     base = float(scorer(X0)[0])
 
     masked_preds: List[float] = []
-    for i in range(0, len(groups), batch_size):
-        batch = groups[i:i+batch_size]
-        masked = []
-        for g in batch:
+    for g in groups:
+        try:
             mg = _mask_atoms_with_dummy(mol, g)
-            masked.append(_featurize(descriptor_fn, mg))
-        if not masked:
-            continue
-        Xb = np.vstack(masked)
-        preds = scorer(Xb)
-        masked_preds.extend([float(p) for p in preds])
+            Xg = _featurize(descriptor_fn, mg)
+            pred = float(scorer(Xg)[0])
+        except Exception:
+            logger.debug("masking failed for atom group %s, scoring as base", g)
+            pred = base
+        masked_preds.append(pred)
 
     masked_preds = np.asarray(masked_preds, dtype=float)
     atts = base - masked_preds
