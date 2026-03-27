@@ -252,3 +252,100 @@ def explain_feature_importance_shap(
         sv = (sv - sv.mean()) / sv.std()
 
     return sv.astype(float), base_value
+
+
+# ── SHAP → atom attribution (fingerprint bit mapping) ────────────────
+
+
+def _maccs_bit_to_atoms(mol: Chem.Mol) -> dict[int, list[int]]:
+    """Map active MACCS key bits to the atom indices that activate them."""
+    from rdkit.Chem import MACCSkeys
+
+    bit_atoms: dict[int, list[int]] = {}
+    for bit_num, (smarts, _) in MACCSkeys.smartsPatts.items():
+        if smarts == "?":
+            continue
+        pat = Chem.MolFromSmarts(smarts)
+        if pat is None:
+            continue
+        matches = mol.GetSubstructMatches(pat)
+        if matches:
+            atoms: set[int] = set()
+            for match in matches:
+                atoms.update(match)
+            bit_atoms[bit_num] = list(atoms)
+    return bit_atoms
+
+
+def _atompair_bit_to_atoms(
+    mol: Chem.Mol, n_bits: int = 512
+) -> dict[int, list[int]]:
+    """Map active AtomPair FP bits to the atom indices that contribute."""
+    from rdkit.Chem import rdFingerprintGenerator
+
+    gen = rdFingerprintGenerator.GetAtomPairGenerator(fpSize=n_bits)
+    ao = rdFingerprintGenerator.AdditionalOutput()
+    ao.AllocateBitInfoMap()
+    gen.GetFingerprint(mol, additionalOutput=ao)
+    bi = ao.GetBitInfoMap()
+
+    bit_atoms: dict[int, list[int]] = {}
+    for bit_idx, pairs in bi.items():
+        atoms: set[int] = set()
+        for pair in pairs:
+            atoms.update(pair)
+        bit_atoms[bit_idx] = list(atoms)
+    return bit_atoms
+
+
+def explain_atom_importance_shap_fp(
+    mol: Chem.Mol,
+    feature_names: List[str],
+    shap_values: np.ndarray,
+) -> np.ndarray:
+    """Attribute fingerprint SHAP values to individual atoms.
+
+    MACCS bits  → atoms via SMARTS substructure matching.
+    AtomPair bits → atoms via rdFingerprintGenerator bit info.
+    Descriptor features are skipped (whole-molecule, no atom mapping).
+
+    Each bit's SHAP value is divided equally among its contributing atoms.
+    """
+    n_atoms = mol.GetNumAtoms()
+    atom_scores = np.zeros(n_atoms, dtype=float)
+    sv = np.asarray(shap_values, dtype=float).reshape(-1)
+
+    maccs_feats: dict[int, int] = {}   # feat_index → bit_num
+    ap_feats: dict[int, int] = {}
+
+    for i, name in enumerate(feature_names):
+        if name.startswith("MACCS_"):
+            try:
+                maccs_feats[i] = int(name.split("_", 1)[1])
+            except ValueError:
+                pass
+        elif name.startswith("AtomPair_"):
+            try:
+                ap_feats[i] = int(name.split("_", 1)[1])
+            except ValueError:
+                pass
+
+    if maccs_feats:
+        m_map = _maccs_bit_to_atoms(mol)
+        for feat_idx, bit_num in maccs_feats.items():
+            atoms = m_map.get(bit_num, [])
+            if atoms:
+                share = sv[feat_idx] / len(atoms)
+                for a in atoms:
+                    atom_scores[a] += share
+
+    if ap_feats:
+        ap_map = _atompair_bit_to_atoms(mol, n_bits=512)
+        for feat_idx, bit_num in ap_feats.items():
+            atoms = ap_map.get(bit_num, [])
+            if atoms:
+                share = sv[feat_idx] / len(atoms)
+                for a in atoms:
+                    atom_scores[a] += share
+
+    return atom_scores

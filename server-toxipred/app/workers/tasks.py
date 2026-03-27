@@ -14,6 +14,7 @@ from app.domain.descriptors import descriptor_map
 from app.services.predict import predict_vectorized
 from app.services.explain import (
     explain_atom_importance,
+    explain_atom_importance_shap_fp,
     explain_feature_importance,
     explain_feature_importance_shap,
 )
@@ -81,6 +82,7 @@ def predict_task(
     self.update_state(state="PROGRESS", meta={"pct": 55, "msg": "explaining"})
 
     feature_scores = None
+    feature_scores_np = None
     try:
         if spec.explainer in ("tree", "linear", "kernel"):
             feature_scores_np, base_pred = explain_feature_importance_shap(
@@ -104,8 +106,14 @@ def predict_task(
         feature_scores = None
 
     try:
-        descriptor_fn = make_descriptor_fn(names)
-        atom_scores_np, base_pred = explain_atom_importance(model, m, descriptor_fn)
+        has_fp = any(n.startswith(("MACCS_", "AtomPair_")) for n in names)
+        if spec.explainer == "tree" and has_fp and feature_scores_np is not None:
+            atom_scores_np = explain_atom_importance_shap_fp(
+                m, names, feature_scores_np
+            )
+        else:
+            descriptor_fn = make_descriptor_fn(names)
+            atom_scores_np, base_pred = explain_atom_importance(model, m, descriptor_fn)
         atom_scores = atom_scores_np.tolist()
     except Exception as e:
         print("Error computing atom_scores:", e)
