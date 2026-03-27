@@ -138,7 +138,7 @@ const jobId = route.params.job_id?.toString() || '';
 const cameFromDemos = route.query.from === 'demos';
 
 function goBack() {
-  router.push(cameFromDemos ? '/demos' : '/workspace');
+  void router.push(cameFromDemos ? '/demos' : '/workspace');
 }
 const modelsStore = useModelsStore();
 
