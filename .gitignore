@@ -77,4 +77,6 @@ nginx/nginx.conf.backup.*
 # /docs/outputs/
 # /coverage/
 
-MODELS/
+/MODELS/
+*.pkl
+!server-toxipred/app/models/*.pkl
