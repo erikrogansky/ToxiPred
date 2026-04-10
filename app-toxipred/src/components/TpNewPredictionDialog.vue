@@ -214,30 +214,64 @@ async function submitPrediction() {
   predictionError.value = null;
 
   try {
-    const response = await api.post(`/jobs/predict/${selectedValue.value}`, {
-      query: inputValue.value
-    });
+    const queries = inputValue.value.split(',').map(q => q.trim()).filter(Boolean);
 
-    if (response.data.error) {
-      predictionError.value = response.data.error;
-      return;
+    if (queries.length <= 1) {
+      // Single prediction - use existing endpoint
+      const response = await api.post(`/jobs/predict/${selectedValue.value}`, {
+        query: inputValue.value.trim()
+      });
+
+      if (response.data.error) {
+        predictionError.value = response.data.error;
+        return;
+      }
+
+      if (!response.data.job_id) {
+        predictionError.value = 'No job ID returned from server';
+        return;
+      }
+
+      jobsStore.upsert({
+        id: response.data.job_id,
+        model: selectedValue.value,
+        state: 'PENDING',
+        percent: 0,
+      });
+      jobsStore.startTracking(response.data.job_id);
+    } else {
+      // Batch prediction
+      const response = await api.post(`/jobs/predict-batch/${selectedValue.value}`, {
+        queries
+      });
+
+      const results: { query: string; job_id: string | null; error: string | null }[] = response.data.results ?? [];
+
+      const errors = results.filter(r => r.error);
+      const successes = results.filter(r => r.job_id);
+
+      for (const r of successes) {
+        jobsStore.upsert({
+          id: r.job_id!,
+          model: selectedValue.value,
+          state: 'PENDING',
+          percent: 0,
+        });
+        jobsStore.startTracking(r.job_id!);
+      }
+
+      if (errors.length > 0 && successes.length === 0) {
+        predictionError.value = errors.map(e => `${e.query}: ${e.error}`).join('; ');
+        return;
+      }
+
+      if (errors.length > 0) {
+        predictionError.value = `${successes.length} submitted, ${errors.length} failed: ${errors.map(e => e.query).join(', ')}`;
+        // Don't return - still close dialog since some succeeded
+      }
     }
-
-    if (!response.data.job_id) {
-      predictionError.value = 'No job ID returned from server';
-      return;
-    }
-
-    jobsStore.upsert({
-      id: response.data.job_id,
-      model: selectedValue.value,
-      state: 'PENDING',
-      percent: 0,
-    });
-    jobsStore.startTracking(response.data.job_id);
 
     close();
-    // Stay on workspace page - the new job will appear in the list
 
   } catch (error) {
     console.error('Error making prediction:', error);

@@ -29,6 +29,9 @@ r = redis.Redis(host="toxipred-redis", port=6379, db=PROGRESS_DB)
 class EnqueueRequest(BaseModel):
     query: str
 
+class BatchEnqueueRequest(BaseModel):
+    queries: List[str]
+
 @router.post("/jobs/predict/{model_name}")
 def enqueue(model_name: str, req: EnqueueRequest):
     chem = resolve_chemical(req.query)
@@ -50,6 +53,37 @@ def enqueue(model_name: str, req: EnqueueRequest):
     )
 
     return {"job_id": task.id}
+
+@router.post("/jobs/predict-batch/{model_name}")
+def enqueue_batch(model_name: str, req: BatchEnqueueRequest):
+    if len(req.queries) > 100:
+        raise HTTPException(status_code=400, detail="Maximum 100 queries per batch")
+
+    results = []
+    for query in req.queries:
+        query = query.strip()
+        if not query:
+            continue
+        chem = resolve_chemical(query)
+        if chem is None:
+            results.append({"query": query, "job_id": None, "error": "Unable to interpret input as SMILES, CAS number, name, or InChI."})
+            continue
+
+        task = celery_app.send_task(
+            "toxipred.predict",
+            args=[model_name, chem.smiles],
+            kwargs={
+                "display_name": chem.name,
+                "formula": chem.formula,
+                "input_query": chem.query,
+                "input_type": chem.source,
+                "trivial_name": chem.trivial_name,
+                "other_names": chem.other_names,
+            },
+        )
+        results.append({"query": query, "job_id": task.id, "error": None})
+
+    return {"results": results}
 
 @router.get("/jobs/status/{job_id}")
 def status(job_id: str):
