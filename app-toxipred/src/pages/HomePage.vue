@@ -163,30 +163,61 @@ const router = useRouter();
 
 const submitPrediction = async () => {
   try {
-    const response = await api.post(`/jobs/predict/${selectedValue.value}`, {
-      query: inputValue.value
-    });
+    const queries = inputValue.value.split(',').map(q => q.trim()).filter(Boolean);
+    const jobs = useJobsStore();
 
-    if (response.data.error) {
-      console.error('Prediction error:', response.data.error);
-      alert(`Error: ${response.data.error}`);
-      return;
+    if (queries.length <= 1) {
+      const response = await api.post(`/jobs/predict/${selectedValue.value}`, {
+        query: inputValue.value.trim()
+      });
+
+      if (response.data.error) {
+        console.error('Prediction error:', response.data.error);
+        alert(`Error: ${response.data.error}`);
+        return;
+      }
+
+      if (!response.data.job_id) {
+        console.error('No job_id in response:', response.data);
+        alert('Error: No job ID returned from server');
+        return;
+      }
+
+      jobs.upsert({
+        id: response.data.job_id,
+        model: selectedValue.value,
+        state: 'PENDING',
+        percent: 0,
+      });
+      jobs.startTracking(response.data.job_id);
+    } else {
+      const response = await api.post(`/jobs/predict-batch/${selectedValue.value}`, {
+        queries
+      });
+
+      const results: { query: string; job_id: string | null; error: string | null }[] = response.data.results ?? [];
+      const errors = results.filter(r => r.error);
+      const successes = results.filter(r => r.job_id);
+
+      for (const r of successes) {
+        jobs.upsert({
+          id: r.job_id!,
+          model: selectedValue.value,
+          state: 'PENDING',
+          percent: 0,
+        });
+        jobs.startTracking(r.job_id!);
+      }
+
+      if (errors.length > 0 && successes.length === 0) {
+        alert(errors.map(e => `${e.query}: ${e.error}`).join('\n'));
+        return;
+      }
+
+      if (errors.length > 0) {
+        alert(`${successes.length} submitted, ${errors.length} failed:\n${errors.map(e => e.query).join(', ')}`);
+      }
     }
-
-    if (!response.data.job_id) {
-      console.error('No job_id in response:', response.data);
-      alert('Error: No job ID returned from server');
-      return;
-    }
-
-    const jobs = useJobsStore()
-    jobs.upsert({
-      id: response.data.job_id,
-      model: selectedValue.value,
-      state: 'PENDING',
-      percent: 0,
-    })
-    jobs.startTracking(response.data.job_id)
 
     await router.push({ name: 'workspace' });
 
