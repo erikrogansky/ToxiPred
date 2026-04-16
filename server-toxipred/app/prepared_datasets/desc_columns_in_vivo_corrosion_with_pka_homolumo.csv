@@ -101,3 +101,6 @@ fr_ester
 fr_ether
 fr_halogen
 fr_unbrch_alkane
+HOMO_eV
+LUMO_eV
+HL_Gap_eV
