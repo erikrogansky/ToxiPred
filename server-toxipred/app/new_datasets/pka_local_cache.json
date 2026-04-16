@@ -43,6 +43,18 @@
     "status": "resolved",
     "value": 7.982670000000001
   },
+  "C=C(C=O)CC": {
+    "status": "resolved",
+    "value": 7.42545
+  },
+  "C=C(C=O)CCC": {
+    "status": "resolved",
+    "value": 7.53248
+  },
+  "C=C(C=O)CCCC": {
+    "status": "resolved",
+    "value": 7.63951
+  },
   "C=C1C2CC3CC1C(O)C(C2)C3C": {
     "status": "resolved",
     "value": 7.564649999999999
@@ -131,6 +143,10 @@
     "status": "resolved",
     "value": 7.704910000000001
   },
+  "CC(Br)C(=O)O": {
+    "status": "resolved",
+    "value": 7.146319999999999
+  },
   "CC(C)(C)CC(C)(C)c1ccc(OCCO)cc1": {
     "status": "resolved",
     "value": 8.08145
@@ -215,6 +231,14 @@
     "status": "resolved",
     "value": 7.81386
   },
+  "CC(COC(=O)CBr)OC(=O)CBr": {
+    "status": "resolved",
+    "value": 7.7253300000000005
+  },
+  "CC(Cl)(Cl)C(=O)Cl": {
+    "status": "resolved",
+    "value": 7.67368
+  },
   "CC(Cl)(Cl)Cl": {
     "status": "resolved",
     "value": 7.71295
@@ -222,6 +246,10 @@
   "CC(N)CN": {
     "status": "resolved",
     "value": 6.57769
+  },
+  "CC(N)CO": {
+    "status": "resolved",
+    "value": 6.58777
   },
   "CC(O)C(=O)O": {
     "status": "resolved",
@@ -231,9 +259,17 @@
     "status": "resolved",
     "value": 6.59785
   },
+  "CC(O)CS": {
+    "status": "resolved",
+    "value": 6.8791
+  },
   "CC(O)[C@H](N)C(=O)O": {
     "status": "resolved",
     "value": 6.3137300000000005
+  },
+  "CC(O)c1ccccc1": {
+    "status": "resolved",
+    "value": 7.411969999999999
   },
   "CC(OCCO)c1ccccc1": {
     "status": "resolved",
@@ -242,6 +278,10 @@
   "CC1(C)OB(B2OC(C)(C)C(C)(C)O2)OC1(C)C": {
     "status": "resolved",
     "value": 8.06476
+  },
+  "CC1=CC(=O)OC1=O": {
+    "status": "resolved",
+    "value": 7.30483
   },
   "CC1=CCC(/C=C/C(C)(C)C(C)O)C1(C)C": {
     "status": "resolved",
@@ -255,9 +295,25 @@
     "status": "resolved",
     "value": 7.64111
   },
+  "CC1CCC(N)CC1": {
+    "status": "resolved",
+    "value": 7.357139999999999
+  },
+  "CC1CN(CCN)CCN1": {
+    "status": "resolved",
+    "value": 6.65164
+  },
   "CC1COC(=O)O1": {
     "status": "resolved",
     "value": 7.46251
+  },
+  "CC=CC(=O)O": {
+    "status": "resolved",
+    "value": 7.08413
+  },
+  "CC=CCBr": {
+    "status": "resolved",
+    "value": 7.5772200000000005
   },
   "CC=O": {
     "status": "resolved",
@@ -267,9 +323,17 @@
     "status": "resolved",
     "value": 7.0343
   },
+  "CCC(Br)C(=O)O": {
+    "status": "resolved",
+    "value": 7.25335
+  },
   "CCC(C)(C)CC": {
     "status": "resolved",
     "value": 7.82978
+  },
+  "CCC(C)(C)c1ccccc1O": {
+    "status": "resolved",
+    "value": 7.803940000000001
   },
   "CCC(C)Br": {
     "status": "resolved",
@@ -279,25 +343,173 @@
     "status": "resolved",
     "value": 7.21513
   },
+  "CCC(C)N(C)C": {
+    "status": "resolved",
+    "value": 7.48395
+  },
   "CCC(C)[C@H](N)C(=O)O": {
     "status": "resolved",
     "value": 6.90332
+  },
+  "CCC(COC(=O)CBr)OC(=O)CBr": {
+    "status": "resolved",
+    "value": 7.83236
+  },
+  "CCC(Cl)(Cl)C(=O)Cl": {
+    "status": "resolved",
+    "value": 7.78071
+  },
+  "CCC(Cl)(Cl)Cl": {
+    "status": "resolved",
+    "value": 7.829980000000001
+  },
+  "CCC(N)CN": {
+    "status": "resolved",
+    "value": 6.68472
+  },
+  "CCC(N)CO": {
+    "status": "resolved",
+    "value": 6.6948
+  },
+  "CCC(O)C(=O)O": {
+    "status": "resolved",
+    "value": 6.73257
+  },
+  "CCC(O)CS": {
+    "status": "resolved",
+    "value": 6.98613
   },
   "CCC(O)OC(O)CC": {
     "status": "resolved",
     "value": 6.99794
   },
+  "CCC(O)c1ccccc1": {
+    "status": "resolved",
+    "value": 7.519
+  },
+  "CCC1=CC(=O)OC1=O": {
+    "status": "resolved",
+    "value": 7.41186
+  },
+  "CCC1CCC(N)CC1": {
+    "status": "resolved",
+    "value": 7.464169999999999
+  },
+  "CCC1CN(CCN)CCN1": {
+    "status": "resolved",
+    "value": 6.7586699999999995
+  },
+  "CCC=CC(=O)O": {
+    "status": "resolved",
+    "value": 7.19116
+  },
+  "CCC=CCBr": {
+    "status": "resolved",
+    "value": 7.6842500000000005
+  },
+  "CCC=O": {
+    "status": "resolved",
+    "value": 7.26859
+  },
   "CCCC(=O)O": {
     "status": "resolved",
     "value": 7.14133
+  },
+  "CCCC(Br)C(=O)O": {
+    "status": "resolved",
+    "value": 7.360379999999999
+  },
+  "CCCC(C)(C)c1ccccc1O": {
+    "status": "resolved",
+    "value": 7.910970000000001
   },
   "CCCC(C)(O)CO": {
     "status": "resolved",
     "value": 6.92894
   },
+  "CCCC(C)C(=O)O": {
+    "status": "resolved",
+    "value": 7.322159999999999
+  },
+  "CCCC(C)N(C)C": {
+    "status": "resolved",
+    "value": 7.590979999999999
+  },
+  "CCCC(COC(=O)CBr)OC(=O)CBr": {
+    "status": "resolved",
+    "value": 7.9393899999999995
+  },
+  "CCCC(Cl)(Cl)C(=O)Cl": {
+    "status": "resolved",
+    "value": 7.88774
+  },
+  "CCCC(Cl)(Cl)Cl": {
+    "status": "resolved",
+    "value": 7.937010000000001
+  },
+  "CCCC(N)CN": {
+    "status": "resolved",
+    "value": 6.7917499999999995
+  },
+  "CCCC(N)CO": {
+    "status": "resolved",
+    "value": 6.80183
+  },
+  "CCCC(O)C(=O)O": {
+    "status": "resolved",
+    "value": 6.8396
+  },
+  "CCCC(O)CS": {
+    "status": "resolved",
+    "value": 7.093159999999999
+  },
+  "CCCC(O)c1ccccc1": {
+    "status": "resolved",
+    "value": 7.626029999999999
+  },
+  "CCCC1=CC(=O)OC1=O": {
+    "status": "resolved",
+    "value": 7.51889
+  },
+  "CCCC1CCC(N)CC1": {
+    "status": "resolved",
+    "value": 7.5712
+  },
+  "CCCC1CN(CCN)CCN1": {
+    "status": "resolved",
+    "value": 6.8656999999999995
+  },
+  "CCCC=CC(=O)O": {
+    "status": "resolved",
+    "value": 7.298189999999999
+  },
+  "CCCC=CCBr": {
+    "status": "resolved",
+    "value": 7.79128
+  },
+  "CCCC=O": {
+    "status": "resolved",
+    "value": 7.37562
+  },
+  "CCCCC(=O)O": {
+    "status": "resolved",
+    "value": 7.248359999999999
+  },
   "CCCCC(C#N)c1ccccc1": {
     "status": "resolved",
     "value": 8.105194000000001
+  },
+  "CCCCC(C)(C)c1ccccc1O": {
+    "status": "resolved",
+    "value": 8.018000000000002
+  },
+  "CCCCC(C)C(=O)O": {
+    "status": "resolved",
+    "value": 7.429189999999999
+  },
+  "CCCCC(C)N(C)C": {
+    "status": "resolved",
+    "value": 7.69801
   },
   "CCCCC(CC)COC(=O)CC(C(=O)OCC(CC)CCCC)S(=O)(=O)[O-]": {
     "status": "resolved",
@@ -306,6 +518,18 @@
   "CCCCC(CC)COC(=O)c1ccc(N)cc1": {
     "status": "resolved",
     "value": 8.1226
+  },
+  "CCCCC(N)CN": {
+    "status": "resolved",
+    "value": 6.8987799999999995
+  },
+  "CCCCC(O)C(=O)O": {
+    "status": "resolved",
+    "value": 6.94663
+  },
+  "CCCCC=O": {
+    "status": "resolved",
+    "value": 7.48265
   },
   "CCCCCBr": {
     "status": "resolved",
@@ -322,6 +546,10 @@
   "CCCCCC(=O)OC": {
     "status": "resolved",
     "value": 7.68191
+  },
+  "CCCCCC(C)C(=O)O": {
+    "status": "resolved",
+    "value": 7.536219999999999
   },
   "CCCCCCBr": {
     "status": "resolved",
@@ -366,6 +594,10 @@
   "CCCCCCCCCC(=O)O": {
     "status": "resolved",
     "value": 7.78351
+  },
+  "CCCCCCCCCCC(=O)O": {
+    "status": "resolved",
+    "value": 7.8905400000000006
   },
   "CCCCCCCCCCCC(=O)N(CCO)CCO": {
     "status": "resolved",
@@ -435,9 +667,21 @@
     "status": "resolved",
     "value": 8.72517
   },
+  "CCCCCCCCCCN": {
+    "status": "resolved",
+    "value": 7.74574
+  },
   "CCCCCCCCCCO": {
     "status": "resolved",
     "value": 7.75582
+  },
+  "CCCCCCCCCN": {
+    "status": "resolved",
+    "value": 7.63871
+  },
+  "CCCCCCCCN": {
+    "status": "resolved",
+    "value": 7.53168
   },
   "CCCCCCCCO": {
     "status": "resolved",
@@ -458,6 +702,46 @@
   "CCCCCCOC(=O)c1ccccc1O": {
     "status": "resolved",
     "value": 7.978790000000001
+  },
+  "CCCCCCP1(=O)OP(=O)(CCC)OP(=O)(CCC)O1": {
+    "status": "resolved",
+    "value": 9.31882
+  },
+  "CCCCCC[CH2][Sn]([Cl])([CH2]CCC)[CH2]CCC": {
+    "status": "resolved",
+    "value": 8.902390000000002
+  },
+  "CCCCCC[CH2][Sn]([Cl])([Cl])[CH2]CCC": {
+    "status": "resolved",
+    "value": 8.613010000000001
+  },
+  "CCCCCN=C=NCCCN(C)C": {
+    "status": "resolved",
+    "value": 7.91066
+  },
+  "CCCCCP1(=O)OP(=O)(CCC)OP(=O)(CCC)O1": {
+    "status": "resolved",
+    "value": 9.21179
+  },
+  "CCCCC[CH2][Sn]([Cl])([CH2]CCC)[CH2]CCC": {
+    "status": "resolved",
+    "value": 8.795360000000002
+  },
+  "CCCCC[CH2][Sn]([Cl])([Cl])[CH2]CCC": {
+    "status": "resolved",
+    "value": 8.505980000000001
+  },
+  "CCCCN(C)CCCNCCCN": {
+    "status": "resolved",
+    "value": 7.11404
+  },
+  "CCCCN(C)Cc1ccccc1": {
+    "status": "resolved",
+    "value": 7.92555
+  },
+  "CCCCN=C=NCCCN(C)C": {
+    "status": "resolved",
+    "value": 7.803629999999999
   },
   "CCCCNCCO": {
     "status": "resolved",
@@ -487,6 +771,10 @@
     "status": "resolved",
     "value": 7.4967
   },
+  "CCCCOCCCN": {
+    "status": "resolved",
+    "value": 7.285570000000001
+  },
   "CCCCOCCOC(C)=O": {
     "status": "resolved",
     "value": 7.64986
@@ -494,6 +782,42 @@
   "CCCCOc1cc(C(=O)NCCN(CC)CC)c2ccccc2n1": {
     "status": "resolved",
     "value": 8.14559
+  },
+  "CCCCP1(=O)OP(=O)(CCC)OP(=O)(CCC)O1": {
+    "status": "resolved",
+    "value": 9.10476
+  },
+  "CCCC[CH2][Sn]([Cl])([CH2]CCC)[CH2]CCC": {
+    "status": "resolved",
+    "value": 8.688330000000002
+  },
+  "CCCC[CH2][Sn]([Cl])([Cl])[CH2]CCC": {
+    "status": "resolved",
+    "value": 8.398950000000001
+  },
+  "CCCCc1ccc(C(C)C)cc1O": {
+    "status": "resolved",
+    "value": 8.017460000000002
+  },
+  "CCCCn1c(O)c(N=O)c(=O)n(C)c1=O": {
+    "status": "resolved",
+    "value": 7.39518
+  },
+  "CCCN(C)CCCNCCCN": {
+    "status": "resolved",
+    "value": 7.00701
+  },
+  "CCCN(C)Cc1ccccc1": {
+    "status": "resolved",
+    "value": 7.8185199999999995
+  },
+  "CCCN=C=NCCCN(C)C": {
+    "status": "resolved",
+    "value": 7.6966
+  },
+  "CCCOCCCN": {
+    "status": "resolved",
+    "value": 7.17854
   },
   "CCCP1(=O)OP(=O)(CCC)OP(=O)(CCC)O1": {
     "status": "resolved",
@@ -510,6 +834,22 @@
   "CCC[CH2][Sn]([Cl])([Cl])[CH2]CCC": {
     "status": "resolved",
     "value": 8.291920000000001
+  },
+  "CCCc1ccc(C(C)C)cc1O": {
+    "status": "resolved",
+    "value": 7.91043
+  },
+  "CCCn1c(O)c(N=O)c(=O)n(C)c1=O": {
+    "status": "resolved",
+    "value": 7.28815
+  },
+  "CCN(C)CCCNCCCN": {
+    "status": "resolved",
+    "value": 6.899979999999999
+  },
+  "CCN(C)Cc1ccccc1": {
+    "status": "resolved",
+    "value": 7.7114899999999995
   },
   "CCN=C=NCCCN(C)C": {
     "status": "resolved",
@@ -535,6 +875,10 @@
     "status": "resolved",
     "value": 7.972
   },
+  "CCOCCCN": {
+    "status": "resolved",
+    "value": 7.07151
+  },
   "CCOCCOCCO": {
     "status": "resolved",
     "value": 7.04954
@@ -546,6 +890,14 @@
   "CC[C@H](C)[C@H](N)C(=O)O": {
     "status": "resolved",
     "value": 6.90332
+  },
+  "CCc1ccc(C(C)C)cc1O": {
+    "status": "resolved",
+    "value": 7.803400000000001
+  },
+  "CCn1c(O)c(N=O)c(=O)n(C)c1=O": {
+    "status": "resolved",
+    "value": 7.18112
   },
   "CN(C)C(=O)N(C)C": {
     "status": "resolved",
