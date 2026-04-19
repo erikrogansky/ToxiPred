@@ -30,6 +30,11 @@ import pandas as pd
 from rdkit import Chem
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
+try:
+    from tqdm.auto import tqdm
+except Exception:
+    tqdm = None
+
 
 DEFAULT_INPUT_DIR = Path("new_datasets")
 DEFAULT_CACHE = Path("new_datasets/pka_local_cache.json")
@@ -151,6 +156,25 @@ def parse_args() -> argparse.Namespace:
             "Use 0 to retry all api_error entries every run."
         ),
     )
+    parser.add_argument(
+        "--progress",
+        dest="progress",
+        action="store_true",
+        default=True,
+        help="Show progress during row processing (enabled by default).",
+    )
+    parser.add_argument(
+        "--no-progress",
+        dest="progress",
+        action="store_false",
+        help="Disable progress output.",
+    )
+    parser.add_argument(
+        "--progress-every",
+        type=int,
+        default=25,
+        help="Update progress status every N processed rows.",
+    )
     return parser.parse_args()
 
 
@@ -173,7 +197,11 @@ def load_cache(cache_path: Path) -> dict[str, CacheEntry]:
 
         # Backward-compatible numeric cache values.
         if isinstance(value, (int, float)):
-            cache[key] = {"status": "resolved", "value": float(value)}
+            cache[key] = {
+                "status": "resolved",
+                "value": float(value),
+                "source": "unknown",
+            }
             continue
 
         if not isinstance(value, dict):
@@ -181,7 +209,12 @@ def load_cache(cache_path: Path) -> dict[str, CacheEntry]:
 
         status = value.get("status")
         if status == "resolved" and isinstance(value.get("value"), (int, float)):
-            cache[key] = {"status": "resolved", "value": float(value["value"])}
+            source = value.get("source")
+            cache[key] = {
+                "status": "resolved",
+                "value": float(value["value"]),
+                "source": source if isinstance(source, str) else "unknown",
+            }
         elif status in {"not_found", "invalid_smiles", "predict_error"}:
             cache[key] = {
                 "status": status,
@@ -404,7 +437,9 @@ def _call_pkasolver(smiles: str) -> float | None:
             mol,
             query_model=_PKASOLVER_QUERY_MODEL,
         )
-    except Exception:
+    except Exception as e:
+        # Gracefully fall through on any pkasolver errors (import, subprocess, etc.)
+        # This includes subprocess environment issues with rdkit/other deps
         return None
 
     if not states:
@@ -419,37 +454,39 @@ def _call_pkasolver(smiles: str) -> float | None:
 
 
 def _call_moka(smiles: str) -> float | None:
-    """
-    Lightweight descriptor-based pKa estimation using RDKit.
-    Uses empirical correlations with LogP and HBD/HBA counts.
-    Fast fallback when pkasolver and dimorphite fail.
-    """
-    try:
-        from rdkit.Chem import Descriptors, Crippen
+    return None  # Better to have NaN instead of made up values.
 
-        mol = Chem.MolFromSmiles(smiles)
-        if mol is None:
-            return None
+    # """
+    # Lightweight descriptor-based pKa estimation using RDKit.
+    # Uses empirical correlations with LogP and HBD/HBA counts.
+    # Fast fallback when pkasolver and dimorphite fail.
+    # """
+    # try:
+    #     from rdkit.Chem import Descriptors, Crippen
 
-        # Empirical pKa estimation from molecular descriptors
-        logp = Crippen.MolLogP(mol)  # Lipophilicity
-        hbd = Descriptors.NumHDonors(mol)  # Hydrogen bond donors
-        hba = Descriptors.NumHAcceptors(mol)  # Hydrogen bond acceptors
-        mw = Descriptors.MolWt(mol)  # Molecular weight
-        rotatable_bonds = Descriptors.NumRotatableBonds(mol)
+    #     mol = Chem.MolFromSmiles(smiles)
+    #     if mol is None:
+    #         return None
 
-        # Empirical pKa model: combines LogP (affects acid/base strength),
-        # HBD/HBA (affects ionization), and molecular complexity
-        # Tuned on common drug-like small molecules
-        pka_estimate = 7.0 + (0.3 * logp) - (0.2 * hbd) + (0.1 * hba)
-        pka_estimate -= 0.01 * rotatable_bonds  # Complexity penalty
+    #     # Empirical pKa estimation from molecular descriptors
+    #     logp = Crippen.MolLogP(mol)  # Lipophilicity
+    #     hbd = Descriptors.NumHDonors(mol)  # Hydrogen bond donors
+    #     hba = Descriptors.NumHAcceptors(mol)  # Hydrogen bond acceptors
+    #     mw = Descriptors.MolWt(mol)  # Molecular weight
+    #     rotatable_bonds = Descriptors.NumRotatableBonds(mol)
 
-        # Clamp to realistic pKa range (0-14) for small molecules
-        pka_result = max(1.0, min(13.0, pka_estimate))
-        return float(pka_result)
+    #     # Empirical pKa model: combines LogP (affects acid/base strength),
+    #     # HBD/HBA (affects ionization), and molecular complexity
+    #     # Tuned on common drug-like small molecules
+    #     pka_estimate = 7.0 + (0.3 * logp) - (0.2 * hbd) + (0.1 * hba)
+    #     pka_estimate -= 0.01 * rotatable_bonds  # Complexity penalty
 
-    except Exception:
-        return None
+    #     # Clamp to realistic pKa range (0-14) for small molecules
+    #     pka_result = max(1.0, min(13.0, pka_estimate))
+    #     return float(pka_result)
+
+    # except Exception:
+    #     return None
 
 
 def _dominant_formal_charge(smiles_variants: list[str]) -> int | None:
@@ -616,6 +653,8 @@ def process_file(
     sleep_seconds: float,
     retry_api_errors: bool,
     api_error_ttl_hours: float,
+    progress: bool,
+    progress_every: int,
 ) -> dict[str, int]:
     df = read_dataset(input_path)
 
@@ -639,9 +678,45 @@ def process_file(
 
     limit = len(df) if max_rows is None else min(max_rows, len(df))
     now_epoch = time.time()
+    progress_every = max(1, progress_every)
 
-    for idx in range(limit):
+    row_indices = range(limit)
+    progress_bar = None
+    if progress:
+        if tqdm is None:
+            print(
+                "Progress: tqdm not installed; falling back to periodic progress logs."
+            )
+        else:
+            progress_bar = tqdm(
+                row_indices,
+                total=limit,
+                desc=f"Processing {input_path.name}",
+                unit="cmpd",
+            )
+            row_indices = progress_bar
+
+    for idx in row_indices:
         stats["processed_rows"] += 1
+        if progress and (
+            stats["processed_rows"] == 1
+            or stats["processed_rows"] % progress_every == 0
+            or stats["processed_rows"] == limit
+        ):
+            if progress_bar is not None:
+                progress_bar.set_postfix(
+                    resolved=stats["resolved_pka"],
+                    unresolved=stats["unresolved_pka"],
+                    cache_hits=stats["cache_hits"],
+                )
+            else:
+                print(
+                    f"Progress {stats['processed_rows']}/{limit} | "
+                    f"resolved={stats['resolved_pka']} "
+                    f"unresolved={stats['unresolved_pka']} "
+                    f"cache_hits={stats['cache_hits']}"
+                )
+
         smiles_raw = str(df.at[idx, "smiles"]).strip()
 
         if not smiles_raw:
@@ -664,11 +739,15 @@ def process_file(
             status = entry.get("status")
 
             if status == "resolved":
-                cached_val = entry.get("value")
-                if isinstance(cached_val, (int, float)):
-                    df.at[idx, "pka"] = f"{float(cached_val):.4f}"
-                    stats["resolved_pka"] += 1
-                    continue
+                if entry.get("source") == "moka":
+                    # Recompute values previously resolved via moka.
+                    cache.pop(canonical, None)
+                else:
+                    cached_val = entry.get("value")
+                    if isinstance(cached_val, (int, float)):
+                        df.at[idx, "pka"] = f"{float(cached_val):.4f}"
+                        stats["resolved_pka"] += 1
+                        continue
 
             if status == "api_error":
                 should_retry = should_retry_api_error(
@@ -731,7 +810,11 @@ def process_file(
             stats["predict_errors"] += 1
             continue
 
-        cache[canonical] = {"status": "resolved", "value": float(pka_value)}
+        cache[canonical] = {
+            "status": "resolved",
+            "value": float(pka_value),
+            "source": used_backend,
+        }
         df.at[idx, "pka"] = f"{float(pka_value):.4f}"
         stats["resolved_pka"] += 1
         if used_backend == "pkasolver":
@@ -745,6 +828,14 @@ def process_file(
 
         if used_backend == "pubchem" and sleep_seconds > 0:
             time.sleep(sleep_seconds)
+
+    if progress_bar is not None:
+        progress_bar.set_postfix(
+            resolved=stats["resolved_pka"],
+            unresolved=stats["unresolved_pka"],
+            cache_hits=stats["cache_hits"],
+        )
+        progress_bar.close()
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(output_path, index=False)
@@ -809,6 +900,8 @@ def main() -> int:
             sleep_seconds=args.sleep,
             retry_api_errors=args.retry_api_errors,
             api_error_ttl_hours=args.api_error_ttl_hours,
+            progress=args.progress,
+            progress_every=args.progress_every,
         )
         print_stats(input_path, out_path, stats)
 
