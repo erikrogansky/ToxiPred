@@ -79,4 +79,5 @@ nginx/nginx.conf.backup.*
 
 /MODELS/
 *.pkl
-!server-toxipred/app/models/*.pkl
+!server-toxipred/app/models/XGB/*.pkl
+!server-toxipred/app/models/GB/*.pkl

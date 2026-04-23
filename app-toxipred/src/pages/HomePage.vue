@@ -282,7 +282,7 @@ const steps = [
 ]
 
 const stats = [
-  { value: '3', label: 'QSAR models' },
+  { value: '4', label: 'QSAR models' },
   { value: '120+', label: 'Molecular descriptors' },
   { value: '100%', label: 'Free to use' },
   { value: '<5s', label: 'Prediction time' },
@@ -296,6 +296,17 @@ const models = [
     details: [
       'Corrosion prediction',
       '23 molecular descriptors',
+      'Tree-based explanations',
+      'Applicability domain check',
+    ],
+  },
+  {
+    name: 'GB Corrosion',
+    value: 'GB Corrosion (in vivo)',
+    badge: 'In Vivo',
+    details: [
+      'Corrosion prediction',
+      '6 molecular descriptors',
       'Tree-based explanations',
       'Applicability domain check',
     ],
@@ -347,7 +358,7 @@ const faqItems = [
   },
   {
     q: 'What dermatological endpoints are covered?',
-    a: 'Currently ToxiPred covers <strong>corrosion</strong> (in vitro), <strong>phototoxicity</strong> (in chemico), and <strong>phototoxicity 3T3</strong> (in vitro). All models use XGBoost classifiers with tailored descriptor sets.',
+    a: 'Currently ToxiPred covers <strong>corrosion</strong> (in vitro and in vivo) plus <strong>phototoxicity</strong> (in chemico) and <strong>phototoxicity 3T3</strong> (in vitro). Models use tree-based classifiers with tailored descriptor sets.',
   },
 ]
 

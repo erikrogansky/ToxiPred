@@ -40,12 +40,26 @@ _FEATURES_CORR = [
 
 _FEATURES_CHEMICO: Optional[list[str]] = None
 _FEATURES_3T3: Optional[list[str]] = None
+_FEATURES_GB_IN_VIVO_CORR = [
+    "MinEStateIndex",
+    "MolWt",
+    "BCUT2D_MWLOW",
+    "BertzCT",
+    "Ipc",
+    "Kappa2",
+]
 
 def _load_json_features(name: str) -> list[str]:
     import json
-    p = MODELS_DIR / f"{name}.features.json"
-    with open(p) as f:
-        return json.load(f)
+    candidates = [
+        MODELS_DIR / "XGB" / f"{name}.features.json",
+        MODELS_DIR / f"{name}.features.json",  # legacy location
+    ]
+    for p in candidates:
+        if p.exists():
+            with open(p) as f:
+                return json.load(f)
+    raise FileNotFoundError(f"Missing features sidecar for '{name}': tried {', '.join(str(c) for c in candidates)}")
 
 def _chemico_features() -> list[str]:
     global _FEATURES_CHEMICO
@@ -63,7 +77,7 @@ def _3t3_features() -> list[str]:
 
 MODELS: dict[str, ModelSpec] = {
     "XGB Corrosion": ModelSpec(
-        path=MODELS_DIR / "xgb_in_vitro_corr.pkl",
+        path=MODELS_DIR / "XGB/xgb_in_vitro_corr.pkl",
         kind="pickle",
         features=_FEATURES_CORR,
         note="XGBoost – 23 descriptors, in vitro corrosion",
@@ -77,7 +91,7 @@ MODELS: dict[str, ModelSpec] = {
         dataset="In Vitro (151 compounds)",
     ),
     "XGB Phototox Chemico": ModelSpec(
-        path=MODELS_DIR / "xgb_in_chemico_photo.pkl",
+        path=MODELS_DIR / "XGB/xgb_in_chemico_photo.pkl",
         kind="pickle",
         note="XGBoost – 48 descriptors + MACCS, in chemico phototoxicity",
         explainer="tree",
@@ -90,7 +104,7 @@ MODELS: dict[str, ModelSpec] = {
         dataset="In Chemico (162 compounds)",
     ),
     "XGB Phototox 3T3": ModelSpec(
-        path=MODELS_DIR / "xgb_in_vitro_3T3_photo.pkl",
+        path=MODELS_DIR / "XGB/xgb_in_vitro_3T3_photo.pkl",
         kind="pickle",
         note="XGBoost – 52 descriptors + AtomPair FP, in vitro 3T3 phototoxicity",
         explainer="tree",
@@ -101,5 +115,19 @@ MODELS: dict[str, ModelSpec] = {
         negative_label="Non-phototoxic",
         classification_threshold=0.5,
         dataset="In Vitro 3T3 (396 compounds)",
+    ),
+    "GB Corrosion (in vivo)": ModelSpec(
+        path=MODELS_DIR / "GB/gb_in_vivo_corrosion.pkl",
+        kind="pickle",
+        features=_FEATURES_GB_IN_VIVO_CORR,
+        note="GradientBoosting – 6 descriptors, in vivo corrosion",
+        explainer="tree",
+        feature_source="descriptors",
+        test_type="in_vivo",
+        prediction_target="corrosion",
+        positive_label="Corrosive",
+        negative_label="Non-corrosive",
+        classification_threshold=0.5,
+        dataset="In Vivo (189 compounds)",
     ),
 }
