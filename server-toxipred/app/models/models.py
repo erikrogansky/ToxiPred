@@ -40,6 +40,7 @@ _FEATURES_CORR = [
 
 _FEATURES_CHEMICO: Optional[list[str]] = None
 _FEATURES_3T3: Optional[list[str]] = None
+_FEATURES_3D: Optional[list[str]] = None
 _FEATURES_GB_IN_VIVO_CORR = [
     "MinEStateIndex",
     "MolWt",
@@ -72,6 +73,12 @@ def _3t3_features() -> list[str]:
     if _FEATURES_3T3 is None:
         _FEATURES_3T3 = _load_json_features("xgb_in_vitro_3T3_photo")
     return _FEATURES_3T3
+
+def _3d_features() -> list[str]:
+    global _FEATURES_3D
+    if _FEATURES_3D is None:
+        _FEATURES_3D = _load_json_features("xgb_in_vitro_3D_photo")
+    return _FEATURES_3D
 
 # ── Model registry ────────────────────────────────────────────────────
 
@@ -115,6 +122,19 @@ MODELS: dict[str, ModelSpec] = {
         negative_label="Non-phototoxic",
         classification_threshold=0.5,
         dataset="In Vitro 3T3 (396 compounds)",
+    ),
+    "XGB Phototox 3D": ModelSpec(
+        path=MODELS_DIR / "XGB/xgb_in_vitro_3D_photo.pkl",
+        kind="pickle",
+        note="XGBoost – 24 descriptors + RDKit FP (512 bits), in vitro 3D phototoxicity",
+        explainer="tree",
+        feature_source="mixed",
+        test_type="in_vitro",
+        prediction_target="photo_toxicity",
+        positive_label="Phototoxic",
+        negative_label="Non-phototoxic",
+        classification_threshold=0.5,
+        dataset="In Vitro 3D (101 compounds)",
     ),
     "GB Corrosion (in vivo)": ModelSpec(
         path=MODELS_DIR / "GB/gb_in_vivo_corrosion.pkl",

@@ -114,45 +114,12 @@ import TpButton from 'components/TpButton.vue';
 import TpIcon from 'components/TpIcon.vue';
 import { ref, computed } from 'vue';
 
-import { useModelsStore, type TestType, type PredictionTarget } from 'src/stores/models-store';
+import { useModelsStore } from 'src/stores/models-store';
 import { useJobsStore } from 'src/stores/jobs-store';
 
 const modelsStore = useModelsStore()
 
-// Labels for display
-const testTypeLabels: Record<TestType, string> = {
-  'in_vitro': 'In Vitro',
-  'in_vivo': 'In Vivo',
-  'in_chemico': 'In Chemico',
-}
-
-const predictionTargetLabels: Record<PredictionTarget, string> = {
-  'photo_irritation': 'Photo Irritation',
-  'photo_toxicity': 'Phototoxicity',
-  'corrosion': 'Corrosion',
-}
-
-// Create model options with formatted labels (Test Type + Prediction Target)
-const modelOptions = computed(() => {
-  return modelsStore.getModels.map((modelName: string) => {
-    const detail = modelsStore.getModelDetail(modelName)
-    const parts: string[] = []
-    
-    if (detail?.prediction_target) {
-      parts.push(predictionTargetLabels[detail.prediction_target] || detail.prediction_target)
-    }
-    if (detail?.test_type) {
-      parts.push(testTypeLabels[detail.test_type] || detail.test_type)
-    }
-    
-    const label = parts.length > 0 ? parts.join(' - ') : modelName
-    
-    return {
-      label,
-      value: modelName
-    }
-  })
-})
+const modelOptions = computed(() => modelsStore.getModelOptions)
 
 const inputValue = ref("");
 const selectedValue = ref("");
@@ -282,7 +249,7 @@ const steps = [
 ]
 
 const stats = [
-  { value: '4', label: 'QSAR models' },
+  { value: '5', label: 'QSAR models' },
   { value: '120+', label: 'Molecular descriptors' },
   { value: '100%', label: 'Free to use' },
   { value: '<5s', label: 'Prediction time' },
@@ -329,6 +296,17 @@ const models = [
     details: [
       'Phototoxicity prediction (3T3)',
       '52 descriptors + AtomPair fingerprint',
+      'Tree-based explanations',
+      'Applicability domain check',
+    ],
+  },
+  {
+    name: 'XGB Phototox 3D',
+    value: 'XGB Phototox 3D',
+    badge: 'In Vitro',
+    details: [
+      'Phototoxicity prediction (3D)',
+      '24 descriptors + RDKit fingerprint (512 bits)',
       'Tree-based explanations',
       'Applicability domain check',
     ],

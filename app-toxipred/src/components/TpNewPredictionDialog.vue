@@ -104,7 +104,7 @@ import TpButtonGroup from 'components/TpButtonGroup.vue';
 import TpDialog from 'components/TpDialog.vue';
 import TpGlassInput from 'components/TpGlassInput.vue';
 import TpInputWithSelect from 'components/TpInputWithSelect.vue';
-import { useModelsStore, type TestType, type PredictionTarget } from 'src/stores/models-store';
+import { useModelsStore } from 'src/stores/models-store';
 import { useJobsStore } from 'src/stores/jobs-store';
 import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
@@ -156,39 +156,7 @@ function extractTokenFromLink(link: string): string | null {
   return null;
 }
 
-// Labels for display
-const testTypeLabels: Record<TestType, string> = {
-  'in_vitro': 'In Vitro',
-  'in_vivo': 'In Vivo',
-  'in_chemico': 'In Chemico',
-};
-
-const predictionTargetLabels: Record<PredictionTarget, string> = {
-  'photo_irritation': 'Photo Irritation',
-  'photo_toxicity': 'Phototoxicity',
-  'corrosion': 'Corrosion',
-};
-
-const modelOptions = computed(() => {
-  return modelsStore.getModels.map((modelName: string) => {
-    const detail = modelsStore.getModelDetail(modelName);
-    const parts: string[] = [];
-    
-    if (detail?.prediction_target) {
-      parts.push(predictionTargetLabels[detail.prediction_target] || detail.prediction_target);
-    }
-    if (detail?.test_type) {
-      parts.push(testTypeLabels[detail.test_type] || detail.test_type);
-    }
-    
-    const label = parts.length > 0 ? parts.join(' - ') : modelName;
-    
-    return {
-      label,
-      value: modelName
-    };
-  });
-});
+const modelOptions = computed(() => modelsStore.getModelOptions);
 
 function goToDraw() {
   close();

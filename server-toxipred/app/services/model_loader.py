@@ -1,79 +1,24 @@
 from typing import Any, List, Optional, Tuple
 from fastapi import HTTPException
 import json
-import pickle as _pickle
 from pathlib import Path
 from app.models.models import ModelSpec
 
 _cache: dict[str, Any] = {}
 
-# ── Cross-version compatibility unpickler ───────────────────────────────
-#
-# numpy 2.0 renamed the internal submodule ``numpy.core`` → ``numpy._core``.
-# Pickles saved with numpy >= 2 therefore reference ``numpy._core.multiarray``
-# (and similar), which does not exist in numpy 1.x. When such a pickle is
-# loaded under numpy 1.26 the stdlib unpickler raises ``ModuleNotFoundError``
-# which joblib propagates; the ``dill`` fallback then surfaces the misleading
-# "STACK_GLOBAL requires str" error.
-#
-# This remap transparently rewrites the module path so the pickle can load
-# while we stay pinned to numpy 1.26.x. It is a no-op under numpy >= 2.
-
-_NUMPY_MODULE_REMAP: tuple[tuple[str, str], ...] = (
-    ("numpy._core", "numpy.core"),
-    ("numpy.core",  "numpy._core"),
-)
-
-
-class _CompatUnpickler(_pickle.Unpickler):
-    def find_class(self, module: str, name: str):
-        try:
-            return super().find_class(module, name)
-        except (ModuleNotFoundError, AttributeError):
-            for src, dst in _NUMPY_MODULE_REMAP:
-                if module == src or module.startswith(src + "."):
-                    remapped = dst + module[len(src):]
-                    try:
-                        return super().find_class(remapped, name)
-                    except (ModuleNotFoundError, AttributeError):
-                        continue
-            raise
-
-
-def _load_with_compat_unpickler(path: Path):
-    with open(path, "rb") as f:
-        return _CompatUnpickler(f).load()
-
-
 def load_pickle(spec: ModelSpec):
     if not spec.path.exists():
         raise HTTPException(500, f"Model file not found: {spec.path}")
-
-    errors: list[str] = []
-
     try:
-        import joblib
-        return joblib.load(spec.path)
-    except Exception as e:
-        errors.append(f"joblib: {e!r}")
-
+        import joblib; return joblib.load(spec.path)
+    except Exception: ...
     try:
-        return _load_with_compat_unpickler(spec.path)
-    except Exception as e:
-        errors.append(f"pickle(compat): {e!r}")
-
+        import pickle; return pickle.load(open(spec.path, "rb"))
+    except Exception: ...
     try:
-        import dill
-        with open(spec.path, "rb") as f:
-            return dill.load(f)
+        import dill;   return dill.load(open(spec.path, "rb"))
     except Exception as e:
-        errors.append(f"dill: {e!r}")
-
-    raise HTTPException(
-        500,
-        f"Failed to load pickle '{spec.path.name}': " + " | ".join(errors),
-    )
-
+        raise HTTPException(500, f"Failed to load pickle '{spec.path.name}': {e}")
 
 def get_model(name: str, specs: dict[str, ModelSpec]):
     spec = specs.get(name)

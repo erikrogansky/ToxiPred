@@ -85,7 +85,7 @@ import TpKetcherEditor from 'components/TpKetcherEditor.vue';
 import TpButton from 'components/TpButton.vue';
 import TpIcon from 'components/TpIcon.vue';
 import TpIconButton from 'components/TpIconButton.vue';
-import { useModelsStore, type TestType, type PredictionTarget } from 'src/stores/models-store';
+import { useModelsStore } from 'src/stores/models-store';
 import { useJobsStore } from 'src/stores/jobs-store';
 import { api } from 'src/boot/axios';
 
@@ -105,26 +105,7 @@ const showCopied = ref(false);
 let smilesPollerHandle: ReturnType<typeof setInterval> | null = null;
 
 // ─── Model options ─────────────────────────────────
-const testTypeLabels: Record<TestType, string> = {
-  in_vitro: 'In Vitro',
-  in_vivo: 'In Vivo',
-  in_chemico: 'In Chemico',
-};
-const predictionTargetLabels: Record<PredictionTarget, string> = {
-  photo_irritation: 'Photo Irritation',
-  photo_toxicity: 'Phototoxicity',
-  corrosion: 'Corrosion',
-};
-
-const modelOptions = computed(() =>
-  modelsStore.getModels.map((name) => {
-    const d = modelsStore.getModelDetail(name);
-    const parts: string[] = [];
-    if (d?.prediction_target) parts.push(predictionTargetLabels[d.prediction_target] || d.prediction_target);
-    if (d?.test_type) parts.push(testTypeLabels[d.test_type] || d.test_type);
-    return { label: parts.length ? parts.join(' – ') : name, value: name };
-  }),
-);
+const modelOptions = computed(() => modelsStore.getModelOptions);
 
 const currentModelLabel = computed(() => {
   const found = modelOptions.value.find((o) => o.value === selectedModel.value);
