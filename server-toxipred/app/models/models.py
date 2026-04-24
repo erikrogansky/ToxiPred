@@ -53,7 +53,7 @@ _FEATURES_GB_IN_VIVO_CORR = [
 def _load_json_features(name: str) -> list[str]:
     import json
     # Search every model family subdir + legacy flat location.
-    subdirs = ("XGB", "GB", "ENSEMBLE")
+    subdirs = ("XGB", "GB", "ENSEMBLE", "SVM")
     candidates = [MODELS_DIR / sd / f"{name}.features.json" for sd in subdirs]
     candidates.append(MODELS_DIR / f"{name}.features.json")  # legacy location
     for p in candidates:
@@ -175,5 +175,20 @@ MODELS: dict[str, ModelSpec] = {
         negative_label="Non-irritant",
         classification_threshold=0.5,
         dataset="In Vivo Rabbit (857 compounds)",
+    ),
+    "SVM Phototox (in vivo)": ModelSpec(
+        path=MODELS_DIR / "SVM/svm_in_vivo_phototoxicity.pkl",
+        kind="pickle",
+        # features provided via sidecar (223 inputs, SelectFromModel reduces internally).
+        note="SVM pipeline (SelectFromModel → SVM) – 223 descriptors + hashed AtomPair FP, in vivo phototoxicity",
+        explainer="kernel",
+        feature_source="mixed",
+        test_type="in_vivo",
+        prediction_target="photo_toxicity",
+        positive_label="Phototoxic",
+        negative_label="Non-phototoxic",
+        # SVM was fit with probability=False, so let the pipeline decide directly via .predict().
+        classification_threshold=None,
+        dataset="In Vivo (35 compounds)",
     ),
 }

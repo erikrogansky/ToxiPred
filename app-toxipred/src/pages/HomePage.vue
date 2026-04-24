@@ -249,7 +249,7 @@ const steps = [
 ]
 
 const stats = [
-  { value: '7', label: 'QSAR models' },
+  { value: '8', label: 'QSAR models' },
   { value: '120+', label: 'Molecular descriptors' },
   { value: '100%', label: 'Free to use' },
   { value: '<5s', label: 'Prediction time' },
@@ -257,13 +257,13 @@ const stats = [
 
 const models = [
   {
-    name: 'Corrosion — In Vitro',
+    name: 'Corrosion 3D — In Vitro',
     value: 'XGB Corrosion',
     badge: 'In Vitro',
     details: [
       'XGBoost classifier',
       '23 molecular descriptors',
-      'In vitro dataset (151 compounds)',
+      'In vitro 3D dataset (151 compounds)',
       'Tree-based SHAP explanations',
     ],
   },
@@ -279,13 +279,13 @@ const models = [
     ],
   },
   {
-    name: 'Skin Irritation — In Vitro',
+    name: 'Skin Irritation 3D — In Vitro',
     value: 'GB Irritation (in vitro)',
     badge: 'In Vitro',
     details: [
       'Gradient Boosting classifier',
       '7 descriptors (incl. HOMO / HL-gap)',
-      'In vitro dataset (208 compounds)',
+      'In vitro 3D dataset (208 compounds)',
       'Tree-based SHAP explanations',
     ],
   },
@@ -333,6 +333,17 @@ const models = [
       'Tree-based SHAP explanations',
     ],
   },
+  {
+    name: 'Phototoxicity — In Vivo',
+    value: 'SVM Phototox (in vivo)',
+    badge: 'In Vivo',
+    details: [
+      'SVM pipeline with embedded feature selection',
+      '223 descriptors + hashed AtomPair fingerprint',
+      'In vivo dataset (35 compounds)',
+      'Kernel SHAP explanations',
+    ],
+  },
 ]
 
 const faqItems = [
@@ -358,7 +369,7 @@ const faqItems = [
   },
   {
     q: 'What dermatological endpoints are covered?',
-    a: 'Currently ToxiPred covers <strong>corrosion</strong> (in vitro and in vivo), <strong>skin irritation</strong> (in vitro and in vivo rabbit), and <strong>phototoxicity</strong> (in chemico, in vitro 3T3 NRU, and in vitro 3D reconstructed tissue). Models use tree-based classifiers and a stacking ensemble with tailored descriptor sets.',
+    a: 'Currently ToxiPred covers <strong>corrosion</strong> (in vitro and in vivo), <strong>skin irritation</strong> (in vitro and in vivo rabbit), and <strong>phototoxicity</strong> (in chemico, in vitro 3T3 NRU, in vitro 3D reconstructed tissue, and in vivo). Models include tree-based classifiers, a stacking ensemble, and an SVM pipeline with tailored descriptor sets.',
   },
 ]
 

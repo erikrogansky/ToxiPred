@@ -32,7 +32,7 @@ function modelDiscriminator(modelName: string): string | null {
   const parts = modelName.trim().split(/\s+/)
   const last = parts[parts.length - 1]
   if (!last) return null
-  if (/^(XGB|GB|Ensemble|Corrosion|Phototox|Photo|Irritation)$/i.test(last)) return null
+  if (/^(XGB|GB|SVM|Ensemble|Corrosion|Phototox|Photo|Irritation)$/i.test(last)) return null
   return last
 }
 

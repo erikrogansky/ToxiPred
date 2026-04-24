@@ -230,6 +230,39 @@ def _rdkit_fingerprint(mol: Chem.Mol, n_bits: int = 512) -> Dict[str, float]:
     return {f"RDK_{i}": float(fp[i]) for i in range(n_bits)}
 
 
+# Names like "AtomPair_128_17", "Morgan2_128_3", "RDK_128_5", "Torsion_128_9".
+_HASHED_FP_RE = re.compile(r"^(Morgan2|RDK|AtomPair|Torsion)_(\d+)_(\d+)$")
+
+
+def _hashed_fingerprints_for(mol: Chem.Mol, wanted: Set[str]) -> Dict[str, float]:
+    """Compute hashed fingerprints with <family>_<nbits>_<i> naming.
+
+    Only computes the (family, nbits) combinations actually requested via
+    *wanted*, so unrelated models don't pay the cost.
+    """
+    pairs: Set[tuple[str, int]] = set()
+    for name in wanted:
+        m = _HASHED_FP_RE.match(name)
+        if m:
+            pairs.add((m.group(1), int(m.group(2))))
+    out: Dict[str, float] = {}
+    for family, n_bits in pairs:
+        if family == "Morgan2":
+            fp = AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=n_bits)
+        elif family == "RDK":
+            fp = Chem.RDKFingerprint(mol, fpSize=n_bits)
+        elif family == "AtomPair":
+            fp = rdMolDescriptors.GetHashedAtomPairFingerprintAsBitVect(mol, nBits=n_bits)
+        elif family == "Torsion":
+            fp = rdMolDescriptors.GetHashedTopologicalTorsionFingerprintAsBitVect(mol, nBits=n_bits)
+        else:
+            continue
+        prefix = f"{family}_{n_bits}_"
+        for i in range(n_bits):
+            out[f"{prefix}{i}"] = float(fp[i])
+    return out
+
+
 # ── need-detection helpers ────────────────────────────────────────────
 
 _MORDRED_PREFIXES = ("GATS", "MATS", "ATS", "AATS", "ATSC", "AATSC")
@@ -296,8 +329,19 @@ def descriptor_map(
     if wanted is None or any(n.startswith("AtomPair_") for n in (wanted or set())):
         d.update(_atompair_fingerprint(mol))
 
-    # 9. RDKit topology fingerprint (RDK_<bit>)
-    if wanted is None or any(n.startswith("RDK_") for n in (wanted or set())):
+    # 9. RDKit topology fingerprint – legacy single-index naming (RDK_<bit>)
+    #    Only applied when the wanted set contains "RDK_<int>" (no second
+    #    underscore), so the "<family>_<nbits>_<i>" naming does not collide.
+    if wanted is None or any(
+        re.fullmatch(r"RDK_\d+", n) for n in (wanted or set())
+    ):
         d.update(_rdkit_fingerprint(mol))
+
+    # 10. Hashed fingerprints keyed as <family>_<nbits>_<i>.
+    if wanted is None:
+        # Backwards compat: nothing to compute here without a request list.
+        pass
+    else:
+        d.update(_hashed_fingerprints_for(mol, wanted))
 
     return d
