@@ -224,6 +224,12 @@ def _atompair_fingerprint(mol: Chem.Mol, n_bits: int = 512) -> Dict[str, float]:
     return {f"AtomPair_{i}": float(fp[i]) for i in range(n_bits)}
 
 
+def _rdkit_fingerprint(mol: Chem.Mol, n_bits: int = 512) -> Dict[str, float]:
+    """RDKit topology fingerprint (daylight-like), used by the 3D photo model."""
+    fp = Chem.RDKFingerprint(mol, fpSize=n_bits)
+    return {f"RDK_{i}": float(fp[i]) for i in range(n_bits)}
+
+
 # ── need-detection helpers ────────────────────────────────────────────
 
 _MORDRED_PREFIXES = ("GATS", "MATS", "ATS", "AATS", "ATSC", "AATSC")
@@ -289,5 +295,9 @@ def descriptor_map(
     # 8. AtomPair fingerprint
     if wanted is None or any(n.startswith("AtomPair_") for n in (wanted or set())):
         d.update(_atompair_fingerprint(mol))
+
+    # 9. RDKit topology fingerprint (RDK_<bit>)
+    if wanted is None or any(n.startswith("RDK_") for n in (wanted or set())):
+        d.update(_rdkit_fingerprint(mol))
 
     return d

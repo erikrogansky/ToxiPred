@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { api } from 'src/boot/axios'
 
 export type TestType = 'in_vitro' | 'in_vivo' | 'in_chemico'
-export type PredictionTarget = 'photo_irritation' | 'photo_toxicity' | 'corrosion'
+export type PredictionTarget = 'photo_irritation' | 'photo_toxicity' | 'corrosion' | 'irritation'
 
 export type ModelOption = {
   label: string
@@ -20,9 +20,10 @@ const PREDICTION_TARGET_LABELS: Record<PredictionTarget, string> = {
   photo_irritation: 'Photo Irritation',
   photo_toxicity: 'Phototoxicity',
   corrosion: 'Corrosion',
+  irritation: 'Irritation',
 }
 
-// Derive a short discriminator (e.g. "3T3", "3D", "in vivo") from the raw
+// Derive a short discriminator (e.g. "3T3", "3D", "Rabbit") from the raw
 // model name so dropdown labels stay unique when two models share the same
 // test_type + prediction_target combination.
 function modelDiscriminator(modelName: string): string | null {
@@ -31,7 +32,7 @@ function modelDiscriminator(modelName: string): string | null {
   const parts = modelName.trim().split(/\s+/)
   const last = parts[parts.length - 1]
   if (!last) return null
-  if (/^(XGB|GB|Corrosion|Phototox|Photo)$/i.test(last)) return null
+  if (/^(XGB|GB|Ensemble|Corrosion|Phototox|Photo|Irritation)$/i.test(last)) return null
   return last
 }
 

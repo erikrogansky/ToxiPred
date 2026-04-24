@@ -10,7 +10,7 @@ ModelKind = Literal["pickle"]
 ExplainerKind = Literal["tree", "linear", "deep", "kernel"]
 FeatureSource = Literal["descriptors", "mixed"]
 TestType = Literal["in_vitro", "in_vivo", "in_chemico"]
-PredictionTarget = Literal["corrosion", "photo_irritation", "photo_toxicity"]
+PredictionTarget = Literal["corrosion", "irritation", "photo_irritation", "photo_toxicity"]
 
 @dataclass(frozen=True)
 class ModelSpec:
@@ -52,10 +52,10 @@ _FEATURES_GB_IN_VIVO_CORR = [
 
 def _load_json_features(name: str) -> list[str]:
     import json
-    candidates = [
-        MODELS_DIR / "XGB" / f"{name}.features.json",
-        MODELS_DIR / f"{name}.features.json",  # legacy location
-    ]
+    # Search every model family subdir + legacy flat location.
+    subdirs = ("XGB", "GB", "ENSEMBLE")
+    candidates = [MODELS_DIR / sd / f"{name}.features.json" for sd in subdirs]
+    candidates.append(MODELS_DIR / f"{name}.features.json")  # legacy location
     for p in candidates:
         if p.exists():
             with open(p) as f:
@@ -149,5 +149,31 @@ MODELS: dict[str, ModelSpec] = {
         negative_label="Non-corrosive",
         classification_threshold=0.5,
         dataset="In Vivo (189 compounds)",
+    ),
+    "GB Irritation (in vitro)": ModelSpec(
+        path=MODELS_DIR / "GB/gb_in_vitro_irritation.pkl",
+        kind="pickle",
+        note="GradientBoosting – 7 descriptors, in vitro skin irritation",
+        explainer="tree",
+        feature_source="descriptors",
+        test_type="in_vitro",
+        prediction_target="irritation",
+        positive_label="Irritant",
+        negative_label="Non-irritant",
+        classification_threshold=0.5,
+        dataset="In Vitro (208 compounds)",
+    ),
+    "Ensemble Irritation (rabbit, in vivo)": ModelSpec(
+        path=MODELS_DIR / "ENSEMBLE/ensemble_in_vivo_rabbit.pkl",
+        kind="pickle",
+        note="Stacking ensemble (XGB + RF + SVM + DT + KNN → LR) – 21 descriptors, in vivo rabbit irritation",
+        explainer="kernel",
+        feature_source="descriptors",
+        test_type="in_vivo",
+        prediction_target="irritation",
+        positive_label="Irritant",
+        negative_label="Non-irritant",
+        classification_threshold=0.5,
+        dataset="In Vivo Rabbit (857 compounds)",
     ),
 }

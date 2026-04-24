@@ -232,7 +232,7 @@ const featureCards = [
 const steps = [
   {
     title: 'Choose a model',
-    text: 'Select from available QSAR models — each targeting a specific dermatological endpoint such as phototoxicity or photo-irritation.',
+    text: 'Select from available QSAR models — each targeting a specific dermatological endpoint (corrosion, skin irritation, phototoxicity) and assay type (in vitro, in vivo, in chemico).',
   },
   {
     title: 'Enter your compound',
@@ -249,7 +249,7 @@ const steps = [
 ]
 
 const stats = [
-  { value: '5', label: 'QSAR models' },
+  { value: '7', label: 'QSAR models' },
   { value: '120+', label: 'Molecular descriptors' },
   { value: '100%', label: 'Free to use' },
   { value: '<5s', label: 'Prediction time' },
@@ -257,58 +257,80 @@ const stats = [
 
 const models = [
   {
-    name: 'XGB Corrosion',
+    name: 'Corrosion — In Vitro',
     value: 'XGB Corrosion',
     badge: 'In Vitro',
     details: [
-      'Corrosion prediction',
+      'XGBoost classifier',
       '23 molecular descriptors',
-      'Tree-based explanations',
-      'Applicability domain check',
+      'In vitro dataset (151 compounds)',
+      'Tree-based SHAP explanations',
     ],
   },
   {
-    name: 'GB Corrosion',
+    name: 'Corrosion — In Vivo',
     value: 'GB Corrosion (in vivo)',
     badge: 'In Vivo',
     details: [
-      'Corrosion prediction',
+      'Gradient Boosting classifier',
       '6 molecular descriptors',
-      'Tree-based explanations',
-      'Applicability domain check',
+      'In vivo dataset (189 compounds)',
+      'Tree-based SHAP explanations',
     ],
   },
   {
-    name: 'XGB Phototox Chemico',
+    name: 'Skin Irritation — In Vitro',
+    value: 'GB Irritation (in vitro)',
+    badge: 'In Vitro',
+    details: [
+      'Gradient Boosting classifier',
+      '7 descriptors (incl. HOMO / HL-gap)',
+      'In vitro dataset (208 compounds)',
+      'Tree-based SHAP explanations',
+    ],
+  },
+  {
+    name: 'Skin Irritation — In Vivo (Rabbit)',
+    value: 'Ensemble Irritation (rabbit, in vivo)',
+    badge: 'In Vivo',
+    details: [
+      'Stacking ensemble: XGB · RF · SVM · DT · KNN → LR',
+      '21 molecular descriptors',
+      'In vivo rabbit dataset (857 compounds)',
+      'Kernel SHAP explanations',
+    ],
+  },
+  {
+    name: 'Phototoxicity — In Chemico',
     value: 'XGB Phototox Chemico',
     badge: 'In Chemico',
     details: [
-      'Phototoxicity prediction',
+      'XGBoost classifier',
       '48 descriptors + MACCS fingerprint',
-      'Lasso feature selection',
-      'Applicability domain check',
+      'In chemico dataset (162 compounds)',
+      'Tree-based SHAP explanations',
     ],
   },
   {
-    name: 'XGB Phototox 3T3',
+    name: 'Phototoxicity 3T3 — In Vitro',
     value: 'XGB Phototox 3T3',
     badge: 'In Vitro',
     details: [
-      'Phototoxicity prediction (3T3)',
+      'XGBoost classifier',
       '52 descriptors + AtomPair fingerprint',
-      'Tree-based explanations',
-      'Applicability domain check',
+      'In vitro 3T3 NRU dataset (396 compounds)',
+      'Tree-based SHAP explanations',
     ],
   },
   {
-    name: 'XGB Phototox 3D',
+    name: 'Phototoxicity 3D — In Vitro',
     value: 'XGB Phototox 3D',
     badge: 'In Vitro',
     details: [
-      'Phototoxicity prediction (3D)',
+      'XGBoost classifier',
       '24 descriptors + RDKit fingerprint (512 bits)',
-      'Tree-based explanations',
-      'Applicability domain check',
+      'In vitro 3D reconstructed-tissue dataset (101 compounds)',
+      'Tree-based SHAP explanations',
     ],
   },
 ]
@@ -336,7 +358,7 @@ const faqItems = [
   },
   {
     q: 'What dermatological endpoints are covered?',
-    a: 'Currently ToxiPred covers <strong>corrosion</strong> (in vitro and in vivo) plus <strong>phototoxicity</strong> (in chemico) and <strong>phototoxicity 3T3</strong> (in vitro). Models use tree-based classifiers with tailored descriptor sets.',
+    a: 'Currently ToxiPred covers <strong>corrosion</strong> (in vitro and in vivo), <strong>skin irritation</strong> (in vitro and in vivo rabbit), and <strong>phototoxicity</strong> (in chemico, in vitro 3T3 NRU, and in vitro 3D reconstructed tissue). Models use tree-based classifiers and a stacking ensemble with tailored descriptor sets.',
   },
 ]
 
