@@ -152,8 +152,8 @@ CC(C)N(C)C,10.5491,1
 CCCCCCCN,10.9007,1
 CCCCCCCC(=O)O,4.8274,1
 CC(=C)C=O,,1
-O.OS(=O)(=O)[O-].[Na+],,1
-OS(=O)(=O)[O-].[Na+],,1
+O.OS(=O)(=O)[O-].[Na+],1.9200,1
+OS(=O)(=O)[O-].[Na+],1.9200,1
 C1CCC(CC1)N,10.3348,1
 CCC(C)C(=O)O,4.7629,1
 C(COC(=O)CBr)OC(=O)CBr,,1
@@ -168,7 +168,7 @@ Br,,1
 P(Br)(Br)Br,,1
 C=CC(=O)O,4.2701,1
 C(=O)O,3.6597,1
-[N+](=O)([O-])[O-].[Ag+],,1
+[N+](=O)([O-])[O-].[Ag+],-1.3800,1
 CC(=O)O,4.1945,1
 CN(C)CCCNCCCN,10.6124,1
 CC(C)CCCCCCCCCCCCCCC(=O)O,4.9690,0

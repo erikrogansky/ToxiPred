@@ -262,14 +262,25 @@ def save_cache(cache_path: Path, cache: dict[str, CacheEntry]) -> None:
 
 def canonicalize_smiles(smiles: str) -> str | None:
     try:
-        mol = Chem.MolFromSmiles(smiles, sanitize=True)
+        mol = Chem.MolFromSmiles(smiles, sanitize=False)
         if mol is None:
             return None
 
-        chooser = rdMolStandardize.LargestFragmentChooser()
-        mol = chooser.choose(mol)
-        Chem.SanitizeMol(mol)
-        return Chem.MolToSmiles(mol, canonical=True)
+        frags = Chem.GetMolFrags(mol, asMols=True)
+        # Prefer largest fragment that contains carbon (organic fragment)
+        organic = [f for f in frags if any(a.GetSymbol() == "C" for a in f.GetAtoms())]
+        chosen = max(organic or frags, key=lambda m: m.GetNumHeavyAtoms())
+
+        Chem.SanitizeMol(chosen)
+
+        # Try to neutralize (uncharger); safe to skip if unavailable/errors
+        try:
+            uncharger = rdMolStandardize.Uncharger()
+            chosen = uncharger.uncharge(chosen)
+        except Exception:
+            pass
+
+        return Chem.MolToSmiles(chosen, canonical=True)
     except Exception:
         return None
 
