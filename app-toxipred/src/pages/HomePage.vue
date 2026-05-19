@@ -58,18 +58,21 @@
     <section class="tp-models">
       <h2 class="tp-section-title">Available models</h2>
       <div class="tp-models__grid">
-        <div v-for="(model, i) in models" :key="i" class="tp-model-card">
+        <div v-for="model in models" :key="model.modelName" class="tp-model-card">
           <div class="tp-model-card__header">
             <span class="tp-model-card__badge">{{ model.badge }}</span>
             <h4>{{ model.name }}</h4>
           </div>
           <ul class="tp-model-card__details">
-            <li v-for="(detail, j) in model.details" :key="j">
+            <li v-for="(detail, j) in model.homeDetails" :key="j">
               <tp-icon icon-name="check" weight="regular" :size="16" />
               <span class="paragraph-small">{{ detail }}</span>
             </li>
           </ul>
-          <tp-button :label="`Try ${model.name}`" variant="outline" size="small" @click="selectAndScroll(model.value)" />
+          <div class="tp-model-card__actions">
+            <tp-button :label="`Try ${model.name}`" variant="outline" size="small" @click="selectAndScroll(model.modelName)" />
+            <tp-button label="Read documentation" variant="link" size="small" :href="model.documentationHref" />
+          </div>
         </div>
       </div>
     </section>
@@ -116,6 +119,7 @@ import { ref, computed } from 'vue';
 
 import { useModelsStore } from 'src/stores/models-store';
 import { useJobsStore } from 'src/stores/jobs-store';
+import { modelDocumentationList } from 'src/data/modelDocumentation';
 
 const modelsStore = useModelsStore()
 
@@ -255,96 +259,7 @@ const stats = [
   { value: '<5s', label: 'Prediction time' },
 ]
 
-const models = [
-  {
-    name: 'Corrosion 3D — In Vitro',
-    value: 'XGB Corrosion',
-    badge: 'In Vitro',
-    details: [
-      'XGBoost classifier',
-      '23 molecular descriptors',
-      'In vitro 3D dataset (151 compounds)',
-      'Tree-based SHAP explanations',
-    ],
-  },
-  {
-    name: 'Corrosion — In Vivo',
-    value: 'GB Corrosion (in vivo)',
-    badge: 'In Vivo',
-    details: [
-      'Gradient Boosting classifier',
-      '6 molecular descriptors',
-      'In vivo dataset (189 compounds)',
-      'Tree-based SHAP explanations',
-    ],
-  },
-  {
-    name: 'Skin Irritation 3D — In Vitro',
-    value: 'GB Irritation (in vitro)',
-    badge: 'In Vitro',
-    details: [
-      'Gradient Boosting classifier',
-      '7 descriptors (incl. HOMO / HL-gap)',
-      'In vitro 3D dataset (208 compounds)',
-      'Tree-based SHAP explanations',
-    ],
-  },
-  {
-    name: 'Skin Irritation — In Vivo (Rabbit)',
-    value: 'Ensemble Irritation (rabbit, in vivo)',
-    badge: 'In Vivo',
-    details: [
-      'Stacking ensemble: XGB · RF · SVM · DT · KNN → LR',
-      '21 molecular descriptors',
-      'In vivo rabbit dataset (857 compounds)',
-      'Kernel SHAP explanations',
-    ],
-  },
-  {
-    name: 'Phototoxicity — In Chemico',
-    value: 'XGB Phototox Chemico',
-    badge: 'In Chemico',
-    details: [
-      'XGBoost classifier',
-      '48 descriptors + MACCS fingerprint',
-      'In chemico dataset (162 compounds)',
-      'Tree-based SHAP explanations',
-    ],
-  },
-  {
-    name: 'Phototoxicity 3T3 — In Vitro',
-    value: 'XGB Phototox 3T3',
-    badge: 'In Vitro',
-    details: [
-      'XGBoost classifier',
-      '52 descriptors + AtomPair fingerprint',
-      'In vitro 3T3 NRU dataset (396 compounds)',
-      'Tree-based SHAP explanations',
-    ],
-  },
-  {
-    name: 'Phototoxicity 3D — In Vitro',
-    value: 'XGB Phototox 3D',
-    badge: 'In Vitro',
-    details: [
-      'XGBoost classifier',
-      '24 descriptors + RDKit fingerprint (512 bits)',
-      'In vitro 3D reconstructed-tissue dataset (101 compounds)',
-      'Tree-based SHAP explanations',
-    ],
-  },
-  {
-    name: 'Phototoxicity — In Vivo',
-    value: 'SVM Phototox (in vivo)',
-    badge: 'In Vivo',
-    details: [
-      'SVM pipeline with embedded feature selection',
-      '223 descriptors + hashed AtomPair fingerprint',
-      'In vivo dataset (35 compounds)',
-      'Kernel SHAP explanations',
-    ],
-  },
-]
+const models = modelDocumentationList
 
 const faqItems = [
   {
@@ -662,6 +577,13 @@ function selectAndScroll(modelValue: string) {
         flex-shrink: 0;
       }
     }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: auto;
   }
 }
 

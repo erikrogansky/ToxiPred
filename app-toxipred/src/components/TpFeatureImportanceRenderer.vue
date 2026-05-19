@@ -5,7 +5,7 @@
     </h2>
 
     <div v-if="!hasData" class="text-caption text-grey-6">
-      No feature importance available for this prediction.
+      No descriptor importance available for this prediction.
     </div>
 
     <div v-else ref="chartEl" class="tp-feature-shap__chart"></div>
@@ -46,25 +46,32 @@ const props = defineProps<{
 
 const chartEl = ref<HTMLDivElement | null>(null);
 
-const hasData = computed(() => {
-  const pred = props.prediction
-  return (
-    props.features?.length > 0 &&
-    props.scores?.length > 0 &&
-    pred !== null &&
-    !Number.isNaN(pred)
-  )
-});
+const fingerprintFeaturePattern = /^(MACCS|AtomPair|RDK|Morgan2|Torsion)(?:_\d+)+$/;
+
+function isFingerprintFeature(name: string): boolean {
+  return fingerprintFeaturePattern.test(name);
+}
 
 const sorted = computed(() => {
   const len = Math.min(props.features.length, props.scores.length);
   const pairs: { name: string; score: number }[] = [];
   for (let i = 0; i < len; i++) {
     const s = props.scores[i];
+    const name = props.features[i] ?? '';
     if (s == null || Number.isNaN(s)) continue;
-    pairs.push({ name: props.features[i] ?? '', score: s });
+    if (isFingerprintFeature(name)) continue;
+    pairs.push({ name, score: s });
   }
   return pairs.sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
+});
+
+const hasData = computed(() => {
+  const pred = props.prediction
+  return (
+    sorted.value.length > 0 &&
+    pred !== null &&
+    !Number.isNaN(pred)
+  )
 });
 
 

@@ -29,9 +29,17 @@ def get_model(name: str, specs: dict[str, ModelSpec]):
 def sidecar_path(spec: ModelSpec) -> Path:
     return spec.path.with_suffix(spec.path.suffix + ".features.json")
 
+def sidecar_paths(spec: ModelSpec) -> list[Path]:
+    primary = sidecar_path(spec)
+    legacy = spec.path.with_suffix(".features.json")
+    if legacy == primary:
+        return [primary]
+    return [primary, legacy]
+
 def load_sidecar_features(spec: ModelSpec) -> Optional[List[str]]:
-    p = sidecar_path(spec)
-    if p.exists():
+    for p in sidecar_paths(spec):
+        if not p.exists():
+            continue
         try:
             data = json.load(open(p, "r"))
             if isinstance(data, list) and all(isinstance(x, str) for x in data):
@@ -54,5 +62,6 @@ def resolve_feature_names(spec: ModelSpec, model: Any) -> List[str]:
     if names: return names
     if n_in:
         raise HTTPException(500, f"Model reports n_features_in_={n_in} but no names. "
-                                 f"Provide {sidecar_path(spec)} or set spec.features.")
+                                 f"Provide one of {', '.join(str(p) for p in sidecar_paths(spec))} "
+                                 f"or set spec.features.")
     raise HTTPException(500, "Could not resolve feature names for the model.")

@@ -30,8 +30,8 @@ def make_descriptor_fn(feature_names):
     def _fn(mol):
         feats = descriptor_map(mol, feature_names=feature_names)
         vec = np.array([feats.get(f, np.nan) for f in feature_names], dtype=float)
-        if np.isnan(vec).any():
-            vec = np.nan_to_num(vec, nan=0.0)
+        if not np.isfinite(vec).all():
+            vec = np.nan_to_num(vec, nan=0.0, posinf=0.0, neginf=0.0)
         return vec
     return _fn
 
@@ -70,8 +70,8 @@ def predict_task(
 
     feats_dict = descriptor_map(m, feature_names=names)
     X = np.array([feats_dict.get(f, np.nan) for f in names], dtype=float).reshape(1, -1)
-    if np.isnan(X).any():
-        X = np.nan_to_num(X, nan=0.0)
+    if not np.isfinite(X).all():
+        X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
 
     set_progress(job_id, 30, "featurized")
     self.update_state(state="PROGRESS", meta={"pct": 30, "msg": "featurized"})
@@ -115,8 +115,9 @@ def predict_task(
 
     set_progress(job_id, 95, "assembling_result")
 
-    # Extract feature values for the summary table
-    feature_values = [feats_dict.get(f, None) for f in names]
+    # Use the exact finite values supplied to the model so the UI and
+    # explanations never disagree on descriptors that were imputed to zero.
+    feature_values = X.reshape(-1).tolist()
 
     # Sanitize NaN/Inf in float lists – JSON doesn't support them
     def _sanitize(lst):

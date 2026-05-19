@@ -39,7 +39,7 @@
               installation, or cost.
             </p>
             <div class="tp-docs__image-slot">
-              <span class="tp-docs__image-placeholder">Application overview screenshot</span>
+              <img :src="screenshotSources.overview" alt="ToxiPred application overview" />
             </div>
           </section>
 
@@ -58,14 +58,15 @@
 
           <section>
             <h2>Available Models</h2>
-            <p class="paragraph">ToxiPred currently offers predictions for two dermatological toxicity endpoints:</p>
+            <p class="paragraph">ToxiPred currently offers eight QSAR models across three dermatological toxicity endpoints:</p>
             <ul>
-              <li><strong>Phototoxicity (in vitro)</strong> — predicts whether a compound is likely to cause phototoxic reactions when exposed to UV light. Built with an XGBoost classifier.</li>
-              <li><strong>Photo-irritation (in chemico)</strong> — predicts the photo-irritation potential of a compound using an ensemble model approach.</li>
+              <li><strong>Corrosion</strong> — in vitro 3D and in vivo models.</li>
+              <li><strong>Skin irritation</strong> — in vitro 3D and in vivo rabbit models.</li>
+              <li><strong>Phototoxicity</strong> — in chemico, in vitro 3T3, in vitro 3D, and in vivo models.</li>
             </ul>
             <p class="paragraph">
-              Both models are validated according to OECD principles for QSAR model validation and use a set
-              of 32 carefully selected molecular descriptors.
+              Open the Models tab for dataset sizes, selected descriptors, fingerprints, validation metrics,
+              thresholds, and hyperparameters for each model.
             </p>
           </section>
         </template>
@@ -84,7 +85,7 @@
               <li><strong>Compound name</strong> — enter a trivial or IUPAC name (e.g. "Aspirin") and it will be resolved to its SMILES representation.</li>
             </ul>
             <div class="tp-docs__image-slot">
-              <span class="tp-docs__image-placeholder">Prediction input screenshot</span>
+              <img :src="screenshotSources.predictionInput" alt="Prediction input with model selector" />
             </div>
           </section>
 
@@ -105,7 +106,7 @@
               submit it directly for prediction.
             </p>
             <div class="tp-docs__image-slot">
-              <span class="tp-docs__image-placeholder">Ketcher editor screenshot</span>
+              <img :src="screenshotSources.ketcher" alt="Ketcher molecular editor" />
             </div>
           </section>
 
@@ -116,6 +117,98 @@
               separated by commas). All compounds will be processed together, and you can view results
               for each compound individually in the job overview.
             </p>
+          </section>
+        </template>
+
+        <!-- Models -->
+        <template v-else-if="activeTab === 'models'">
+          <section>
+            <h2>Model Documentation</h2>
+            <p class="paragraph">
+              These summaries are sourced from the final model deliverables. Runtime feature lists are treated
+              as authoritative when a document and model artifact disagree.
+            </p>
+          </section>
+
+          <section
+            v-for="model in modelDocumentationList"
+            :id="model.slug"
+            :key="model.modelName"
+            class="tp-docs__model-card"
+          >
+            <div class="tp-docs__model-header">
+              <span class="tp-docs__model-badge">{{ model.badge }}</span>
+              <div>
+                <h3>{{ model.name }}</h3>
+                <p class="paragraph-small">{{ model.algorithm }} for {{ model.endpoint.toLowerCase() }} prediction.</p>
+              </div>
+            </div>
+
+            <dl class="tp-docs__model-facts">
+              <div>
+                <dt>Dataset</dt>
+                <dd>{{ model.dataset }} ({{ model.observations }} compounds)</dd>
+              </div>
+              <div>
+                <dt>Assay type</dt>
+                <dd>{{ model.assayType }}</dd>
+              </div>
+              <div>
+                <dt>Descriptors</dt>
+                <dd>{{ model.descriptors }}</dd>
+              </div>
+              <div>
+                <dt>Fingerprint</dt>
+                <dd>{{ model.fingerprint }}</dd>
+              </div>
+              <div>
+                <dt>Feature selection</dt>
+                <dd>{{ model.featureSelection }}</dd>
+              </div>
+              <div>
+                <dt>Threshold</dt>
+                <dd>{{ model.threshold }}</dd>
+              </div>
+              <div>
+                <dt>Tuning</dt>
+                <dd>{{ model.tuning }}</dd>
+              </div>
+              <div>
+                <dt>Class balance</dt>
+                <dd>{{ model.classBalance.join('; ') }}</dd>
+              </div>
+            </dl>
+
+            <h4>Validation Metrics</h4>
+            <table class="tp-docs__metrics-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th v-if="usesTrainTestMetrics(model)">Train</th>
+                  <th v-if="usesTrainTestMetrics(model)">Test</th>
+                  <th v-if="!usesTrainTestMetrics(model)">Stacking</th>
+                  <th v-if="!usesTrainTestMetrics(model)">Voting</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="metric in model.metrics" :key="metric.label">
+                  <td>{{ metric.label }}</td>
+                  <td v-if="usesTrainTestMetrics(model)">{{ metric.train }}</td>
+                  <td v-if="usesTrainTestMetrics(model)">{{ metric.test }}</td>
+                  <td v-if="!usesTrainTestMetrics(model)">{{ metric.stacking }}</td>
+                  <td v-if="!usesTrainTestMetrics(model)">{{ metric.voting }}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h4>Hyperparameters</h4>
+            <ul class="tp-docs__compact-list">
+              <li v-for="item in model.hyperparameters" :key="item">{{ item }}</li>
+            </ul>
+
+            <div v-if="model.note" class="tp-docs__highlight">
+              <p class="paragraph">{{ model.note }}</p>
+            </div>
           </section>
         </template>
 
@@ -169,7 +262,7 @@
               <em>why</em> the model made its decision, not just <em>what</em> the decision was.
             </p>
             <div class="tp-docs__image-slot">
-              <span class="tp-docs__image-placeholder">SHAP feature importance chart</span>
+              <img :src="screenshotSources.featureImportance" alt="Descriptor contribution chart" />
             </div>
           </section>
 
@@ -181,7 +274,7 @@
               or negatively to the predicted toxicity.
             </p>
             <div class="tp-docs__image-slot">
-              <span class="tp-docs__image-placeholder">XSMILES atom contribution visualization</span>
+              <img :src="screenshotSources.atomContributions" alt="XSMILES atom contribution visualization" />
             </div>
           </section>
 
@@ -204,7 +297,7 @@
               compound count.
             </p>
             <div class="tp-docs__image-slot">
-              <span class="tp-docs__image-placeholder">Workspace overview screenshot</span>
+              <img :src="screenshotSources.workspace" alt="Workspace overview" />
             </div>
           </section>
 
@@ -332,10 +425,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import TpPage from 'components/TpPage.vue';
 import TpIcon from 'components/TpIcon.vue';
 import TpLink from 'components/TpLink.vue';
+import {
+  modelDocumentationList,
+  type ModelDocumentation,
+} from 'src/data/modelDocumentation';
 
 import type { IconName } from 'src/css/icons/icon-names';
 
@@ -348,12 +446,48 @@ interface Tab {
 const tabs: Tab[] = [
   { id: 'overview', label: 'Overview', icon: 'book' },
   { id: 'getting-started', label: 'Getting Started', icon: 'play' },
+  { id: 'models', label: 'Models', icon: 'document' },
   { id: 'results', label: 'Results', icon: 'chart' },
   { id: 'workspace', label: 'Workspace', icon: 'settings' },
   { id: 'faq', label: 'FAQ', icon: 'star' },
 ];
 
+const route = useRoute();
 const activeTab = ref('overview');
+
+const screenshotSources = {
+  overview: '/docs/screenshots/application-overview.png',
+  predictionInput: '/docs/screenshots/prediction-input.png',
+  ketcher: '/docs/screenshots/ketcher-editor.png',
+  featureImportance: '/docs/screenshots/descriptor-contributions.png',
+  atomContributions: '/docs/screenshots/xsmiles-atom-contributions.png',
+  workspace: '/docs/screenshots/workspace-overview.png',
+};
+
+function usesTrainTestMetrics(model: ModelDocumentation) {
+  return model.metrics.some((metric) => metric.train !== undefined || metric.test !== undefined);
+}
+
+async function syncTabWithHash() {
+  if (!route.hash.startsWith('#model-')) return;
+
+  activeTab.value = 'models';
+  await nextTick();
+
+  const target = document.getElementById(route.hash.slice(1));
+  target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+onMounted(() => {
+  void syncTabWithHash();
+});
+
+watch(
+  () => route.hash,
+  () => {
+    void syncTabWithHash();
+  },
+);
 </script>
 
 <style scoped lang="scss">
@@ -362,7 +496,7 @@ const activeTab = ref('overview');
 
 .tp-docs {
   box-sizing: content-box;
-  max-width: 750px;
+  max-width: 920px;
   gap: 0;
 
   &__subtitle {
@@ -468,6 +602,108 @@ const activeTab = ref('overview');
     font-style: italic;
   }
 
+  &__model-card {
+    @include glass.glass($radius: 12px);
+    padding: 24px;
+    scroll-margin-top: 96px;
+
+    h4 {
+      margin: 20px 0 8px;
+    }
+  }
+
+  &__model-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0 0 4px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-medium);
+    }
+  }
+
+  &__model-badge {
+    display: inline-block;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 4px 12px;
+    border-radius: 360px;
+    background: var(--surface-brand-extra-light);
+    color: var(--text-brand-regular);
+  }
+
+  &__model-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 20px;
+    margin: 0;
+
+    div {
+      min-width: 0;
+    }
+
+    dt {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    dd {
+      margin: 0;
+      color: var(--text);
+      line-height: 1.5;
+    }
+  }
+
+  &__metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 8px;
+
+    th,
+    td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    th {
+      background: rgba(128, 128, 128, 0.15);
+      color: var(--text-brand-regular);
+      font-size: 13px;
+    }
+
+    td {
+      color: var(--text);
+      font-size: 14px;
+    }
+  }
+
+  &__compact-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 18px;
+    padding-left: 18px !important;
+
+    li {
+      font-size: 14px !important;
+      line-height: 1.5 !important;
+    }
+  }
+
   // ── Info highlight box ──
   &__highlight {
     @include glass.glass-info-box();
@@ -505,6 +741,15 @@ const activeTab = ref('overview');
 
   .tp-docs__image-slot {
     min-height: 140px;
+  }
+
+  .tp-docs__model-header {
+    flex-direction: column;
+  }
+
+  .tp-docs__model-facts,
+  .tp-docs__compact-list {
+    grid-template-columns: 1fr;
   }
 }
 </style>

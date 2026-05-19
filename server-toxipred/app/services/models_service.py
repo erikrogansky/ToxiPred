@@ -5,7 +5,14 @@ from fastapi import Request
 from fastapi.responses import JSONResponse, Response
 
 from app.models.models import MODELS
+from app.services.model_loader import load_sidecar_features, sidecar_paths
 from app.utils.etag import make_etag
+
+def feature_count(v) -> int | None:
+  if v.features:
+    return len(v.features)
+  sidecar = load_sidecar_features(v)
+  return len(sidecar) if sidecar else None
 
 def models_payload() -> Dict[str, Any]:
   return {
@@ -15,7 +22,7 @@ def models_payload() -> Dict[str, Any]:
         "file": v.path.name,
         "path": str(v.path),
         "kind": v.kind,
-        "features_in_spec": (len(v.features) if v.features else None),
+        "features_in_spec": feature_count(v),
         "note": v.note,
         "test_type": v.test_type,
         "prediction_target": v.prediction_target,
@@ -35,6 +42,11 @@ def last_models_mtime() -> float:
       mtimes.append(Path(v.path).stat().st_mtime)
     except FileNotFoundError:
       pass
+    for sidecar in sidecar_paths(v):
+      try:
+        mtimes.append(sidecar.stat().st_mtime)
+      except FileNotFoundError:
+        pass
   return max(mtimes) if mtimes else time.time()
 
 def list_models_response(request: Request) -> Response:
