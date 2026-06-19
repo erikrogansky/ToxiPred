@@ -36,6 +36,22 @@ def make_descriptor_fn(feature_names):
     return _fn
 
 
+def has_mappable_fingerprint_features(feature_names):
+    return any(
+        name.startswith(("AtomPair_", "MACCS_"))
+        for name in feature_names
+    )
+
+
+def has_atom_score_signal(atom_scores_np, n_atoms):
+    scores = np.asarray(atom_scores_np, dtype=float)
+    return (
+        scores.shape == (n_atoms,)
+        and np.isfinite(scores).all()
+        and bool(np.any(np.abs(scores) > 1e-12))
+    )
+
+
 @shared_task(bind=True, name="toxipred.predict")
 def predict_task(
     self,
@@ -105,13 +121,27 @@ def predict_task(
         traceback.print_exc()
         feature_scores = None
 
-    try:
-        descriptor_fn = make_descriptor_fn(names)
-        atom_scores_np, base_pred = explain_atom_importance(model, m, descriptor_fn)
-        atom_scores = atom_scores_np.tolist()
-    except Exception as e:
-        print("Error computing atom_scores:", e)
-        atom_scores = None
+    atom_scores = None
+    if feature_scores_np is not None and has_mappable_fingerprint_features(names):
+        try:
+            atom_scores_np = explain_atom_importance_shap_fp(
+                m,
+                names,
+                feature_scores_np,
+            )
+            if has_atom_score_signal(atom_scores_np, m.GetNumAtoms()):
+                atom_scores = atom_scores_np.tolist()
+        except Exception as e:
+            print("Error computing fingerprint atom_scores:", e)
+
+    if atom_scores is None:
+        try:
+            descriptor_fn = make_descriptor_fn(names)
+            atom_scores_np, base_pred = explain_atom_importance(model, m, descriptor_fn)
+            atom_scores = atom_scores_np.tolist()
+        except Exception as e:
+            print("Error computing atom_scores:", e)
+            atom_scores = None
 
     set_progress(job_id, 95, "assembling_result")
 
