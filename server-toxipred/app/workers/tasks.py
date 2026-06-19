@@ -60,6 +60,22 @@ def should_use_shap_feature_importance(spec, model):
     return True
 
 
+def decision_score(model, X):
+    if not hasattr(model, "decision_function"):
+        return None
+    try:
+        scores = np.asarray(model.decision_function(X), dtype=float)
+    except Exception:
+        return None
+    if scores.ndim == 1:
+        return float(scores.reshape(-1)[0])
+    if scores.shape[-1] == 1:
+        return float(scores[0, 0])
+    if scores.shape[-1] == 2:
+        return float(scores[0, 1] - scores[0, 0])
+    return float(np.max(scores[0]))
+
+
 @shared_task(bind=True, name="toxipred.predict")
 def predict_task(
     self,
@@ -101,6 +117,7 @@ def predict_task(
     self.update_state(state="PROGRESS", meta={"pct": 30, "msg": "featurized"})
 
     y, conf = predict_vectorized(model, X, threshold=spec.classification_threshold)
+    margin = decision_score(model, X)
 
     set_progress(job_id, 55, "explaining")
     self.update_state(state="PROGRESS", meta={"pct": 55, "msg": "explaining"})
@@ -176,6 +193,8 @@ def predict_task(
     atom_scores = _sanitize(atom_scores)
     if conf is not None and (np.isnan(conf) or np.isinf(conf)):
         conf = None
+    if margin is not None and (np.isnan(margin) or np.isinf(margin)):
+        margin = None
 
     # Map raw prediction to human-readable label
     label = spec.positive_label if y == 1 else spec.negative_label
@@ -192,6 +211,7 @@ def predict_task(
         "prediction": y,
         "prediction_label": label,
         "confidence": conf,
+        "decision_score": margin,
         "features_used": names,
         "feature_values": feature_values,
         "model": model_name,

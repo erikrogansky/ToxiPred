@@ -110,6 +110,7 @@
           :scores="featureScores"
           :prediction="predictionValue"
           :confidence="confidence"
+          :decision-score="decisionScore"
           :positive-label="positiveLabel"
           :negative-label="negativeLabel"
         />
@@ -204,6 +205,7 @@ interface JobResultPayload {
   other_names?: string[] | null;
   prediction?: number | number[] | null;
   confidence?: number | null;
+  decision_score?: number | null;
   features_used?: string[] | null;
   feature_values?: (number | null)[] | null;
   model?: string | null;
@@ -228,6 +230,7 @@ const featureNames = ref<string[]>([]);
 const featureValues = ref<(number | null)[]>([]);
 const featureScores = ref<number[]>([]);
 const confidence = ref<number | null>(null);
+const decisionScore = ref<number | null>(null);
 
 onMounted(async () => {
   // Check if share link is valid before asking for password
@@ -289,6 +292,7 @@ async function accessShared() {
     featureValues.value = result.value.feature_values ?? [];
     featureScores.value = result.value.feature_scores ?? [];
     confidence.value = result.value.confidence ?? null;
+    decisionScore.value = result.value.decision_score ?? null;
 
     state.value = 'success';
   } catch (err: unknown) {

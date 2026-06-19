@@ -63,6 +63,7 @@
           :scores="featureScores"
           :prediction="predictionValue"
           :confidence="confidence"
+          :decision-score="decisionScore"
           :positive-label="positiveLabel"
           :negative-label="negativeLabel"
         />
@@ -156,6 +157,7 @@ interface JobResultPayload {
   other_names?: string[] | null;
   prediction?: number | number[] | null;
   confidence?: number | null;
+  decision_score?: number | null;
   features_used?: string[] | null;
   feature_values?: (number | null)[] | null;
   model?: string | null;
@@ -172,6 +174,7 @@ const featureNames = ref<string[]>([]);
 const featureValues = ref<(number | null)[]>([]);
 const featureScores = ref<number[]>([]);
 const confidence = ref<number | null>(null);
+const decisionScore = ref<number | null>(null);
 
 onMounted(async () => {
   try {
@@ -189,6 +192,7 @@ onMounted(async () => {
     featureValues.value = result.value.feature_values ?? [];
     featureScores.value = (result.value.feature_scores ?? []);
     confidence.value = result.value.confidence ?? null;
+    decisionScore.value = result.value.decision_score ?? null;
 
     console.log('Fetched job result:', result.value);
   } catch (err) {
@@ -794,7 +798,11 @@ async function downloadPdf() {
     // Confidence badge
     drawRoundedRect(margin + badgeWidth + badgeGap, y, badgeWidth, badgeHeight, 2, confidenceYellow);
     doc.setTextColor(...darkText);
-    const confidenceText = confidence.value !== null ? `Confidence: ${(confidence.value * 100).toFixed(1)}%` : 'Confidence: —';
+    const confidenceText = confidence.value !== null
+      ? `Confidence: ${(confidence.value * 100).toFixed(1)}%`
+      : decisionScore.value !== null
+        ? `Decision margin: ${decisionScore.value >= 0 ? '+' : ''}${decisionScore.value.toFixed(2)}`
+        : 'Confidence: —';
     doc.text(confidenceText, margin + badgeWidth + badgeGap + badgeWidth / 2, y + 7.5, { align: 'center' });
     
     y += badgeHeight + 10;

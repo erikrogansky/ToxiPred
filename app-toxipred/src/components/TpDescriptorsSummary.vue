@@ -16,7 +16,7 @@
           :size="20"
           weight="regular"
         />
-        <span>Confidence: {{ confidencePercent }}%</span>
+        <span>{{ scoreBadgeText }}</span>
       </div>
     </div>
 
@@ -118,6 +118,7 @@ interface Props {
   scores: number[];
   prediction: number | null;
   confidence: number | null;
+  decisionScore?: number | null;
   positiveLabel?: string;
   negativeLabel?: string;
 }
@@ -190,9 +191,15 @@ const resultBadgeClass = computed(() => {
   return props.prediction === 0 ? 'tp-badge--negative' : 'tp-badge--positive';
 });
 
-const confidencePercent = computed(() => {
-  if (props.confidence === null) return '—';
-  return (props.confidence * 100).toFixed(1);
+const scoreBadgeText = computed(() => {
+  if (props.confidence !== null) {
+    return `Confidence: ${(props.confidence * 100).toFixed(1)}%`;
+  }
+  if (props.decisionScore !== null && props.decisionScore !== undefined) {
+    const prefix = props.decisionScore >= 0 ? '+' : '';
+    return `Decision margin: ${prefix}${props.decisionScore.toFixed(2)}`;
+  }
+  return 'Confidence: —';
 });
 
 interface DescriptorRow {

@@ -1,33 +1,4 @@
 from typing import Tuple, Any, Optional
-import numpy as np
-
-
-def _sigmoid(x: float) -> float:
-    x = float(np.clip(x, -709, 709))
-    return float(1.0 / (1.0 + np.exp(-x)))
-
-
-def _decision_confidence(model: Any, X) -> float | None:
-    if not hasattr(model, "decision_function"):
-        return None
-    try:
-        margin = np.asarray(model.decision_function(X), dtype=float)
-    except Exception:
-        return None
-
-    if margin.ndim == 1 or margin.shape[-1] == 1:
-        p1 = _sigmoid(margin.reshape(-1)[0])
-        return max(p1, 1.0 - p1)
-
-    if margin.ndim == 2 and margin.shape[0] > 0:
-        row = margin[0]
-        row = row - np.max(row)
-        exp = np.exp(row)
-        denom = float(exp.sum())
-        if denom > 0:
-            return float(exp.max() / denom)
-
-    return None
 
 def predict_vectorized(
     model: Any,
@@ -53,6 +24,4 @@ def predict_vectorized(
             conf = float(max(p0)) if hasattr(p0, "__iter__") else float(p0)
         except Exception:
             pass
-    if conf is None:
-        conf = _decision_confidence(model, X)
     return y0, conf
