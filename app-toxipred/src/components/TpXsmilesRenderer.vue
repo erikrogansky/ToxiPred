@@ -17,6 +17,15 @@ const emit = defineEmits<{
 
 const container = ref<HTMLDivElement | null>(null)
 
+function getGradientScale(scores: number[]) {
+  const finiteScores = scores.filter(score => Number.isFinite(score))
+  const maxAbs = Math.max(0.09, ...finiteScores.map(score => Math.abs(score)))
+  const mid = maxAbs * 0.55
+  return {
+    colorDomain: [-maxAbs, -mid, 0, mid, maxAbs],
+  }
+}
+
 async function render() {
   if (!container.value) return
   if (!props.smiles || !Array.isArray(props.atomScores) || props.atomScores.length === 0) {
@@ -42,6 +51,8 @@ async function render() {
 
   container.value.innerHTML = ''
 
+  const gradientScale = getGradientScale(props.atomScores)
+
   const setup = {
     molecule: {
       string: props.smiles,
@@ -60,7 +71,7 @@ async function render() {
         name: 'MyPalette',
         colors: ['#7FFFD4', '#C7FFEA', '#FFFFFF', '#FCDDDD', '#F9B4B4']
       },
-      colorDomain: [-0.09, -0.05, 0, 0.05, 0.09],
+      colorDomain: gradientScale.colorDomain,
       highlight: true,
       blur: 0.7,
       opacity: { min: 0.7, max: 1.0 },

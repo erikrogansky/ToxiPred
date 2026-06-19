@@ -52,6 +52,14 @@ def has_atom_score_signal(atom_scores_np, n_atoms):
     )
 
 
+def should_use_shap_feature_importance(spec, model):
+    if spec.explainer not in ("tree", "linear", "kernel"):
+        return False
+    if spec.explainer == "kernel" and not hasattr(model, "predict_proba"):
+        return False
+    return True
+
+
 @shared_task(bind=True, name="toxipred.predict")
 def predict_task(
     self,
@@ -100,7 +108,7 @@ def predict_task(
     feature_scores = None
     feature_scores_np = None
     try:
-        if spec.explainer in ("tree", "linear", "kernel"):
+        if should_use_shap_feature_importance(spec, model):
             feature_scores_np, base_pred = explain_feature_importance_shap(
                 model,
                 X,

@@ -325,6 +325,15 @@ async function svgToDataUrl(svgString: string, width: number, height: number): P
     img.src = url;
   });
 }
+function getXsmilesGradientScale(scores: number[]) {
+  const finiteScores = scores.filter(score => Number.isFinite(score));
+  const maxAbs = Math.max(0.09, ...finiteScores.map(score => Math.abs(score)));
+  const mid = maxAbs * 0.55;
+  return {
+    colorDomain: [-maxAbs, -mid, 0, mid, maxAbs],
+  };
+}
+
 // Helper to render XSMILES visualization as image - uses exact same rendering as TpXsmilesRenderer
 async function renderXsmilesImage(smilesStr: string, atomScores: number[], width: number, height: number): Promise<string | null> {
   try {
@@ -336,6 +345,8 @@ async function renderXsmilesImage(smilesStr: string, atomScores: number[], width
     const tempDiv = document.createElement('div');
     tempDiv.style.cssText = `position: fixed; left: -9999px; top: 0; width: ${width}px; height: ${height}px; background: white;`;
     document.body.appendChild(tempDiv);
+
+    const gradientScale = getXsmilesGradientScale(atomScores);
 
     // Use EXACT same setup as TpXsmilesRenderer component
     const setup = {
@@ -356,7 +367,7 @@ async function renderXsmilesImage(smilesStr: string, atomScores: number[], width
           name: 'MyPalette',
           colors: ['#7FFFD4', '#C7FFEA', '#FFFFFF', '#FCDDDD', '#F9B4B4']
         },
-        colorDomain: [-0.09, -0.05, 0, 0.05, 0.09],
+        colorDomain: gradientScale.colorDomain,
         highlight: true,
         blur: 0.7,
         opacity: { min: 0.7, max: 1.0 },

@@ -7,14 +7,23 @@ from rdkit.Chem import rdmolops
 
 logger = logging.getLogger(__name__)
 
+def _decision_scores(model, X: np.ndarray) -> np.ndarray:
+    """Return raw decision margins for non-probabilistic classifiers."""
+    z = np.asarray(model.decision_function(X), dtype=float)
+    if z.ndim == 1:
+        return z.reshape(-1)
+    if z.shape[1] == 1:
+        return z[:, 0]
+    if z.shape[1] == 2:
+        return z[:, 1] - z[:, 0]
+    return z.max(axis=1)
+
+
 def _score_fn(model) -> Callable[[np.ndarray], np.ndarray]:
     if hasattr(model, "predict_proba"):
         return lambda X: np.asarray(model.predict_proba(X))[:, 1]
     if hasattr(model, "decision_function"):
-        def f(X):
-            z = np.asarray(model.decision_function(X)).reshape(-1)
-            return 1.0 / (1.0 + np.exp(-z))
-        return f
+        return lambda X: _decision_scores(model, X)
     return lambda X: np.asarray(model.predict(X)).reshape(-1).astype(float)
 
 def _sanitize(m: Chem.Mol) -> Chem.Mol:
