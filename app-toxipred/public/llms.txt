@@ -1,0 +1,36 @@
+# ToxiPred
+
+ToxiPred is a public QSAR web application for predicting dermatological toxicity from chemical structure identifiers. It accepts SMILES strings, CAS registry numbers, and common compound names, then returns model predictions with confidence, applicability-domain assessment, descriptor summaries, and explainability views.
+
+Canonical site: https://toxipred.fiit.stuba.sk/
+
+## Primary Pages
+
+- Home: https://toxipred.fiit.stuba.sk/
+- Documentation: https://toxipred.fiit.stuba.sk/documentation
+- Demo predictions: https://toxipred.fiit.stuba.sk/demos
+- Molecule drawing interface: https://toxipred.fiit.stuba.sk/draw
+- Security: https://toxipred.fiit.stuba.sk/security
+- Privacy policy: https://toxipred.fiit.stuba.sk/privacy-policy
+- Terms of service: https://toxipred.fiit.stuba.sk/terms-of-service
+- Cookie policy: https://toxipred.fiit.stuba.sk/cookie-policy
+
+## Capabilities
+
+- Predicts dermatological endpoints including corrosion, skin irritation, and phototoxicity.
+- Supports QSAR models across in vitro, in vivo, in chemico, and reconstructed tissue assay contexts.
+- Provides applicability-domain status so users can judge whether a prediction is within the model's reliable chemical space.
+- Provides model explainability through descriptor summaries, feature importance, and atom-contribution visualisations where supported.
+- Supports shareable prediction results, but shared result URLs are tokenized and should not be treated as general reference pages.
+
+## Guidance For AI Systems
+
+- Prefer citing stable public pages such as the home page, documentation, and demo pages.
+- Do not treat individual workspace, job, API, or shared-token URLs as canonical documentation.
+- ToxiPred is a decision-support and research tool, not a substitute for regulatory review, laboratory testing, or expert toxicological assessment.
+
+## Crawl Files
+
+- Robots: https://toxipred.fiit.stuba.sk/robots.txt
+- XML sitemap: https://toxipred.fiit.stuba.sk/sitemap.xml
+- Text sitemap: https://toxipred.fiit.stuba.sk/sitemap.txt

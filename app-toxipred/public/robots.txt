@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /workspace
+Disallow: /workspace/
+Disallow: /shared/
+
+Sitemap: https://toxipred.fiit.stuba.sk/sitemap.xml
